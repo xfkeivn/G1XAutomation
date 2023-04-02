@@ -1,6 +1,0 @@
-27/Mar/2023 21:20:18 - comport - INFO: connecting to device
-27/Mar/2023 21:20:19 - comport - INFO: COM Port COM3 created successfully
-27/Mar/2023 21:20:28 - comport - INFO: disconnecting from device
-27/Mar/2023 21:20:28 - comport - WARNING: terminated the serial port read- index out of range
-27/Mar/2023 21:20:36 - comport - INFO: connecting to device
-27/Mar/2023 21:20:38 - comport - INFO: COM Port COM3 created successfully
