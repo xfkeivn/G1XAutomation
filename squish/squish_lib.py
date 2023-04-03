@@ -1,16 +1,3 @@
-#!/usr/bin/env python
-# encoding: utf-8
-"""
-@author: Kevin Xu
-@license: (C) Copyright 2021-2025, Boston Scientific Corporation Limited.
-@contact: xuf@bsci.com
-@software: BSCUDSStudio
-@file: squish_lib.py
-@time: 2023/4/1 17:40
-@desc:
-"""
-#!/usr/bin/env python
-# encoding: utf-8
 """
 @author: Kevin Xu
 @license: (C) Copyright 2021-2025, Boston Scientific Corporation Limited.
@@ -21,8 +8,9 @@
 @desc:
 """
 import sys
-sys.path.append(r'E:\Squish for Qt 7.0.1\bin')
-sys.path.append(r'E:\Squish for Qt 7.0.1\lib\python')
+
+sys.path.append(r'C:\Squish for Qt 7.0.1\bin')
+sys.path.append(r'C:\Squish for Qt 7.0.1\lib\python')
 import squishtest as sqt
 import psutil
 import subprocess
@@ -30,6 +18,7 @@ import time
 import logging
 from utils.utilties import os_system_cmd
 from project_specific import names
+
 logger = logging.getLogger("GX1")
 
 
@@ -51,8 +40,8 @@ def find_process(pname):
 
 
 class SquishTest(object):
-    def __init__(self, target_ip_address, private_keyfile, attach_app_name='RFGenerator'):
-        self.process_to_attach = attach_app_name
+    def __init__(self, target_ip_address, private_keyfile, attach_app_name='gx1'):
+        self._process_to_attach = attach_app_name
         self._squish_started = False
         self._open_ssh_folder = r"C:\\Windows\\System32\\OpenSSH"
         self._target_ip_address = target_ip_address
@@ -62,20 +51,18 @@ class SquishTest(object):
         self._app_context = None
         self._is_check_obj_exists = True
         self._parent = None
-        self._connectingCallback = None
 
     # ================================================================================
     # Squish library communication
     # ================================================================================
     def start_squish_server(self):
         """Starts the Squish server as a subprocess.
-
         """
         try:
             subprocess.run(["squishserver.exe", "--stop"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            subprocess.Popen(['squishserver.exe'],stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            subprocess.Popen(['squishserver.exe'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             self._squish_started = True
-            time.sleep(3)
+            time.sleep(1)
         except WindowsError as err:
             logger.error("Squish server started failed")
             return False
@@ -84,42 +71,31 @@ class SquishTest(object):
     def ssh_connect(self):
         """Establish the SSh connection to port 3520 for Squish AUT attachment.
         """
-        for i in range(0, 3):
-            self._spSsh = subprocess.Popen(
-                [self._open_ssh_folder + "\\ssh", "-oStrictHostKeyChecking=no", "-tt", "-L", "3250:localhost:3250",
-                 *self._ssh_User, "bsci@%s" % self._target_ip_address], bufsize=0, stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,shell=True)
-            time.sleep(1)
-            if self.is_active() is True:
-                try:
-                    self.input_cmd("")
-                except:
-                    pass
-                line = self._spSsh.stdout.readline()
-                line = "".join(e for e in line.decode() if e.isprintable())
-                if line.find("bsci@") >= 0:
-                    logger.info("SSH connection Successful %s %s" % (self._target_ip_address, str(self._ssh_User)))
-                    break
-                elif line.find("MTI> ") >= 0:
-                    self.disconnect()
-                    logger.info("The system is still in MTI mode, please reboot it to the application mode")
-                    break
-
-            logger.info("Retry generating the ssh key for %s %s..." % (self._target_ip_address, str(self._ssh_User)))
-            os_system_cmd("%s\\ssh-keygen -R %s" % (self._open_ssh_folder, self._target_ip_address))
-            os_system_cmd("echo exit|%s\\ssh -oStrictHostKeyChecking=no -L 3520:localhost:3520 bsci@%s" % (
-                self._open_ssh_folder, self._target_ip_address))
-            self._spSsh = None
-
-        return self._spSsh is not None
+        self._spSsh = subprocess.Popen(
+            [self._open_ssh_folder + "\\ssh", "-oStrictHostKeyChecking=no", "-tt", "-L", "3520:localhost:3520",
+             *self._ssh_User, "bsci@%s" % self._target_ip_address], bufsize=0, stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE, shell=True)
+        time.sleep(2)
+        if self.is_active() is True:
+            try:
+                self.input_cmd("")
+            except WindowsError as err:
+                return False
+            line = self._spSsh.stdout.readline()
+            line = "".join(e for e in line.decode() if e.isprintable())
+            if line.find("bsci@") >= 0:
+                logger.info("SSH connection Successful %s %s" % (self._target_ip_address, str(self._ssh_User)))
+                return True
+            elif line.find("MTI> ") >= 0:
+                self.disconnect()
+                logger.info("The system is still in MTI mode, please reboot it to the application mode")
+                return False
+        else:
+            return False
 
     def connect(self):
         """This function will try to attach to a Squish AUT VssUI.
-
         """
-
-        if self._connectingCallback:
-            self._connectingCallback()
         if self._squish_started is not True:
             if self.start_squish_server() is False:
                 return False
@@ -127,38 +103,33 @@ class SquishTest(object):
         self.disconnect()
         if self.ssh_connect() is not True:
             logger.error("Failed to establish SSH connection!!!")
-            if self.connectDoneCallback:
-                self.connectDoneCallback()
             return False
-
-        for i in range(0, 2):
-            try:
-                self._app_context = sqt.attachToApplication(self.process_to_attach)
-                logger.info(f'Attach AUT {self.process_to_attach} Successful')
-                # ct = sqt.applicationContext("VssUI")
-                # ctLst = sqt.applicationContextList()
-                break
-            except:
-                logger.info(f"Failed to attach to AUT  {self.process_to_attach}!!!")
-                self.disconnect()
-                logger.info(f"Retry connecting to AUT  {self.process_to_attach}.")
-
-                time.sleep(2)
-                os_system_cmd("%s\\ssh-keygen -R %s" % (self._open_ssh_folder, self._target_ip_address))
-                os_system_cmd("echo exit|%s\\ssh -oStrictHostKeyChecking=no -L 3520:localhost:3520 bsci@%s" % (
-                self._open_ssh_folder, self._target_ip_address))
-                time.sleep(2)
-                self.ssh_connect()
-
+        try:
+            self._app_context = sqt.attachToApplication(self._process_to_attach)
+            logger.info(f'Attach AUT {self._process_to_attach} Successful')
+            # ct = sqt.applicationContext("VssUI")
+            # ctLst = sqt.applicationContextList()
+            return True
+        except WindowsError as err:
+            ct = sqt.applicationContext(self._process_to_attach)
+            if ct:
+                ct.detach()
+                self._app_context = None
+            logger.info(f"Failed to attach to AUT  {self._process_to_attach}!!!")
+            self.disconnect()
+            logger.info(f"Retry connecting to AUT  {self._process_to_attach}.")
+            time.sleep(2)
+            self.ssh_connect()
             self.start_squish_server()
+            self._app_context = sqt.attachToApplication(self._process_to_attach)
 
         if self._app_context is None:
             self.disconnect()
             os_system_cmd("%s\\ssh-keygen -R %s" % (self._open_ssh_folder, self._target_ip_address))
-            if self.connectDoneCallback: self.connectDoneCallback()
+
             return False
 
-        if self.connectDoneCallback: self.connectDoneCallback()
+
         return True
 
     def is_active(self):
@@ -202,9 +173,11 @@ class SquishTest(object):
         if self._app_context is not None:
             self._app_context.detach()
             self._app_context = None
-            logger.info(f"Detach AUT {self.process_to_attach}... Done")
+            logger.info(f"Detach AUT {self._process_to_attach}... Done")
 
         if self._spSsh is not None:
+            self.input_cmd("exit")
+            self._spSsh.terminate()
             self._spSsh.kill()
             time.sleep(0.5)
             self._spSsh = None
@@ -212,7 +185,7 @@ class SquishTest(object):
 
     def gobj_exist(self, gobj, timeout=0.5):
         """Look for a squish object. If there is no AUT try to make a connection.
-
+]
         Args:
             gobj (dict): A dictionary containing the Squish object details,
             i.e.: ``rEADY_Text = {"container": o_Tab, "text": "READY", "type": "Text", "unnamed": 1, "visible": True}``
@@ -221,11 +194,11 @@ class SquishTest(object):
             (bool): True if the Squish object exist, False otherwise.
 
         """
-        if (self._app_context is None) or (self._app_context.isFrozen(2) is True):
+        if self._app_context is None or self._app_context.isFrozen(2) is True:
             self.connect()
             time.sleep(1)
 
-        return self.getGobj(gobj) is not None
+        return self.get_gobj(gobj) is not None
 
     def get_gobj(self, gobj, timeout=0.5):
         """Returns the Squish object for the given native script dictionary of squish object.
@@ -241,7 +214,7 @@ class SquishTest(object):
         if sqt.object.exists(gobj) is not True:
             return None
         try:
-            _obj = sqt.waitForObject(gobj, timeout * 1000)
+            _obj = sqt.waitForObject(gobj, int(timeout * 1000))
         except:
             _obj = None
         return _obj
@@ -262,11 +235,9 @@ class SquishTest(object):
 
         if self._is_check_obj_exists is True:
             logger.info("GUI object %s applicable in current state" % (["is NOT", "is"][self.gobj_exist(gobj)]))
-            return None
-
-        if self.gobj_exist(gobj) is not True:
-            logger.info("\n!!! Object not applicable in this screen context!!! (%s)" % str(gobj))
-            return None
+            if self.gobj_exist(gobj) is not True:
+                logger.info("\n!!! Object not applicable in this screen context!!! (%s)" % str(gobj))
+                return None
 
         return self.get_gobj(gobj)
 
@@ -330,7 +301,7 @@ class SquishTest(object):
         # sqt.mouseWheel(names.o_QQuickApplicationWindow, x, y, 0, steps, sqt.Qt.NoModifier)
 
     def long_mouse_drag(self, gobj, steps):
-        """If object is applicable, this function will procuce a mouse drag operation with a fixed delay of
+        """If object is applicable, this function will produce a mouse drag operation with a fixed delay of
         about one second between pressing the mouse button and starting to move the mouse cursor.
 
         Args:
@@ -366,7 +337,8 @@ class SquishTest(object):
             y (int): the pixels on the y axis.
 
         """
-        if self.get_action_obj(names.greenHouse_Application_QQuickWindowQmlImpl) is not None:  # in case we need to re-connect
+        if self.get_action_obj(
+                names.greenHouse_Application_QQuickWindowQmlImpl) is not None:  # in case we need to re-connect
             sqt.tapObject(names.greenHouse_Application_QQuickWindowQmlImpl, x, y)
 
     def long_mouse_click(self, gobj, x, y):
@@ -385,7 +357,8 @@ class SquishTest(object):
         """Perform a screenshot of the screen and save it under the TMP folder on local station.
 
         """
-        if self.get_action_obj(names.greenHouse_Application_QQuickWindowQmlImpl) is not None:  # in case we need to re-connect
+        if self.get_action_obj(
+                names.greenHouse_Application_QQuickWindowQmlImpl) is not None:  # in case we need to re-connect
             sqt.saveDesktopScreenshot(path_to_save)
         else:
             return None
@@ -407,52 +380,8 @@ class SquishTest(object):
 
 
 if __name__ == "__main__":
-    from sshtunnel import SSHTunnelForwarder
+    st = SquishTest("192.168.19.128", r'C:\Users\xuf\.ssh\bsci', 'gx1')
+    st.connect()
 
-    # logger = logging.getLogger(
-    #     'sshtunnel.SSHTunnelForwarder'
-    # )
-    # logger.setLevel(logging.DEBUG)
-    # remote_user = 'bsci'
-    # remote_host = '192.168.254.130'
-    # remote_port = 22
-    # local_host = '127.0.0.1'
-    # local_port = 3520
-    # private_server = 'localhost'
-    # private_server_port = 3520
-    #
-    # try:
-    #     with SSHTunnelForwarder(
-    #             (remote_host, remote_port),
-    #             ssh_username=remote_user,
-    #             ssh_private_key=r'E:\WORKSPACE\GX1\FengKevin.Xu@bsci.com\FengKevin.Xu@bsci.com',
-    #             remote_bind_address=(local_host, local_port),
-    #             local_bind_address=(local_host, local_port),
-    #             ssh_private_key_password='Xf59166565',
-    #             logger = logger
-    #     ) as server:
-    #
-    #         server.start()
-    #         print('server connected')
-    #
-    #         r = requests.get(f'{private_server}:{private_server_port}').content
-    #         print(r)
-    #
-    # except Exception as e:
-    #     print(str(e))
-    import paramiko
-
-    ssh = paramiko.SSHClient()
-
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
-    ssh.connect('192.168.254.130', username='bsci',password='Xf59166565',
-                passphrase='Xf59166565',
-                allow_agent=True)
-
-    ssh.save_host_keys("hostkey.txt")
-
-    stdin, stdout, stderr = ssh.exec_command('cd /',bufsize=0,timeout=5)
-    stdin, stdout, stderr = ssh.exec_command('ls ', bufsize=0, timeout=5)
-    print(stdout.readlines())
-    ssh.close()
+    st.screen_save("test.png")
+    st.disconnect()
