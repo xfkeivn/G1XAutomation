@@ -133,12 +133,14 @@ class TreeModel():
         
     def to_json(self):
         json_result = {}
-        json_result.setdefault('sub_models', {})
+
         json_result.setdefault('properties', {})
+        if len(self.children_models) >= 1:
+            json_result.setdefault('sub_models', {})
+
         if self.children_models is not None and len(self.children_models) >= 1:
             for model in self.children_models:
                 json_result['sub_models'][model.label] = model.to_json()
-
         if self.properties is not None and len(self.properties) >= 1:
             for prop in self.properties:
                 json_result['properties'][prop.label] = prop.to_json()

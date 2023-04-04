@@ -9,8 +9,8 @@
 """
 import sys
 
-sys.path.append(r'C:\Squish for Qt 7.0.1\bin')
-sys.path.append(r'C:\Squish for Qt 7.0.1\lib\python')
+sys.path.append(r'D:\Squish for Qt 7.0.1\bin')
+sys.path.append(r'D:\Squish for Qt 7.0.1\lib\python')
 import squishtest as sqt
 import psutil
 import subprocess
@@ -115,21 +115,14 @@ class SquishTest(object):
             if ct:
                 ct.detach()
                 self._app_context = None
-            logger.info(f"Failed to attach to AUT  {self._process_to_attach}!!!")
+            logger.info(f"Failed to attach to AUT  {self._process_to_attach}!!")
             self.disconnect()
             logger.info(f"Retry connecting to AUT  {self._process_to_attach}.")
-            time.sleep(2)
-            self.ssh_connect()
-            self.start_squish_server()
-            self._app_context = sqt.attachToApplication(self._process_to_attach)
-
         if self._app_context is None:
             self.disconnect()
-            os_system_cmd("%s\\ssh-keygen -R %s" % (self._open_ssh_folder, self._target_ip_address))
+            logger.error("Failed to attach to aut")
 
             return False
-
-
         return True
 
     def is_active(self):
@@ -179,7 +172,7 @@ class SquishTest(object):
             self.input_cmd("exit")
             self._spSsh.terminate()
             self._spSsh.kill()
-            time.sleep(0.5)
+            #time.sleep(0.5)
             self._spSsh = None
             logger.info("Disconnecting SSH... Done")
 
@@ -380,7 +373,7 @@ class SquishTest(object):
 
 
 if __name__ == "__main__":
-    st = SquishTest("192.168.19.128", r'C:\Users\xuf\.ssh\bsci', 'gx1')
+    st = SquishTest("192.168.80.129", r'C:\Users\xuf\.ssh\bsci', 'gx1')
     st.connect()
 
     st.screen_save("test.png")

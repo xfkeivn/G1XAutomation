@@ -34,11 +34,11 @@ class Project(TreeModel):
         self.project_config.setdefault('Project', {})
         self.project_config['Project']['name'] = self.label
         self.project_config['Project']['last_perspective'] = None
+        self.squish_container = None
 
     def __enum_com_ports(self):
         comPorts = comports()
         return [comPort.name for comPort in comPorts]
-
 
     def getProjectDir(self):
         return self.project_dir
@@ -59,8 +59,8 @@ class Project(TreeModel):
         generator = ResponseModelGenerator(model)
         generator.create_command_response_models()
 
-        model = SquishContainer(self)
-        self.addChild(model)
+        self.squish_container = SquishContainer(self)
+        self.addChild(self.squish_container)
         model = MTICommandContainer(self)
         self.addChild(model)
         model = DAQIOContainer(self)

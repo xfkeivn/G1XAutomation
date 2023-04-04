@@ -1,6 +1,5 @@
 from sim_desk.models.TreeModel import TreeModel
 import wx.propgrid as wxpg
-from lxml import etree
 import wx
 
 

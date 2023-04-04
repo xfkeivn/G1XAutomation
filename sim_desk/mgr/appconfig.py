@@ -1,7 +1,7 @@
 import os
 from sim_desk import constant
 import json
-from utilities import Singleton
+from utils.singleton import Singleton
 KEY_PROJECT_HISTORIES = "ProjectHistories"
 KEY_INSTALLED_DRIVERS="InstalledDrivers"
 KEY_DEFAULT_PERSPECTIVE = "DefaultPerspective"

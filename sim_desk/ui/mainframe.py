@@ -17,7 +17,7 @@ try:
 except ImportError:  # if it's not there locally, try the wxPython lib.
     import wx.lib.agw.aui as aui
 from sim_desk.ui import statusbar, images
-
+from squish.squish_lib import *
 ID_NewProject = wx.ID_HIGHEST + 1
 ID_ImportProject = wx.ID_HIGHEST + 2
 ID_ExportProject = wx.ID_HIGHEST + 3
@@ -30,6 +30,7 @@ ID_SaveProject = wx.ID_HIGHEST + 22
 ID_StartTest = wx.ID_HIGHEST + 26
 ID_StopTest = wx.ID_HIGHEST + 27
 ID_ClearLog = wx.ID_HIGHEST + 29
+ID_ScreenShot = wx.ID_HIGHEST + 30
 ID_FirstLastestProject = wx.ID_HIGHEST + 40
 
 
@@ -57,6 +58,7 @@ class MainFrame(wx.Frame):
         # when the ui is all done, set the IO to Console
         CONSOLE = self.console
         self.bps = BPS()
+        self.squish_runner = None
         self.init()
         self._mgr.Update()
 
@@ -109,6 +111,8 @@ class MainFrame(wx.Frame):
         tb1.AddSeparator()
         tb1.AddSimpleTool(ID_StartTest, "StartTop", images.run.GetBitmap())
         tb1.AddSimpleTool(ID_StopTest, "StopTest", images.stop.GetBitmap())
+        tb1.AddSeparator()
+        tb1.AddSimpleTool(ID_ScreenShot, "ScreenShot", images.widget.GetBitmap())
         tb1.Realize()
         self.tb = tb1
         self._mgr.AddPane(self.CreateProjectTreeCtrl(), aui.AuiPaneInfo().
@@ -149,6 +153,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnNewProject, id=ID_NewProject)
         self.Bind(wx.EVT_MENU, self.OnSaveProject, id=ID_SaveProject)
         self.Bind(wx.EVT_MENU, self.OnImportProject, id=ID_ImportProject)
+        self.Bind(wx.EVT_MENU, self.onScreenShot, id = ID_ScreenShot)
         self.Bind(wx.EVT_CLOSE, self.OnClose)
         self.Bind(EVT_MODEL_DIRTYSTATE_CHANGE_EVENT, self.onDirtyStateChanged)
         self.Bind(wx.EVT_MENU, self.OnAbout, id=wx.ID_ABOUT)
@@ -168,6 +173,13 @@ class MainFrame(wx.Frame):
         result = self.bps.start(com_port_val)
         if result:
             self.__onRuntimeState()
+            ip_prop = self.active_project.squish_container.getPropertyByName("IP")
+            aut_prop = self.active_project.squish_container.getPropertyByName("AUT")
+            if ip_prop and aut_prop:
+                ip_address = ip_prop.getStringValue()
+                aut_name = aut_prop.getStringValue()
+                self.squish_runner = SquishTest(ip_address,aut_name)
+                self.squish_runner.connect()
 
     def __onRuntimeState(self):
         if self.active_project:
@@ -177,17 +189,10 @@ class MainFrame(wx.Frame):
         for toolindex in range(toolcount):
             tool = self.tb.FindToolByIndex(toolindex)
             self.tb.EnableTool(tool.GetId(), False)
+        self.tb.EnableTool(ID_ScreenShot, True)
+        self.tb.EnableTool(ID_StopTest, True)
         self.sb.SetText1("Project is running")
         #self.sb.SetStatus(TreeModel.TREEMODEL_STATUS_RUNTIME)
-        self.GetMenuBar().EnableTop(0, False)
-        self.GetMenuBar().EnableTop(1, False)
-        self.GetMenuBar().EnableTop(2, False)
-        toolcount = self.tb.GetToolCount()
-        for toolindex in range(toolcount):
-            tool = self.tb.FindToolByIndex(toolindex)
-            self.tb.EnableTool(tool.GetId(), False)
-        self.tb.EnableTool(ID_StopTest, True)
-        self.sb.SetStatus(TreeModel.TREEMODEL_STATUS_RUNTIME)
         self.GetMenuBar().EnableTop(0, False)
         self.GetMenuBar().EnableTop(1, False)
         self.GetMenuBar().EnableTop(2, False)
@@ -208,12 +213,21 @@ class MainFrame(wx.Frame):
         self.GetMenuBar().EnableTop(0, True)
         self.GetMenuBar().EnableTop(1, True)
         self.GetMenuBar().EnableTop(2, True)
+        self.tb.EnableTool(ID_ScreenShot, False)
         self.tb.Realize()
 
     def onStop(self, evt):
         if self.bps.stop():
             self.__onNormalState()
             self.SetWindowStyle(wx.DEFAULT_FRAME_STYLE | wx.SUNKEN_BORDER)
+        if self.squish_runner:
+            self.squish_runner.disconnect()
+
+
+    def onScreenShot(self,evt):
+        if self.squish_runner:
+            name = time.strftime('%Y%b%d_%H_%M_%S.png', time.localtime())
+            self.squish_runner.screen_save(name)
 
     def OnPaneClose(self, evt):
         # print "close pane"
