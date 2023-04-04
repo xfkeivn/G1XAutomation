@@ -81,6 +81,7 @@ class BackPlaneSimulator(object):
         self.com_port = com_port
         self.com_handle = comp.SerialCmd(self.com_port)
         self.receive_thread = Thread(target=self.__receive_response)
+        self.receive_thread_stop = False
         self.receive_thread.start()
         time.sleep(0.1)
         return self.receive_thread.is_alive()
@@ -88,8 +89,9 @@ class BackPlaneSimulator(object):
     def stop(self):
         if self.receive_thread is not None and self.receive_thread.is_alive():
             self.receive_thread_stop = True
+            self.com_handle.disconnect()
             self.receive_thread.join(1)
-        self.com_handle.disconnect()
+
         return not self.receive_thread.is_alive()
 
     def set_command_pending_response(self,command_code, command_response_obj):
@@ -173,7 +175,8 @@ class BackPlaneSimulator(object):
         while not self.receive_thread_stop:
             response = self.com_handle.get_command()
             if self.receive_thread_stop:
-                return
+                logger.debug("the thread is stopped")
+                break
             if response is None:
                 continue
             logger.debug('*' * 100)

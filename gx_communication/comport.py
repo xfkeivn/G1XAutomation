@@ -121,19 +121,23 @@ class SerialCmd:
     def get_response(self):
         # read until zero is received
         received_data = bytes()
+        response = None
         while True:
             try:
                 received_data += self.serialPort.read(1)
-                if received_data[-1] == 0:
-                    if len(received_data) > 1:
-                        break
-                    else:
-                        received_data = bytes()
-                response = cobs.decode(received_data[:-1])[:-1]
-                self.serialPort.flushInput()
-            except Exception as err:
+                if len(received_data) == 0:
+                    break
+
+                elif len(received_data) > 1 and received_data[-1] == 0:
+                    response = cobs.decode(received_data[:-1])[:]
+                    break
+                elif len(received_data) == 1 and received_data[-1] == 0:
+                    received_data = bytes()
+
+            except serial.SerialException as err:
                 logger.warning(f'terminated the serial port read- {err}')
-                return None
+                self.serialPort.flushInput()
+                break
 
         return response
 

@@ -6,7 +6,6 @@ from sim_desk.mgr.appconfig import AppConfig
 from sim_desk.ui.propertygrid import PropertyGridPanel
 from sim_desk.ui.project_tree import ProjectTreeCtrl
 from sim_desk.ui.wizards.NewProjectWizard import NewProjectWizard as NPW
-from sim_desk.ui.wizards.DriverManagerWizard import DriverManagerWizard as DMW
 from sim_desk.models.Project import Project
 from sim_desk.models.TreeModel import EVT_MODEL_DIRTYSTATE_CHANGE_EVENT
 from sim_desk.ui.console import Console
@@ -17,7 +16,6 @@ try:
     from agw import aui
 except ImportError:  # if it's not there locally, try the wxPython lib.
     import wx.lib.agw.aui as aui
-from sim_desk.mgr.drivermanager import DriverManager
 from sim_desk.ui import statusbar, images
 
 ID_NewProject = wx.ID_HIGHEST + 1

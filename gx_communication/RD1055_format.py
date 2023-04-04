@@ -24,7 +24,7 @@ def get_payload(resp):
     length = len(resp)
     #return resp[4: length-2]
     #UI SW seems send less 1
-    return resp[4: length-1]
+    return resp[4: length-2]
 
 
 def build_payload(cmd_dictionary):
