@@ -21,10 +21,7 @@ from threading import Thread
 from rpc_constants import *
 import time
 from utils import simple_queue
-from logging.handlers import RotatingFileHandler
-logger = logging.getLogger("GX1")
-logger.setLevel(level=logging.DEBUG)
-logger.addHandler(RotatingFileHandler(r'GX1.log'))
+from utils.logging import logger
 
 
 # mapping of the command code with the Command
@@ -46,11 +43,15 @@ Command_Code_Class_Mapping = {
     BLOCK_CHANNEL_CMD: commands.BlockChannelCmd,
     CTRL_ADJUST_VOLT: commands.AdjustVoltageCmd,
     CTRL_ADJUST_CURR: commands.AdjustCurrentCmd,
-    UNIT_TEST_CMD: None,
+    UNIT_TEST_CMD: commands.UT_EchoCmd,
     GET_STIMULATION_SETTING_CMD: commands.GetStimulationSettingCmd,
     GET_THERMAL_RF_SETTING_CMD: commands.GetThermalRFSettingCmd,
     GET_PULSED_RF_SETTING_CMD: commands.GetPulsedRFSettingCmd,
     CTRL_ADJUST_TEMP: commands.AdjustTempCmd,
+    SET_CPLD_REGISTERS:commands.SetCPLDRegCmd,
+    GET_CPLD_REGISTERS:commands.GetCPLDRegCmd,
+    SET_IMPEDANCE_SETTING:commands.SetImpedanceSettingCmd,
+    GET_IMPEDANCE_SETTING:commands.GetImpedanceSettingCmd,
 }
 
 
@@ -130,8 +131,8 @@ class BackPlaneSimulator(metaclass=Singleton):
             start_idx = key_name.find('[')
             end_idx = key_name.find(']')
             attrname = key_name[0:start_idx]
-            index = int(key_name[start_idx:end_idx])
-            keyattr = getattr(parent_attr, attrname, None)
+            index = int(key_name[start_idx+1:end_idx])
+            keyattr = parent_attr
             if keyattr is None:
                 return None
             return keyattr[index]
@@ -141,7 +142,7 @@ class BackPlaneSimulator(metaclass=Singleton):
             key = key.strip()
             key_parts = key.split('.')
             if key_parts[0] == pending_response_obj.__class__.__name__:
-                key_parts=key_parts[1:]
+                key_parts = key_parts[1:]
             layers = len(key_parts)
             layer = 0
             upper_layer_attr = pending_response_obj
@@ -154,7 +155,8 @@ class BackPlaneSimulator(metaclass=Singleton):
                     upper_layer_attr = layer_attr
                 layer += 1
             if layer_attr is not None:
-                layer_attr = value
+                setattr(upper_layer_attr,key_part,value)
+                #layer_attr = value
 
     def __logging_command(self, command_code, command_obj):
         self.command_logging.put(command_code,(time.time_ns(),command_obj))

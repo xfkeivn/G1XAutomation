@@ -1,7 +1,7 @@
 import logging
 import wx
 import threading
-logger = logging.getLogger('GX1')
+from utils.logging import logger
 
 
 class WxTextCtrlHandler(logging.Handler):

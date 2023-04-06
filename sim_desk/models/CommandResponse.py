@@ -81,7 +81,7 @@ class FieldNumberModel(TreeModel):
 
         self.addProperties(number_value_property)
 
-    def __get_parameter_name(self):
+    def get_parameter_name(self):
         name_list = []
         parent = self
         command_code = None
@@ -103,7 +103,7 @@ class FieldNumberModel(TreeModel):
             stringvalue = wxprop.GetValueAsString()
             intvalue = int(stringvalue)
             if prop.editable:
-                parameter_name,command_code = self.__get_parameter_name()
+                parameter_name,command_code = self.get_parameter_name()
                 BPS().set_command_pending_response_by_parameters(command_code,**{parameter_name:intvalue})
         return prop
 

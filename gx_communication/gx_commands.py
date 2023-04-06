@@ -459,6 +459,41 @@ class SetImpedanceVolumeResp(Response):
         super().__init__(gx_command_codes.SET_IMPEDANCE_VOLUME_CMD)
 
 
+
+class SetImpedanceSettingCmd(Command):
+    """
+    ---------
+    """
+
+    def __init__(self):
+        super().__init__(gx_command_codes.SET_IMPEDANCE_SETTING)
+        self.response = SetImpedanceSettingResp()
+        self.u16_open_circuit_impedance = 0x00
+        self.u16_short_circuit_impedance = 0x00
+
+
+class SetImpedanceSettingResp(Response):
+    def __init__(self):
+        super().__init__(gx_command_codes.SET_IMPEDANCE_SETTING)
+
+
+class GetImpedanceSettingCmd(Command):
+    """
+    ---------
+    """
+
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_IMPEDANCE_SETTING)
+        self.response = GetImpedanceSettingResp()
+
+
+
+class GetImpedanceSettingResp(Response):
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_IMPEDANCE_SETTING)
+        self.u16_open_circuit_impedance = 0x00
+        self.u16_short_circuit_impedance = 0x00
+
 class SetCPLDRegCmd(Command):
     """
     ---------

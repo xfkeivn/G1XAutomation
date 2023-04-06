@@ -6,6 +6,8 @@ from sim_desk.models.TreeModel import EVT_ADD_TO_TREE_EVENT
 from sim_desk.models.TreeModel import EVT_REMOVE_FROM_TREE_EVENT
 from sim_desk.models.TreeModel import EVT_UPDATE_TREE_ITEM_IMAGE
 from sim_desk.models.TreeModel import EVT_UPDATE_TREE_ITEM_LABEL
+from sim_desk.models.CommandResponse import FieldNumberModel
+from utils.logging import logger
 class ProjectTreeCtrl( wx.TreeCtrl ):
     def __init__(self,parent,id, pos, size, style):
         wx.TreeCtrl.__init__(self, parent, id,pos, size,style)
@@ -169,6 +171,9 @@ class ProjectTreeCtrl( wx.TreeCtrl ):
         if item:
             self.Expand(item)
             parent = self.GetItemParent(item)
+            itemmodel = self.GetPyData(item)
+            if isinstance(itemmodel,FieldNumberModel):
+                logger.info(itemmodel.get_parameter_name()[0])
             if parent.IsOk():
                 #self.SortChildren(item)
                 pass
@@ -211,20 +216,10 @@ class ProjectTreeCtrl( wx.TreeCtrl ):
 
     def OnDrag(self,evt):
         item = self.GetSelection()
-        if item!=None and item.IsOk():
+        if item is not None and item.IsOk():
             itemmodel= self.GetPyData(item)
-            if itemmodel.getScriptSnippet():
-                data = wx.CustomDataObject("model")
-                data.SetData(str(itemmodel.getScriptSnippet()))
-                dropSource = wx.DropSource(self)
-                dropSource.SetData(data)
-                dropSource.DoDragDrop(wx.Drag_AllowMove)
-            elif isinstance(itemmodel,Message):
-                data = wx.CustomDataObject("message")
-                data.SetData(str(itemmodel.getMessage().getID()))
-                dropSource = wx.DropSource(self)
-                dropSource.SetData(data)
-                dropSource.DoDragDrop(wx.Drag_AllowMove)               
+
+
                 
   
         

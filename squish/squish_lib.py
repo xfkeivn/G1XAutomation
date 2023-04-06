@@ -18,8 +18,7 @@ import time
 import logging
 from utils.utilties import os_system_cmd
 from project_specific import names
-
-logger = logging.getLogger("GX1")
+from utils.logging import logger
 
 
 def find_process(pname):
