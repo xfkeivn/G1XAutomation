@@ -6,6 +6,8 @@ KEY_PROJECT_HISTORIES = "ProjectHistories"
 KEY_INSTALLED_DRIVERS="InstalledDrivers"
 KEY_DEFAULT_PERSPECTIVE = "DefaultPerspective"
 KEY_PERSPECTIVES = "Perspectives"
+
+
 class AppConfig(metaclass=Singleton):
     def __init__(self):
         self.appconfig={}

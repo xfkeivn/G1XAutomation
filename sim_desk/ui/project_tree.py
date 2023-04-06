@@ -171,7 +171,7 @@ class ProjectTreeCtrl( wx.TreeCtrl ):
         if item:
             self.Expand(item)
             parent = self.GetItemParent(item)
-            itemmodel = self.GetPyData(item)
+            itemmodel = self.GetItemData(item)
             if isinstance(itemmodel,FieldNumberModel):
                 logger.info(itemmodel.get_parameter_name()[0])
             if parent.IsOk():

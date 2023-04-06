@@ -4,13 +4,14 @@
 @author: Kevin Xu
 @license: (C) Copyright 2021-2025, Boston Scientific Corporation Limited.
 @contact: xuf@bsci.com
-@software: BSCUDSStudio
+@software: BSC_EME_TAF
 @file: simple_queue.py
 @time: 2023/3/26 22:00
 @desc:
 """
 import threading
 import copy
+
 
 class LightQueue():
     def __init__(self, max_size=None):
@@ -85,12 +86,13 @@ class MessageDictQueue:
         self.lock.acquire()
         if self._msgqueue_dict.get(message_id) is None:
             self._msgqueue_dict[message_id] = LightQueue()
-
-        self._msgqueue_dict[message_id].put((self.seq,message))
+        message.sequence = self.seq
+        self._msgqueue_dict[message_id].put(message)
         if self._msgqueue_dict[message_id].size() > self.buffersize:
             self._msgqueue_dict[message_id].get()
 
         self.lock.release()
+        self.seq += 1
 
     def count(self):
         self.lock.acquire()

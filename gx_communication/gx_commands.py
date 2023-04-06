@@ -29,6 +29,10 @@ class Command(serializable.Serializable, serializable.Deserializable):
         self.response = None
 
 
+
+
+
+
 class Response(serializable.Serializable, serializable.Deserializable):
     """
     Base class for RD1055 command responses.
@@ -46,6 +50,7 @@ class Response(serializable.Serializable, serializable.Deserializable):
         super(serializable.Serializable, self).__init__()
         self.u16_ResponseCode = commandCode + 0x1
         self.u16_ErrorCode = 0x0000
+
 
 
 class WhoAmICmd(Command):
@@ -591,6 +596,8 @@ class MeasuredChannelParam(serializable.Serializable):
         self.u16_Power = 0
         self.u16_Width = 0
 
+    def __str__(self):
+        return serializable.Serializable.__str__(self)
 
 class GetMeasuredChannelsResp(Response):
     def __init__(self):

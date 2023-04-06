@@ -5,7 +5,7 @@ import serial.tools.list_ports
 from gx_communication import constants
 from gx_communication import gx_commands
 from gx_communication import RD1055_format as rd
-logger = logging.getLogger("GX1")
+from utils.logging import logger
 
 class SerialCmd:
 
@@ -91,10 +91,10 @@ class SerialCmd:
         else:
             raw_bytes = cmd_response
         protocol_4_added_cmd = rd.protocol_4_command(raw_bytes)
-        logger.debug(f"Resp: {protocol_4_added_cmd.hex()}")
+        #logger.debug(f"Resp: {protocol_4_added_cmd.hex()}")
         cobs_resp = cobs.encode(protocol_4_added_cmd)
         cobs_resp += b'\x00'
-        logger.debug(f"Resp Cobs: {cobs_resp.hex()}")
+        #logger.debug(f"Resp Cobs: {cobs_resp.hex()}")
         self.cmd = cobs_resp
         self.serialPort.flushOutput()
         self.serialPort.write(cobs_resp)

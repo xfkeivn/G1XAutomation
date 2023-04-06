@@ -64,6 +64,11 @@ def test_crc(self):
     crc = generateCrcBytes([0x80, 0x00, 0x09, 0x00, 0x46, 0xc0, 0x00])
     print(self.bytes_hex_print(crc))
 
+class MessageWrapper(object):
+    def __init__(self,command_obj,time_ns):
+        self.sequence = 0
+        self.time_ns = time_ns
+        self.data = command_obj
 
 class BackPlaneSimulator(metaclass=Singleton):
     def __init__(self ):
@@ -72,9 +77,9 @@ class BackPlaneSimulator(metaclass=Singleton):
         self.receive_thread = None
         self.receive_thread_stop = False
         self.pending_resp_lock = threading.Lock()
-        self.command_logging_lock = threading.Lock()
         self.command_response_pending = {}
         self.command_logging = simple_queue.MessageDictQueue()
+        self.command_listeners = []
 
     def start(self, com_port="COM3"):
         if self.receive_thread is not None and self.receive_thread.is_alive():
@@ -95,6 +100,9 @@ class BackPlaneSimulator(metaclass=Singleton):
 
         return not self.receive_thread.is_alive()
 
+    def add_command_listener(self, listener):
+        self.command_listeners.append(listener)
+
     def set_command_pending_response(self,command_code, command_response_obj):
         if command_code not in Command_Code_Class_Mapping:
             return RPC_RESULT_COMMAND_CODE_NOT_EXIST
@@ -107,7 +115,6 @@ class BackPlaneSimulator(metaclass=Singleton):
         if command_code not in Command_Code_Class_Mapping:
             return RPC_RESULT_COMMAND_CODE_NOT_EXIST
         self.pending_resp_lock.acquire()
-
         response_obj = self.command_response_pending.get(command_code)
         if response_obj is None:
             command_class = Command_Code_Class_Mapping.get(command_code)
@@ -115,11 +122,14 @@ class BackPlaneSimulator(metaclass=Singleton):
             self.command_response_pending[command_code] = response_obj
         self.__set_pending_response_filed_values(response_obj,**kwargs)
         self.pending_resp_lock.release()
-
         return RPC_RESULT_SUCCESS
 
-    def find_logged_command(self, command_code, start_pos=0):
-        return self.command_logging.get_all_retain_specific(command_code)
+    def __match_conditions(self, command_obj,**kwargs):
+        return True
+
+    def find_logged_commands(self, command_code, after_seq_id=-1, **kwargs):
+        logged_commands = self.command_logging.get_all_retain_specific(command_code)
+        return [logged_command for logged_command in logged_commands if logged_command.sequence > after_seq_id and self.__match_conditions(logged_command) ]
 
     def clean_logged_command_queue(self):
         self.command_logging.clear()
@@ -156,10 +166,12 @@ class BackPlaneSimulator(metaclass=Singleton):
                 layer += 1
             if layer_attr is not None:
                 setattr(upper_layer_attr,key_part,value)
-                #layer_attr = value
 
     def __logging_command(self, command_code, command_obj):
-        self.command_logging.put(command_code,(time.time_ns(),command_obj))
+        logged_msg = MessageWrapper (command_obj,time.time_ns())
+        self.command_logging.put(command_code,logged_msg)
+        for command_listener in self.command_listeners:
+            command_listener.on_command_received(command_obj)
 
     def __dispatch_command(self, command_obj):
         self.pending_resp_lock.acquire()
@@ -183,22 +195,30 @@ class BackPlaneSimulator(metaclass=Singleton):
                 break
             if response is None:
                 continue
-            logger.debug('*' * 100)
-            logger.debug('Decoded:' + bytes_2_hex(response))
+
+            #logger.debug('Decoded:' + bytes_2_hex(response))
             payload = RD1055_format.get_payload(response)
-            logger.debug('Payload:' + bytes_2_hex(payload))
+            #logger.debug('Payload:' + bytes_2_hex(payload))
             cmd_code_bytes = payload[0:2]
             command_code_value = int.from_bytes(cmd_code_bytes, 'little')
-            logger.debug('Command Code: %x' % command_code_value + bytes_2_hex(cmd_code_bytes))
+            if command_code_value != GET_STATUS: logger.debug('*' * 100)
+
+            #logger.debug('Command Code: %x' % command_code_value + bytes_2_hex(cmd_code_bytes))
             command_class = Command_Code_Class_Mapping.get(command_code_value)
             if command_class is None:
                 logger.error('Command Code %X not defined for processing' % command_code_value)
                 logger.debug('*' * 100)
                 continue
-            logger.debug(f'Command {command_class.__name__} is received')
+
             command_obj = command_class()
             command_obj.deserialize(payload)
+
+            if command_code_value != GET_STATUS: logger.debug(f'Command {command_class.__name__}: {str(command_obj)}')
             self.__logging_command(command_code_value,command_obj)
-            self.com_handle.send_response(self.__dispatch_command(command_obj))
-            logger.debug('*' * 100)
+            response_cmd = self.__dispatch_command(command_obj)
+            self.com_handle.send_response(response_cmd)
+            for command_listener in self.command_listeners:
+                command_listener.on_command_responsed(response_cmd)
+            if command_code_value != GET_STATUS:logger.debug(str(response_cmd))
+            if command_code_value != GET_STATUS:logger.debug('*' * 100)
 

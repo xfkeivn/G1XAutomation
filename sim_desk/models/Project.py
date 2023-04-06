@@ -1,12 +1,7 @@
-from sim_desk.models.TreeModel import TreeModel
-
 from sim_desk.models.FolderModel import CommandResponseContainer,SquishContainer,MTICommandContainer,DAQIOContainer
 import os
 from sim_desk.mgr.appconfig import AppConfig
 from sim_desk import mgr
-from sim_desk.models.CommonProperty import StringProperty,EnumProperty
-from sim_desk.models.TreeModel import TREEMODEL_STATUS_RUNTIME
-from sim_desk.models.TreeModel import TREEMODEL_STATUS_NORMAL
 import json
 import copy
 from sim_desk.models.CommandResponse import *

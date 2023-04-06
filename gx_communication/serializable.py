@@ -184,6 +184,19 @@ class Serializable:
         fieldBytes = struct.pack(fieldFormat, number)
         return fieldBytes
 
+    def __str__(self):
+        fields = getSerializableFields(self)
+        field_strings = []
+        for field in fields:
+            val = getattr(self,field)
+            val_str = str(val)
+            if isinstance(val, list):
+                val_str = str([str(v) for v in val])
+
+            filed_string = "%s->%s"%(field,str(val_str))
+            field_strings.append(filed_string)
+        return " ".join(field_strings)
+
 
 class Deserializable:
     """

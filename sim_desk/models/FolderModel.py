@@ -30,6 +30,10 @@ class SquishContainer(TreeModel):
         pathprop.setStringValue("gx1")
         pathprop.setSavable(True)
         self.addProperties(pathprop)
+        pathprop = StringProperty("PrivateKey", "PrivateKey", editable=True)
+        pathprop.setStringValue(r"C:\Users\xuf\.ssh\bsci")
+        pathprop.setSavable(True)
+        self.addProperties(pathprop)
         self.tree_action_list.append(TreeAction("Import Squish Name Files", wx.ID_HIGHEST + 1000, self.import_squish_names))
 
     def getActions(self):

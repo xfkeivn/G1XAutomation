@@ -175,10 +175,11 @@ class MainFrame(wx.Frame):
             self.__onRuntimeState()
             ip_prop = self.active_project.squish_container.getPropertyByName("IP")
             aut_prop = self.active_project.squish_container.getPropertyByName("AUT")
+            private_key = self.active_project.squish_container.getPropertyByName("PrivateKey")
             if ip_prop and aut_prop:
                 ip_address = ip_prop.getStringValue()
                 aut_name = aut_prop.getStringValue()
-                self.squish_runner = SquishTest(ip_address,aut_name)
+                self.squish_runner = SquishTest(ip_address,private_key,aut_name)
                 self.squish_runner.connect()
 
     def __onRuntimeState(self):

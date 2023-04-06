@@ -2,7 +2,7 @@
 @author: Kevin Xu
 @license: (C) Copyright 2021-2025, Boston Scientific Corporation Limited.
 @contact: xuf@bsci.com
-@software: BSCUDSStudio
+@software: BSC_EME_TAF
 @file: pyssh.py
 @time: 2023/3/25 20:34
 @desc:
@@ -39,7 +39,7 @@ def find_process(pname):
 
 
 class SquishTest(object):
-    def __init__(self, target_ip_address, private_keyfile, attach_app_name='gx1'):
+    def __init__(self, target_ip_address,private_keyfile, attach_app_name='gx1'):
         self._process_to_attach = attach_app_name
         self._squish_started = False
         self._open_ssh_folder = r"C:\\Windows\\System32\\OpenSSH"
