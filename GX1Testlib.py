@@ -88,7 +88,7 @@ class CommandListener(object):
             self.ml_stringio.close()
             logger.info("The message log is closed")
             self.is_log_inited = False
-            self.messagelog_lock.release()
+            self.message_log_lock.release()
         else:
             logger.warn("The log is not initiated when trying to closed")
 
