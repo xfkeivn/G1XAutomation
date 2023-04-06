@@ -14,7 +14,7 @@ from  gx_communication import gx_commands
 from gx_communication.serializable import *
 from sim_desk.models.CommonProperty import *
 from sim_desk.ui.images import message_reply, signal, slot, did,message
-
+from BackPlaneSimulator import BackPlaneSimulator as BPS
 class CommandResponseModel(TreeModel):
     def __init__(self,parent,label,response_cls):
         TreeModel.__init__(self,parent,label)
@@ -28,7 +28,6 @@ class CommandResponseModel(TreeModel):
         number_value_property = StringProperty('Response Code', 'Response Code',
                                                '%X' % (self.response_obj.u16_ResponseCode), editable=False)
         self.addProperties(number_value_property)
-
 
 
 class ElementModel(TreeModel):
@@ -82,6 +81,31 @@ class FieldNumberModel(TreeModel):
 
         self.addProperties(number_value_property)
 
+    def __get_parameter_name(self):
+        name_list = []
+        parent = self
+        command_code = None
+        while parent is not None:
+            name_list.append(parent.label)
+            if isinstance(parent,CommandResponseModel):
+                stringvalue = parent.getPropertyByName("Command Code").getStringValue()
+                command_code = int(stringvalue,16)
+                break
+            parent = parent.parent
+        reversed_names = reversed(name_list)
+        return ".".join(reversed_names),command_code
+
+
+    def updateProperty(self,wxprop):
+        TreeModel.updateProperty(self,wxprop)
+        prop = self.getPropertyBywxprop(wxprop)
+        if prop:
+            stringvalue = wxprop.GetValueAsString()
+            intvalue = int(stringvalue)
+            if prop.editable:
+                parameter_name,command_code = self.__get_parameter_name()
+                BPS().set_command_pending_response_by_parameters(command_code,**{parameter_name:intvalue})
+        return prop
 
 class ResponseModelGenerator():
     def __init__(self,container):

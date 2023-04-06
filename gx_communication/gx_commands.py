@@ -155,9 +155,36 @@ class SetStimulationSettingCmd(Command):
         self.u8_MaxCurrent = 0x00
 
 
+class GetStimulationSettingCmd(Command):
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_STIMULATION_SETTING_CMD)
+        self.response = GetStimulationSettingResponse()
+
+
+
+class GetStimulationSettingResponse(Response):
+    """
+    ---------
+    """
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_STIMULATION_SETTING_CMD)
+        self.u8_ControlSetting = 0x00
+        self.u8_SensoryMotor = 0x00
+        self.u8_Rate = 0x00
+        self.u8_Width = 0x00
+        self.u8_Amplitude = 0x00
+        self.u8_RampSpeed = 0x00
+        self.u8_MaxVoltage = 0x00
+        self.u8_MaxCurrent = 0x00
+
+
 class SetStimulationSettingResp(Response):
     def __init__(self):
         super().__init__(gx_command_codes.SET_STIMULATION_SETTING_CMD)
+
+
+
+
 
 
 class SetThermalRFSettingCmd(Command):
@@ -188,6 +215,35 @@ class SetThermalRFSettingResp(Response):
         super().__init__(gx_command_codes.SET_THERMAL_RF_SETTING_CMD)
 
 
+
+
+class GetThermalRFSettingResp(Response):
+    """
+    ---------
+    """
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_THERMAL_RF_SETTING_CMD)
+        self.u8_TRFMode = 0x00
+        self.u8_AutoRamp = 0x00
+        self.u8_RampRate = 0x00
+        self.u16_SetTime = 0x0000
+        self.u8_SetTemp = 0x00
+        self.u16_StaggerStartTime = 0x0000
+        self.u16_ElectrodePower = 0x0000
+        self.u16_StepTime = 0x0000
+        self.u16_FinalTime = 0x0000
+        self.u8_StartTemp = 0x00
+        self.u8_StepTempInc = 0x00
+        self.u8_FinalTemp = 0x00
+        self.u8_SetVoltage = 0x00
+
+
+class GetThermalRFSettingCmd(Command):
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_THERMAL_RF_SETTING_CMD)
+        self.response = GetThermalRFSettingResp()
+
+
 class SetPulsedRFSettingCmd(Command):
     """
     ---------
@@ -210,6 +266,35 @@ class SetPulsedRFSettingCmd(Command):
 class SetPulsedRFSettingResp(Response):
     def __init__(self):
         super().__init__(gx_command_codes.SET_PULSED_RF_SETTING_CMD)
+
+
+class GetPulsedRFSettingResp(Response):
+    """
+    ---------
+    """
+
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_PULSED_RF_SETTING_CMD)
+        self.u8_PRFMode = 0x00
+        self.u8_AutoRamp = 0x00
+        self.u16_SetTime = 0x0000
+        self.u8_MaxTemp = 0x00
+        self.u8_PulseRate = 0x00
+        self.u16_StaggerStartTime = 0x0000
+        self.u16_Voltage = 0x00
+        self.u16_PulseWidth = 0x00
+        self.u16_ElectrodePower = 0x0000
+
+
+class GetPulsedRFSettingCmd(Command):
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_PULSED_RF_SETTING_CMD)
+        self.response = GetPulsedRFSettingResp()
+
+
+
+
+
 
 
 
@@ -311,6 +396,27 @@ class AdjustCurrentCmd(Command):
 class AdjustCurrentResp(Response):
     def __init__(self):
         super().__init__(gx_command_codes.CTRL_ADJUST_CURR)
+
+
+
+
+
+
+
+class AdjustTempCmd(Command):
+    """
+    ---------
+    """
+
+    def __init__(self):
+        super().__init__(gx_command_codes.CTRL_ADJUST_TEMP)
+        self.response = AdjustTempResp()
+        self.i16_target_temp = 0x0000
+
+
+class AdjustTempResp(Response):
+    def __init__(self):
+        super().__init__(gx_command_codes.CTRL_ADJUST_TEMP)
 
 
 class UT_EchoCmd(Command):

@@ -62,6 +62,9 @@ class TreeModel():
             if str(p.getWxProperty()) == str(wxprop):
                 return p
         return None
+
+    def getPropertyBywxprop(self,wxprop):
+        return self.__getPropertyBywxprop(wxprop)
     
     def updateProperty(self,wxprop):
         prop = self.__getPropertyBywxprop(wxprop)

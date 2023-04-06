@@ -10,7 +10,7 @@
 @desc:
 """
 import threading
-from queue import Queue
+from utils.singleton import Singleton
 from gx_communication import comport as comp
 from gx_communication import gx_commands as commands
 import logging
@@ -44,13 +44,13 @@ Command_Code_Class_Mapping = {
     CTRL_START_CMD: commands.CtrlStartCmd,
     CTRL_STOP_CMD: commands.CtrlStopCmd,
     BLOCK_CHANNEL_CMD: commands.BlockChannelCmd,
-    #CTRL_ADJUST_VOLT: commands.CtrlAdjustOutputCmd,
-    CTRL_ADJUST_CURR: None,
+    CTRL_ADJUST_VOLT: commands.AdjustVoltageCmd,
+    CTRL_ADJUST_CURR: commands.AdjustCurrentCmd,
     UNIT_TEST_CMD: None,
-    GET_STIMULATION_SETTING_CMD: None,
-    GET_THERMAL_RF_SETTING_CMD: None,
-    GET_PULSED_RF_SETTING_CMD: None,
-    CTLR_ADJUST_TEMP: None,
+    GET_STIMULATION_SETTING_CMD: commands.GetStimulationSettingCmd,
+    GET_THERMAL_RF_SETTING_CMD: commands.GetThermalRFSettingCmd,
+    GET_PULSED_RF_SETTING_CMD: commands.GetPulsedRFSettingCmd,
+    CTRL_ADJUST_TEMP: commands.AdjustTempCmd,
 }
 
 
@@ -64,8 +64,8 @@ def test_crc(self):
     print(self.bytes_hex_print(crc))
 
 
-class BackPlaneSimulator(object):
-    def __init__(self, ):
+class BackPlaneSimulator(metaclass=Singleton):
+    def __init__(self ):
         self.com_port = 'COM3'
         self.com_handle = None
         self.receive_thread = None
@@ -140,6 +140,8 @@ class BackPlaneSimulator(object):
         for key, value in kwargs.items():
             key = key.strip()
             key_parts = key.split('.')
+            if key_parts[0] == pending_response_obj.__class__.__name__:
+                key_parts=key_parts[1:]
             layers = len(key_parts)
             layer = 0
             upper_layer_attr = pending_response_obj

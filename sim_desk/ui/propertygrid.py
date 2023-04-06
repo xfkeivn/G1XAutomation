@@ -70,7 +70,7 @@ class PropertyGridPanel( wx.Panel ):
         self.pg.Clear()
         categories = model.getPropertyCategories()
         for property in model.getProperties():
-            if property.getCategory() == None:
+            if property.getCategory() is None:
                 p = property.createwxproperty()
                 self.pg.Append(p)
                 
