@@ -29,7 +29,6 @@ class CommandListener(object):
         self.is_log_inited = False
         self.command_filters = []
 
-
     def _correctfilename(self, filename):
         special_chrs = r'\/:*?"<>|'
         modified_filename = ''
@@ -37,7 +36,6 @@ class CommandListener(object):
             if c not in special_chrs:
                 modified_filename += c
         return modified_filename
-
 
     def exclude_command_code(self,command_code):
         self.command_filters.append(command_code)
@@ -96,7 +94,7 @@ class CommandListener(object):
         # t1 = time.clock()
         if self.is_log_inited:
             self.message_log_lock.acquire()
-            self.ml_stringio.write(msg)
+            self.ml_stringio.write(msg+"\n")
             self.message_log_lock.release()
 
     def on_command_received(self,command):
@@ -151,6 +149,7 @@ class GX1Testlib(object):
         self.project_inited = False
         self.out_put_dir = None
         self.is_log_inited = False
+        self.squish_name_mapping = dict()
 
     #####################################################################################################
     ################################listeners #####################################################################
@@ -188,6 +187,12 @@ class GX1Testlib(object):
         logger.info("Screenshot saved to '<a href=\"%s\">%s</a>'."
                     % (link, path), html=True)
 
+    def _get_obj_from_alias(self,alias):
+        obj = self.squish_name_mapping.get(alias,None)
+        if obj is None:
+            raise Exception(f'There is no squish name {alias} in the name.py')
+        return obj
+
     @property
     def _log_dir(self):
         variables = BuiltIn().get_variables()
@@ -198,12 +203,12 @@ class GX1Testlib(object):
 
     def _get_screenshot_path(self, basename):
         directory = self._log_dir
-        if basename.lower().endswith(('.jpg', '.jpeg')):
+        if basename.lower().endswith(('.png', '.png')):
             return os.path.join(directory, basename)
         index = 0
         while True:
             index += 1
-            path = os.path.join(directory, "%s_%d.jpg" % (basename, index))
+            path = os.path.join(directory, "%s_%d.png" % (basename, index))
             if not os.path.exists(path):
                 return path
 
@@ -213,16 +218,19 @@ class GX1Testlib(object):
 
         if self.project_dir is None:
             self.project_dir = last_open_project
-        self.project_model.init(self.project_dir)
+
+        logger.info(f'Loading the project at {self.project_dir}')
         self.project_model.open(self.project_dir)
         ip_prop = self.project_model.squish_container.getPropertyByName("IP")
         aut_prop = self.project_model.squish_container.getPropertyByName("AUT")
         private_key = self.project_model.squish_container.getPropertyByName("PrivateKey")
+
         if ip_prop and aut_prop and private_key:
             ip_address = ip_prop.getStringValue()
             aut_name = aut_prop.getStringValue()
             private_key_file = private_key.getStringValue()
             self.squish_tester = SquishTest(ip_address, private_key_file, aut_name)
+            logger.info(f'Squish Hook {ip_address}, {aut_name}, {private_key_file}')
             logger.info('%s has been loaded successfully' % self.project_model.getLabel())
         else:
             logger.error("Failed to init the project the project setting error")
@@ -247,6 +255,8 @@ class GX1Testlib(object):
 
         if not self.project_inited:
             self.__init_project()
+            self.squish_name_mapping = self.project_model.squish_container.get_all_name_mapping()
+            self.project_inited = True
             com_port_val = self.project_model.getPropertyByName("COM").getStringValue()
             result = self.gx1_simulator.start(com_port_val)
             if result:
@@ -284,6 +294,7 @@ class GX1Testlib(object):
             logger.info("Squish tester is stopped")
         else:
             logger.warn("The project is not initialized for testing ")
+        self.project_inited = False
 
     def set_command_response(self,command_code,**response_data):
         return self.gx1_simulator.set_command_pending_response_by_parameters(command_code,**response_data)
@@ -294,17 +305,17 @@ class GX1Testlib(object):
     def find_logged_commands(self,command_code, start_seq=-1,**kwargs):
         return self.gx1_simulator.find_logged_command(command_code,start_seq,**kwargs)
 
-    def screen_shot(self, embedded_image_to_report=False):
+    def screen_shot(self, embedded_image_to_report=True):
 
         """
         Capture the image from Screen and embedded  the image captured to the report
         :param embedded_image_to_report: whether the image should be embedded into report
         :return: the image file location
         """
-        basename = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S.jpg')
+        basename = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S.png')
         screenshot_name = self._get_screenshot_path(basename)
         self.squish_tester.screen_save(screenshot_name)
-        if embedded_image_to_report == "1" or embedded_image_to_report.upper() == "TRUE":
+        if embedded_image_to_report in ["1", "TRUE",True]:
             self._embed_screenshot(screenshot_name, 400)
         return screenshot_name
 
@@ -316,6 +327,7 @@ class GX1Testlib(object):
             offset (int): The direction and length to drag in pixels.
 
         """
+        gobj = self._get_obj_from_alias(gobj)
         return self.squish_tester.list_drag(gobj,offset)
 
     def mouse_tap(self, gobj):
@@ -327,6 +339,7 @@ class GX1Testlib(object):
             gobj (dict): A dictionary containing the Squish object details
 
         """
+        gobj = self._get_obj_from_alias(gobj)
         return self.squish_tester.mouse_tap(gobj)
 
     def mouse_wheel(self, gobj, steps):
@@ -338,6 +351,7 @@ class GX1Testlib(object):
             steps (int): number of ticks to move the mouse wheel.
 
         """
+        gobj = self._get_obj_from_alias(gobj)
         return self.squish_tester.mouse_wheel(gobj,steps)
 
     def mouse_wheel_screen(self, x, y, steps):
@@ -362,6 +376,7 @@ class GX1Testlib(object):
             steps (int): pixels to drag.
 
         """
+        gobj = self._get_obj_from_alias(gobj)
         return self.squish_tester.long_mouse_drag(gobj,steps)
 
     def mouse_click(self, gobj):
@@ -373,6 +388,7 @@ class GX1Testlib(object):
             gobj (dict): A dictionary containing the Squish object details.
 
         """
+        gobj = self._get_obj_from_alias(gobj)
         return self.squish_tester.mouse_click(gobj)
 
     def mouse_xy(self, x, y):
@@ -393,12 +409,15 @@ class GX1Testlib(object):
             y (int): the pixels on the y axis.
 
         """
+        gobj = self._get_obj_from_alias(gobj)
         return self.squish_tester.long_mouse_click(gobj,x,y)
 
 
 if __name__ == "__main__":
     gx1_testlib = GX1Testlib()
     gx1_testlib.init_test()
-    gx1_testlib.command_listener.open_message_log()
-    gx1_testlib.screen_shot(1)
+    gx1_testlib.mouse_click("OneTouch")
+    #gx1_testlib.command_listener.open_message_log()
+    #gx1_testlib.screen_shot(1)
+
     gx1_testlib.close_test()

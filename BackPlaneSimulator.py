@@ -213,7 +213,7 @@ class BackPlaneSimulator(metaclass=Singleton):
             command_obj = command_class()
             command_obj.deserialize(payload)
 
-            if command_code_value != GET_STATUS: logger.debug(f'Command {command_class.__name__}: {str(command_obj)}')
+            if command_code_value != GET_STATUS: logger.debug(f'{str(command_obj)}')
             self.__logging_command(command_code_value,command_obj)
             response_cmd = self.__dispatch_command(command_obj)
             self.com_handle.send_response(response_cmd)

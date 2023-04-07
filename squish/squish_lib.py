@@ -11,12 +11,10 @@ import sys
 
 sys.path.append(r'D:\Squish for Qt 7.0.1\bin')
 sys.path.append(r'D:\Squish for Qt 7.0.1\lib\python')
-import squishtest as sqt
+
 import psutil
 import subprocess
 import time
-import logging
-from utils.utilties import os_system_cmd
 from project_specific import names
 from utils.logging import logger
 
@@ -40,6 +38,7 @@ def find_process(pname):
 
 class SquishTest(object):
     def __init__(self, target_ip_address,private_keyfile, attach_app_name='gx1'):
+
         self._process_to_attach = attach_app_name
         self._squish_started = False
         self._open_ssh_folder = r"C:\\Windows\\System32\\OpenSSH"
@@ -50,6 +49,7 @@ class SquishTest(object):
         self._app_context = None
         self._is_check_obj_exists = True
         self._parent = None
+        self.sqt_module = None
 
     # ================================================================================
     # Squish library communication
@@ -72,7 +72,8 @@ class SquishTest(object):
         """
         self._spSsh = subprocess.Popen(
             [self._open_ssh_folder + "\\ssh", "-oStrictHostKeyChecking=no", "-tt", "-L", "3520:localhost:3520",
-             *self._ssh_User, "bsci@%s" % self._target_ip_address], bufsize=0, stdin=subprocess.PIPE,
+             #*self._ssh_User,
+             "bsci@%s" % self._target_ip_address], bufsize=0, stdin=subprocess.PIPE,
             stdout=subprocess.PIPE, shell=True)
         time.sleep(2)
         if self.is_active() is True:
@@ -95,6 +96,9 @@ class SquishTest(object):
     def connect(self):
         """This function will try to attach to a Squish AUT VssUI.
         """
+        import squishtest as sqt
+        self.sqt_module = sqt
+
         if self._squish_started is not True:
             if self.start_squish_server() is False:
                 return False
@@ -104,13 +108,13 @@ class SquishTest(object):
             logger.error("Failed to establish SSH connection!!!")
             return False
         try:
-            self._app_context = sqt.attachToApplication(self._process_to_attach)
+            self._app_context = self.sqt_module.attachToApplication(self._process_to_attach)
             logger.info(f'Attach AUT {self._process_to_attach} Successful')
             # ct = sqt.applicationContext("VssUI")
             # ctLst = sqt.applicationContextList()
             return True
         except WindowsError as err:
-            ct = sqt.applicationContext(self._process_to_attach)
+            ct = self.sqt_module.applicationContext(self._process_to_attach)
             if ct:
                 ct.detach()
                 self._app_context = None
@@ -166,6 +170,7 @@ class SquishTest(object):
             self._app_context.detach()
             self._app_context = None
             logger.info(f"Detach AUT {self._process_to_attach}... Done")
+        #subprocess.run(["squishserver.exe", "--stop"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         if self._spSsh is not None:
             self.input_cmd("exit")
@@ -187,7 +192,6 @@ class SquishTest(object):
 
         """
         if self._app_context is None or self._app_context.isFrozen(2) is True:
-            self.connect()
             time.sleep(1)
 
         return self.get_gobj(gobj) is not None
@@ -203,10 +207,10 @@ class SquishTest(object):
             (obj or None): The Squish object if exist, None otherwise.
 
         """
-        if sqt.object.exists(gobj) is not True:
+        if self.sqt_module.object.exists(gobj) is not True:
             return None
         try:
-            _obj = sqt.waitForObject(gobj, int(timeout * 1000))
+            _obj = self.sqt_module.waitForObject(gobj, int(timeout * 1000))
         except:
             _obj = None
         return _obj
@@ -222,7 +226,6 @@ class SquishTest(object):
 
         """
         if (self._app_context is None) or (self._app_context.isFrozen(2) is True):
-            self.connect()
             time.sleep(1)
 
         if self._is_check_obj_exists is True:
@@ -243,7 +246,7 @@ class SquishTest(object):
         """
         _obj = self.get_action_obj(gobj)
         if _obj is not None:
-            sqt.flick(_obj, 0, offset)
+            self.sqt_module.flick(_obj, 0, offset)
 
     def mouse_tap(self, gobj):
         """If object is applicable, perform a touch tap by passing in the Squish object reference.
@@ -256,7 +259,7 @@ class SquishTest(object):
         """
         _obj = self.get_action_obj(gobj)
         if _obj is not None:
-            sqt.tap_object(_obj)
+            self.sqt_module.tap_object(_obj)
 
     def mouse_wheel(self, gobj, steps):
         """If object is applicable, this function performs a mouse wheel operation,
@@ -269,7 +272,7 @@ class SquishTest(object):
         """
         _obj = self.get_action_obj(gobj)
         if _obj is not None:
-            sqt.mouseWheel(_obj, 1, 1, 0, steps, sqt.Qt.NoModifier)
+            self.sqt_module.mouseWheel(_obj, 1, 1, 0, steps, sqt.Qt.NoModifier)
 
     def mouse_wheel_screen(self, x, y, steps):
         """If the Squish object exist, this function will perform a mouse wheel scroll
@@ -286,7 +289,7 @@ class SquishTest(object):
         for gobj in self.listViews:
             if self.gobj_exist(gobj):
                 _obj = self.get_action_obj(gobj)
-                sqt.mouseWheel(_obj, 1, 1, 0, steps, sqt.Qt.NoModifier)
+                self.sqt_module.mouseWheel(_obj, 1, 1, 0, steps, self.sqt_module.Qt.NoModifier)
                 return
         # as part of the clean up, please remove the following code if not in use.
         # as a last resort, try this?:
@@ -303,7 +306,7 @@ class SquishTest(object):
         """
         _obj = self.get_action_obj(gobj)
         if _obj is not None:
-            sqt.longMouseDrag(_obj, 300, 30, 0, steps, sqt.Qt.NoModifier, sqt.Qt.LeftButton)
+            self.sqt_module.longMouseDrag(_obj, 300, 30, 0, steps, self.sqt_module.Qt.NoModifier, self.sqt_module.Qt.LeftButton)
 
     def mouse_click(self, gobj):
         """If object is applicable, perform a mouse click by passing in the Squish object reference.
@@ -316,7 +319,7 @@ class SquishTest(object):
         """
         _obj = self.get_action_obj(gobj)
         if _obj is not None:
-            sqt.mouseClick(_obj)
+            self.sqt_module.mouseClick(_obj)
 
     def set_gui_app_root(self, parent):
         self._parent = parent
@@ -331,7 +334,7 @@ class SquishTest(object):
         """
         if self.get_action_obj(
                 names.greenHouse_Application_QQuickWindowQmlImpl) is not None:  # in case we need to re-connect
-            sqt.tapObject(names.greenHouse_Application_QQuickWindowQmlImpl, x, y)
+            self.sqt_module.tapObject(names.greenHouse_Application_QQuickWindowQmlImpl, x, y)
 
     def long_mouse_click(self, gobj, x, y):
         """Perform a long mouse click on the active window.
@@ -343,7 +346,7 @@ class SquishTest(object):
         """
         _obj = self.get_action_obj(gobj)
         if _obj is not None:
-            sqt.longMouseClick(_obj, x, y, sqt.Qt.LeftButton)
+            self.sqt_module.longMouseClick(_obj, x, y, self.sqt_module.Qt.LeftButton)
 
     def screen_save(self, path_to_save):
         """Perform a screenshot of the screen and save it under the TMP folder on local station.
@@ -351,7 +354,7 @@ class SquishTest(object):
         """
         if self.get_action_obj(
                 names.greenHouse_Application_QQuickWindowQmlImpl) is not None:  # in case we need to re-connect
-            sqt.saveDesktopScreenshot(path_to_save)
+            self.sqt_module.saveDesktopScreenshot(path_to_save)
         else:
             return None
 
@@ -372,7 +375,7 @@ class SquishTest(object):
 
 
 if __name__ == "__main__":
-    st = SquishTest("192.168.80.129", r'C:\Users\xuf\.ssh\bsci', 'gx1')
+    st = SquishTest("192.168.80.130", r'C:\Users\xuf\.ssh\bsci', 'gx1')
     st.connect()
 
     st.screen_save("test.png")

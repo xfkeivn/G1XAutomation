@@ -24,7 +24,7 @@ class SerialCmd:
                 bytesize=8,
                 stopbits=serial.STOPBITS_ONE)
             self.connect()
-        except:
+        except Exception as err:
             logger.error(f'COM Port {self.com_port} failed to created')
         else:
             logger.info(f'COM Port {self.com_port} created successfully')

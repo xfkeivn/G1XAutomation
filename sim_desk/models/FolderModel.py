@@ -7,7 +7,7 @@ import shutil
 from sim_desk.models.SquishNameFile import *
 from sim_desk.mgr.tag_names import *
 name_file_wildcard = "Name File (*.py)|*.py"
-
+import json
 
 class CommandResponseContainer(TreeModel):
     def __init__(self,parent):
@@ -23,7 +23,7 @@ class SquishContainer(TreeModel):
         TreeModel.__init__(self, parent, TAG_NAME_SQUISH_NAMES_CONTAINER)
         self.label = TAG_NAME_SQUISH_NAMES_CONTAINER
         pathprop = StringProperty("IP", "IP", editable=True)
-        pathprop.setStringValue("192.168.80.129")
+        pathprop.setStringValue("192.168.80.130")
         pathprop.setSavable(True)
         self.addProperties(pathprop)
         pathprop = StringProperty("AUT", "AUT", editable=True)
@@ -38,6 +38,15 @@ class SquishContainer(TreeModel):
 
     def getActions(self):
         return TreeModel.getActions(self)
+
+    def get_all_name_mapping(self):
+        name_mapping = {}
+        for file_child_model in self.children_models:
+            for name_child_model in file_child_model.children_models:
+                obj = name_child_model.getPropertyByName("Object").getStringValue()
+                alias = name_child_model.getPropertyByName("Alias").getStringValue()
+                name_mapping[alias] = eval(obj)
+        return name_mapping
 
     def from_json(self,element):
         for name, module in element['sub_models'].items():
@@ -70,7 +79,7 @@ class SquishContainer(TreeModel):
 
     def __isAllready(self,absname):
         for dbcmodel in self.getModelChildren():
-            if dbcmodel.getLabel() == os.path.basename(absname):
+            if dbcmodel.getLabel() == os.path.exists(absname):
                 return True
         return False
 

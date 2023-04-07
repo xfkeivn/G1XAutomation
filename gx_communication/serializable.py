@@ -186,7 +186,7 @@ class Serializable:
 
     def __str__(self):
         fields = getSerializableFields(self)
-        field_strings = []
+        field_strings = [self.__class__.__name__]
         for field in fields:
             val = getattr(self,field)
             val_str = str(val)

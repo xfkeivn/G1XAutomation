@@ -61,7 +61,6 @@ class Project(TreeModel):
         model = DAQIOContainer(self)
         self.addChild(model)
 
-
     def __load_json(self, project_dir):
         if not os.path.exists(project_dir):
             raise Exception("The project does not exists")
@@ -111,7 +110,6 @@ class Project(TreeModel):
         TreeModel.close(self)
         AppConfig().addProjectHistory(self.project_dir)
         self.is_Dirty = False
-
 
     def to_json(self):
         json_result = TreeModel.to_json(self)
