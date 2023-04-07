@@ -98,14 +98,14 @@ class CommandListener(object):
             self.message_log_lock.release()
 
     def on_command_received(self,command):
-        if command.u16_CommandCode in self.command_filters:
+        if command.data.u16_CommandCode in self.command_filters:
             return
-        self.__message_logging(str(command))
+        self.__message_logging(f'{command.time_ns//100000}:{command.sequence}:{command.data}')
 
     def on_command_responsed(self,response):
-        if response.u16_ResponseCode - 1 in self.command_filters:
+        if response.data.u16_ResponseCode - 1 in self.command_filters:
             return
-        self.__message_logging(str(response))
+        self.__message_logging(f'{response.time_ns//100000}:{response.sequence}:{response.data}')
 
 
 class GX1Testlib(object):
@@ -416,7 +416,10 @@ class GX1Testlib(object):
 if __name__ == "__main__":
     gx1_testlib = GX1Testlib()
     gx1_testlib.init_test()
+    time.sleep(1)
     gx1_testlib.mouse_click("OneTouch")
+    time.sleep(10)
+
     #gx1_testlib.command_listener.open_message_log()
     #gx1_testlib.screen_shot(1)
 

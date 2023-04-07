@@ -171,8 +171,10 @@ class MainFrame(wx.Frame):
         self.SetWindowStyle(wx.CAPTION | wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.RESIZE_BORDER)
         com_port_val = self.active_project.getPropertyByName("COM").getStringValue()
         result = self.bps.start(com_port_val)
-        if result:
-            self.__onRuntimeState()
+        enabled_squish = self.active_project.squish_container.getPropertyByName("Enabled")
+
+        if result and enabled_squish.getStringValue() == "True":
+
             ip_prop = self.active_project.squish_container.getPropertyByName("IP")
             aut_prop = self.active_project.squish_container.getPropertyByName("AUT")
             private_key = self.active_project.squish_container.getPropertyByName("PrivateKey")
@@ -182,6 +184,8 @@ class MainFrame(wx.Frame):
                 private_key_file = private_key.getStringValue()
                 self.squish_runner = SquishTest(ip_address,private_key_file,aut_name)
                 self.squish_runner.connect()
+        if result:
+            self.__onRuntimeState()
 
     def __onRuntimeState(self):
         if self.active_project:

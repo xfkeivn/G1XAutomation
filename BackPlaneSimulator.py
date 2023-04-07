@@ -169,8 +169,16 @@ class BackPlaneSimulator(metaclass=Singleton):
     def __logging_command(self, command_code, command_obj):
         logged_msg = MessageWrapper (command_obj,time.time_ns())
         self.command_logging.put(command_code,logged_msg)
+        logger.debug(f'{logged_msg.time_ns // 100000}:{logged_msg.data}')
         for command_listener in self.command_listeners:
-            command_listener.on_command_received(command_obj)
+            command_listener.on_command_received(logged_msg)
+
+    def __logging_response(self, command_response_code, response_obj):
+        logged_msg = MessageWrapper (response_obj,time.time_ns())
+        self.command_logging.put(command_response_code,logged_msg)
+        logger.debug(f'{logged_msg.time_ns//100000}:{logged_msg.data}')
+        for command_listener in self.command_listeners:
+            command_listener.on_command_responsed(logged_msg)
 
     def __dispatch_command(self, command_obj):
         self.pending_resp_lock.acquire()
@@ -195,29 +203,20 @@ class BackPlaneSimulator(metaclass=Singleton):
             if response is None:
                 continue
 
-            #logger.debug('Decoded:' + bytes_2_hex(response))
             payload = RD1055_format.get_payload(response)
-            #logger.debug('Payload:' + bytes_2_hex(payload))
             cmd_code_bytes = payload[0:2]
             command_code_value = int.from_bytes(cmd_code_bytes, 'little')
-            if command_code_value != GET_STATUS: logger.debug('*' * 100)
-
-            #logger.debug('Command Code: %x' % command_code_value + bytes_2_hex(cmd_code_bytes))
             command_class = Command_Code_Class_Mapping.get(command_code_value)
             if command_class is None:
                 logger.error('Command Code %X not defined for processing' % command_code_value)
-                logger.debug('*' * 100)
                 continue
-
             command_obj = command_class()
             command_obj.deserialize(payload)
 
-            if command_code_value != GET_STATUS: logger.debug(f'{str(command_obj)}')
             self.__logging_command(command_code_value,command_obj)
             response_cmd = self.__dispatch_command(command_obj)
             self.com_handle.send_response(response_cmd)
-            for command_listener in self.command_listeners:
-                command_listener.on_command_responsed(response_cmd)
-            if command_code_value != GET_STATUS:logger.debug(str(response_cmd))
-            if command_code_value != GET_STATUS:logger.debug('*' * 100)
+            self.__logging_response(response_cmd.u16_ResponseCode,response_cmd)
+
+
 
