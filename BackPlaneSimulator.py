@@ -18,7 +18,6 @@ from gx_communication.gx_command_codes import *
 from gx_communication import RD1055_format
 from gx_communication.bsnUtil import generateCrcBytes
 from threading import Thread
-from rpc_constants import *
 import time
 from utils import simple_queue
 from utils.logging import logger
@@ -105,15 +104,15 @@ class BackPlaneSimulator(metaclass=Singleton):
 
     def set_command_pending_response(self,command_code, command_response_obj):
         if command_code not in Command_Code_Class_Mapping:
-            return RPC_RESULT_COMMAND_CODE_NOT_EXIST
+            return False
         self.pending_resp_lock.acquire()
         self.command_response_pending[command_code] = command_response_obj
         self.pending_resp_lock.release()
-        return RPC_RESULT_SUCCESS
+        return True
 
     def set_command_pending_response_by_parameters(self,command_code, **kwargs):
         if command_code not in Command_Code_Class_Mapping:
-            return RPC_RESULT_COMMAND_CODE_NOT_EXIST
+            return False
         self.pending_resp_lock.acquire()
         response_obj = self.command_response_pending.get(command_code)
         if response_obj is None:
@@ -122,7 +121,7 @@ class BackPlaneSimulator(metaclass=Singleton):
             self.command_response_pending[command_code] = response_obj
         self.__set_pending_response_filed_values(response_obj,**kwargs)
         self.pending_resp_lock.release()
-        return RPC_RESULT_SUCCESS
+        return True
 
     def __match_conditions(self, command_obj,**kwargs):
         return True

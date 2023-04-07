@@ -15,3 +15,7 @@ version as Squish, you can use the python under squish installation folder pytho
 13. select the squish names to set the squish hooker's ip and aut, the ip is the virtual machine ip 
 where the application is running, normally check vmnet8, and it will start from 128 at last section
 14. start the sim_desk with start button on the toolbar
+# How to robotframe work
+1. under you venv, go to the Scripts find the ride.py, run it.
+2. set the output dir in the run setting 
+3. start running you test 
