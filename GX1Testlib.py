@@ -1,9 +1,9 @@
 import threading
 from sim_desk.models.Project import Project
 from BackPlaneSimulator import BackPlaneSimulator as BPS
-from squish.squish_lib import SquishTest
 from importlib import reload
 from sim_desk.mgr.appconfig import AppConfig
+from squish.squish_proxy import SquishProxy
 import sys
 reload(sys)
 import datetime
@@ -141,7 +141,7 @@ class GX1Testlib(object):
         self.project_model = Project(None)
         self.project_dir = project_dir
         self.gx1_simulator = BPS()
-        self.squish_tester = None
+        self.squish_proxy = None
 
         self.command_listener = CommandListener()
         self.gx1_simulator.add_command_listener(self.command_listener)
@@ -229,7 +229,7 @@ class GX1Testlib(object):
             ip_address = ip_prop.getStringValue()
             aut_name = aut_prop.getStringValue()
             private_key_file = private_key.getStringValue()
-            self.squish_tester = SquishTest(ip_address, private_key_file, aut_name)
+            self.squish_proxy = SquishProxy(ip_address, private_key_file, aut_name)
             logger.info(f'Squish Hook {ip_address}, {aut_name}, {private_key_file}')
             logger.info('%s has been loaded successfully' % self.project_model.getLabel())
         else:
@@ -258,6 +258,7 @@ class GX1Testlib(object):
             self.squish_name_mapping = self.project_model.squish_container.get_all_name_mapping()
             self.project_inited = True
             com_port_val = self.project_model.getPropertyByName("COM").getStringValue()
+            result = True
             result = self.gx1_simulator.start(com_port_val)
             if result:
                 logger.info("GX1 Simulator is started")
@@ -265,7 +266,9 @@ class GX1Testlib(object):
                 logger.error("GX1 Simulator failed to start")
                 return
 
-            result = self.squish_tester.connect()
+            #result = self.squish_proxy.connect()
+            self.squish_proxy.create_proxy()
+            result = self.squish_proxy.connect()
             if result:
                 logger.info("Squish tester is started")
             else:
@@ -290,14 +293,19 @@ class GX1Testlib(object):
         if self.project_inited is True:
             self.gx1_simulator.stop()
             logger.info("GX1 Simulator is stopped")
-            self.squish_tester.disconnect()
+            self.squish_proxy.disconnect()
             logger.info("Squish tester is stopped")
         else:
             logger.warn("The project is not initialized for testing ")
         self.project_inited = False
 
     def set_command_response(self,command_code,**response_data):
-        return self.gx1_simulator.set_command_pending_response_by_parameters(command_code,**response_data)
+        command_code = int(command_code,16)
+        key_int_value_map = dict()
+        for key, str_value in response_data.items():
+            key_int_value_map[key] = int(str_value)
+
+        return self.gx1_simulator.set_command_pending_response_by_parameters(command_code,**key_int_value_map)
 
     def clean_command_logging_queue(self):
         return self.gx1_simulator.clean_logged_command_queue()
@@ -314,7 +322,7 @@ class GX1Testlib(object):
         """
         basename = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S.png')
         screenshot_name = self._get_screenshot_path(basename)
-        self.squish_tester.screen_save(screenshot_name)
+        self.squish_proxy.screen_save(screenshot_name)
         if embedded_image_to_report in ["1", "TRUE",True]:
             self._embed_screenshot(screenshot_name, 400)
         return screenshot_name
@@ -328,7 +336,7 @@ class GX1Testlib(object):
 
         """
         gobj = self._get_obj_from_alias(gobj)
-        return self.squish_tester.list_drag(gobj,offset)
+        return self.squish_proxy.list_drag(gobj,offset)
 
     def mouse_tap(self, gobj):
         """If object is applicable, perform a touch tap by passing in the Squish object reference.
@@ -340,7 +348,7 @@ class GX1Testlib(object):
 
         """
         gobj = self._get_obj_from_alias(gobj)
-        return self.squish_tester.mouse_tap(gobj)
+        return self.squish_proxy.mouse_tap(gobj)
 
     def mouse_wheel(self, gobj, steps):
         """If object is applicable, this function performs a mouse wheel operation,
@@ -352,7 +360,7 @@ class GX1Testlib(object):
 
         """
         gobj = self._get_obj_from_alias(gobj)
-        return self.squish_tester.mouse_wheel(gobj,steps)
+        return self.squish_proxy.mouse_wheel(gobj,steps)
 
     def mouse_wheel_screen(self, x, y, steps):
         """If the Squish object exist, this function will perform a mouse wheel scroll
@@ -365,7 +373,7 @@ class GX1Testlib(object):
             y (int): position but not in use.
 
         """
-        return self.squish_tester.mouse_wheel_screen(x,y,steps)
+        return self.squish_proxy.mouse_wheel_screen(x,y,steps)
 
     def long_mouse_drag(self, gobj, steps):
         """If object is applicable, this function will produce a mouse drag operation with a fixed delay of
@@ -377,7 +385,7 @@ class GX1Testlib(object):
 
         """
         gobj = self._get_obj_from_alias(gobj)
-        return self.squish_tester.long_mouse_drag(gobj,steps)
+        return self.squish_proxy.long_mouse_drag(gobj,steps)
 
     def mouse_click(self, gobj):
         """If object is applicable, perform a mouse click by passing in the Squish object reference.
@@ -389,7 +397,8 @@ class GX1Testlib(object):
 
         """
         gobj = self._get_obj_from_alias(gobj)
-        return self.squish_tester.mouse_click(gobj)
+        return self.squish_proxy.mouse_click(gobj)
+        #return self.squish_proxy.mouse_click(gobj)
 
     def mouse_xy(self, x, y):
         """Perform a mouse click on the active window.
@@ -399,7 +408,7 @@ class GX1Testlib(object):
             y (int): the pixels on the y axis.
 
         """
-        return self.squish_tester.mouse_xy(x,y)
+        return self.squish_proxy.mouse_xy(x,y)
 
     def long_mouse_click(self, gobj, x, y):
         """Perform a long mouse click on the active window.
@@ -410,16 +419,21 @@ class GX1Testlib(object):
 
         """
         gobj = self._get_obj_from_alias(gobj)
-        return self.squish_tester.long_mouse_click(gobj,x,y)
+        return self.squish_proxy.long_mouse_click(gobj,x,y)
 
 
 if __name__ == "__main__":
     gx1_testlib = GX1Testlib()
     gx1_testlib.init_test()
-    time.sleep(1)
-    gx1_testlib.mouse_click("OneTouch")
-    time.sleep(10)
 
+    gx1_testlib.mouse_click("OneTouch")
+    time.sleep(1)
+    gx1_testlib.mouse_click("Stimulation")
+    time.sleep(1)
+    gx1_testlib.set_command_response("0xC046",u8_OutputStatus=1)
+    #tt.start()
+    time.sleep(10)
+    #gx1_testlib.mouse_click("OneTouch")
     #gx1_testlib.command_listener.open_message_log()
     #gx1_testlib.screen_shot(1)
 

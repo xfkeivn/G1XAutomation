@@ -20,5 +20,16 @@ TEST_CASE_2_CLICK_AND_SCREEN_SHOT
     Mouse Click    OneTouch
     sleep    5s
     Screen Shot
-    sleep    10s
+    sleep    1s
+    Mouse Click    Stimulation
+    sleep    1s
+    Set Command Response    C046    u8_OutputStatus=1    u8_ButtonStatus=1
+    sleep    1s
+    Screen Shot
+    sleep    1s
+    Set Command Response    C046    u8_OutputStatus=0    u8_ButtonStatus=1
+    sleep    1s
+    Screen Shot
+    Mouse Click    PulseRF
+    Screen Shot
     Log    this is the test demo, started

@@ -8,6 +8,7 @@
 @desc:
 """
 import sys
+import threading
 
 sys.path.append(r'D:\Squish for Qt 7.0.1\bin')
 sys.path.append(r'D:\Squish for Qt 7.0.1\lib\python')
@@ -17,7 +18,7 @@ import subprocess
 import time
 from project_specific import names
 from utils.logging import logger
-
+import queue
 
 def find_process(pname):
     """Look the list of currently running process for match the given name process.
@@ -66,6 +67,19 @@ class SquishTest(object):
             logger.error("Squish server started failed")
             return False
         return True
+
+    def stop_squish_server(self):
+        """Starts the Squish server as a subprocess.
+        """
+        try:
+            subprocess.run(["squishserver.exe", "--stop"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            time.sleep(1)
+            self._squish_started = False
+        except WindowsError as err:
+            logger.error("Squish server started failed")
+            return False
+        return True
+
 
     def ssh_connect(self):
         """Establish the SSh connection to port 3520 for Squish AUT attachment.
@@ -172,6 +186,7 @@ class SquishTest(object):
             logger.info(f"Detach AUT {self._process_to_attach}... Done")
         #subprocess.run(["squishserver.exe", "--stop"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
+
         if self._spSsh is not None:
             self.input_cmd("exit")
             self._spSsh.terminate()
@@ -272,7 +287,7 @@ class SquishTest(object):
         """
         _obj = self.get_action_obj(gobj)
         if _obj is not None:
-            self.sqt_module.mouseWheel(_obj, 1, 1, 0, steps, sqt.Qt.NoModifier)
+            self.sqt_module.mouseWheel(_obj, 1, 1, 0, steps, self.sqt_module.Qt.NoModifier)
 
     def mouse_wheel_screen(self, x, y, steps):
         """If the Squish object exist, this function will perform a mouse wheel scroll
@@ -319,6 +334,7 @@ class SquishTest(object):
         """
         _obj = self.get_action_obj(gobj)
         if _obj is not None:
+            #self.sqt_module.mouseClick(self.sqt_module.waitForObject(_obj),61, 47)
             self.sqt_module.mouseClick(_obj)
 
     def set_gui_app_root(self, parent):

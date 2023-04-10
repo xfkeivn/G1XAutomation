@@ -169,14 +169,14 @@ class BackPlaneSimulator(metaclass=Singleton):
     def __logging_command(self, command_code, command_obj):
         logged_msg = MessageWrapper (command_obj,time.time_ns())
         self.command_logging.put(command_code,logged_msg)
-        logger.debug(f'{logged_msg.time_ns // 100000}:{logged_msg.data}')
+        logger.debug(f'{logged_msg.time_ns // 1000000}:{logged_msg.data}')
         for command_listener in self.command_listeners:
             command_listener.on_command_received(logged_msg)
 
     def __logging_response(self, command_response_code, response_obj):
         logged_msg = MessageWrapper (response_obj,time.time_ns())
         self.command_logging.put(command_response_code,logged_msg)
-        logger.debug(f'{logged_msg.time_ns//100000}:{logged_msg.data}')
+        logger.debug(f'{logged_msg.time_ns//1000000}:{logged_msg.data}')
         for command_listener in self.command_listeners:
             command_listener.on_command_responsed(logged_msg)
 
@@ -202,7 +202,6 @@ class BackPlaneSimulator(metaclass=Singleton):
                 break
             if response is None:
                 continue
-
             payload = RD1055_format.get_payload(response)
             cmd_code_bytes = payload[0:2]
             command_code_value = int.from_bytes(cmd_code_bytes, 'little')
