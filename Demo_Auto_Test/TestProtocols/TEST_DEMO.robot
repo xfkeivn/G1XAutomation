@@ -6,12 +6,13 @@ Library           ../../GX1Testlib.py
 *** Test Cases ***
 TEST_CASE_1_SCREENSHOT
     [Documentation]    This test case is for demo for the features of DVTFront of GX1.
-    [Tags]    MAINPAGE    SCREENSHOT    DEMO
+    [Tags]    MAINPAGE    SCREENSHOT    DEMO    stimulation
     Log    this is the test demo, started
     sleep    1s
     Screen Shot
     sleep    10s
     Log    this is the test demo, started
+    Screen Shot
 
 TEST_CASE_2_CLICK_AND_SCREEN_SHOT
     [Documentation]    This is the second case

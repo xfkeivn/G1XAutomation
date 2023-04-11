@@ -18,4 +18,5 @@ where the application is running, normally check vmnet8, and it will start from 
 # How to robotframe work
 1. under you venv, go to the Scripts find the ride.py, run it.
 2. set the output dir in the run setting 
-3. start running you test 
+3. start the squishPyServer.py to start the server, update the IP, the private key file and name of attachable before running, will be updated soon to start by test
+4. start running you test 

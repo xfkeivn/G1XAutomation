@@ -18,6 +18,7 @@ except ImportError:  # if it's not there locally, try the wxPython lib.
     import wx.lib.agw.aui as aui
 from sim_desk.ui import statusbar, images
 from squish.squish_lib import *
+from squish.squish_proxy import *
 ID_NewProject = wx.ID_HIGHEST + 1
 ID_ImportProject = wx.ID_HIGHEST + 2
 ID_ExportProject = wx.ID_HIGHEST + 3
@@ -51,6 +52,7 @@ class MainFrame(wx.Frame):
         self.CreateMenuBar()
         self.BindEvents()
         self.active_project = None
+        self.squish_runner = None
         self.__fast_open_projects_list = []
         self.appconfig = AppConfig()
         self.SetTitle("G1X Simulator Control Desk")
@@ -182,8 +184,10 @@ class MainFrame(wx.Frame):
                 ip_address = ip_prop.getStringValue()
                 aut_name = aut_prop.getStringValue()
                 private_key_file = private_key.getStringValue()
-                self.squish_runner = SquishTest(ip_address,private_key_file,aut_name)
+                self.squish_runner = SquishProxy(ip_address,private_key_file,aut_name)
+                self.squish_runner.create_proxy()
                 self.squish_runner.connect()
+                self.active_project.squish_runner = self.squish_runner
         if result:
             self.__onRuntimeState()
 

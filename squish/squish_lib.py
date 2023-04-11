@@ -51,6 +51,7 @@ class SquishTest(object):
         self._is_check_obj_exists = True
         self._parent = None
         self.sqt_module = None
+        self._root = None
 
     # ================================================================================
     # Squish library communication
@@ -336,9 +337,10 @@ class SquishTest(object):
         if _obj is not None:
             #self.sqt_module.mouseClick(self.sqt_module.waitForObject(_obj),61, 47)
             self.sqt_module.mouseClick(_obj)
+        return None
 
     def set_gui_app_root(self, parent):
-        self._parent = parent
+        self._root = parent
 
     def mouse_xy(self, x, y):
         """Perform a mouse click on the active window.

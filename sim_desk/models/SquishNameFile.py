@@ -10,7 +10,7 @@ import wx
 from sim_desk.ui.images import flex
 import importlib
 import sys
-from squish.squish_lib import *
+from squish.squishPyServer import *
 
 
 def parse_squish_name_file(name_file):
@@ -44,9 +44,17 @@ class SquishName(TreeModel):
         pathprop = StringProperty("Alias", "Alias", editable=True)
         pathprop.setSavable(True)
         self.addProperties(pathprop)
+        self.tree_action_list.append(
+            TreeAction("Mouse Click", wx.ID_HIGHEST + 1011, self.mouse_click))
 
     def getImage(self):
         return flex
+
+    def mouse_click(self,evt):
+        str_value = self.getPropertyByName("Object").getStringValue()
+        obj = eval(str_value)
+        self.getRoot().squish_runner.mouse_click(obj)
+
 
 
 class SquishNameFile(TreeModel):
