@@ -34,10 +34,14 @@ class Rampmeasure(Scenario):
         kw["ar_measured_channels.MeasuredChannelParam[0].u8_TempRefAvailable"] = 1
         kw["ar_measured_channels.MeasuredChannelParam[0].u16_TempRef"] = self.temp//10
         if self.temp <400:
-            self.temp+=5
-        elif self.temp > 700:
-            self.temp-= 5
-        else:
+            self.temp+=5
+
+        elif self.temp > 700:
+
+            self.temp-= 5
+
+        else:
+
             self.temp+=10
         self.simulator.set_command_pending_response_by_parameters(command_code,**kw)
         #logger.info(str(commandobj))

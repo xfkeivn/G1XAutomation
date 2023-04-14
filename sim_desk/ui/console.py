@@ -9,7 +9,6 @@ class WxTextCtrlHandler(logging.Handler):
         logging.Handler.__init__(self)
         self.ctrl = ctrl
 
-
     def emit(self, record):
         s = self.format(record) + '\n'
         wx.CallAfter(self.ctrl.logging, s)

@@ -12,9 +12,14 @@
 from gx_communication.gx_commands import Response
 from  gx_communication import gx_commands
 from gx_communication.serializable import *
+from gx_communication.gx_commands import Command,Response
 from sim_desk.models.CommonProperty import *
 from sim_desk.ui.images import message_reply, signal, slot, did,message
 from BackPlaneSimulator import BackPlaneSimulator as BPS
+from BackPlaneSimulator import CommandResponseFilter
+from sim_desk.models.TreeModel import TREEMODEL_STATUS_NORMAL,TREEMODEL_STATUS_RUNTIME
+
+
 class CommandResponseModel(TreeModel):
     def __init__(self,parent,label,response_cls):
         TreeModel.__init__(self,parent,label)
@@ -27,7 +32,51 @@ class CommandResponseModel(TreeModel):
         self.addProperties(number_value_property)
         number_value_property = StringProperty('Response Code', 'Response Code',
                                                '%X' % (self.response_obj.u16_ResponseCode), editable=False)
+
         self.addProperties(number_value_property)
+        logging = BoolProperty("CommandLogging","CommandLogging")
+        self.addProperties(logging)
+        logging = BoolProperty("ResponseLogging","ResponseLogging")
+        self.addProperties(logging)
+
+    def updateProperty(self,wxprop):
+        TreeModel.updateProperty(self,wxprop)
+        prop = self.getPropertyBywxprop(wxprop)
+        if prop and prop.propertyname =="CommandLogging":
+            stringvalue = wxprop.GetValueAsString()
+            logging = stringvalue == "True"
+            intvalue = int(self.getPropertyByName("Command Code").getStringValue(), 16)
+            if logging:
+
+                CommandResponseFilter().include_command(intvalue)
+            else:
+                CommandResponseFilter().exclude_command(intvalue)
+
+        if prop and prop.propertyname =="ResponseLogging":
+            stringvalue = wxprop.GetValueAsString()
+            logging = stringvalue == "True"
+            intvalue = int(self.getPropertyByName("Response Code").getStringValue(), 16)
+            if logging:
+                CommandResponseFilter().include_response(intvalue)
+            else:
+                CommandResponseFilter().exclude_response(intvalue)
+
+        return prop
+
+    def set_model_status(self,status):
+        if status == TREEMODEL_STATUS_RUNTIME:
+            command_logging = self.getPropertyByName("CommandLogging").getStringValue() == "True"
+            response_logging = self.getPropertyByName("ResponseLogging").getStringValue() == "True"
+            response_code = int(self.getPropertyByName("Response Code").getStringValue(), 16)
+            command_code = int(self.getPropertyByName("Command Code").getStringValue(), 16)
+            if response_logging:
+                CommandResponseFilter().include_response(response_code)
+            else:
+                CommandResponseFilter().exclude_response(response_code)
+            if command_logging:
+                CommandResponseFilter().include_command(command_code)
+            else:
+                CommandResponseFilter().exclude_command(command_code)
 
 
 class ElementModel(TreeModel):

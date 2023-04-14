@@ -79,6 +79,42 @@ class MessageWrapper(object):
     def __getattr__(self,name):
         return getattr(self.data,name)
 
+
+class CommandResponseFilter(metaclass=Singleton):
+    def __init__(self):
+        self.command_filter = []
+        self.response_filter = []
+
+    def clear(self):
+        self.command_filter.clear()
+        self.response_filter.clear()
+
+    def exclude_command(self,command_code):
+        if command_code not in self.command_filter:
+            self.command_filter.append(command_code)
+
+    def include_command(self,command_code):
+        if command_code  in self.command_filter:
+            self.command_filter.remove(command_code)
+
+    def exclude_response(self,response_code):
+        if response_code not in self.response_filter:
+            self.response_filter.append(response_code)
+
+    def include_response(self,response_code):
+        if response_code  in self.response_filter:
+            self.response_filter.remove(response_code)
+
+    def filter(self,commandobj):
+        if isinstance(commandobj.data, GX1Command):
+            if commandobj.code in self.command_filter:
+                return True
+        if isinstance(commandobj.data,GX1Response):
+            if commandobj.data.u16_ResponseCode in self.response_filter:
+                return True
+        return False
+
+
 class BackPlaneSimulator(metaclass=Singleton):
     def __init__(self ):
         self.com_port = 'COM3'
@@ -89,6 +125,7 @@ class BackPlaneSimulator(metaclass=Singleton):
         self.command_response_pending = {}
         self.command_logging = simple_queue.MessageDictQueue()
         self.command_listeners = list()
+        self.command_response_filter = CommandResponseFilter()
 
     def start(self, com_port="COM3"):
         self.command_listeners.clear()
@@ -105,6 +142,7 @@ class BackPlaneSimulator(metaclass=Singleton):
         return self.receive_thread.is_alive()
 
     def stop(self):
+        self.command_response_filter.clear()
         self.command_listeners.clear()
         self.command_logging.clear()
         self.command_response_pending.clear()
@@ -182,19 +220,26 @@ class BackPlaneSimulator(metaclass=Singleton):
             if layer_attr is not None:
                 setattr(upper_layer_attr,key_part,value)
 
-    def __logging_command(self, command_code, command_obj):
-        logged_msg = MessageWrapper (command_obj,time.time_ns())
-        self.command_logging.put(command_code,logged_msg)
-        logger.debug(f'{logged_msg.time_ns // 1000000}:{logged_msg.data}')
+    def __process_command(self, command_code, command_obj):
+        logged_msg = MessageWrapper(command_obj, time.time_ns())
         for command_listener in self.command_listeners:
             command_listener.on_command_received(logged_msg)
+        #Logging
+        if self.command_response_filter.filter(logged_msg) is True:
+            return
+        self.command_logging.put(command_code,logged_msg)
+        logger.debug(f'{logged_msg.time_ns // 1000000}:{logged_msg.data}')
 
-    def __logging_response(self, command_response_code, response_obj):
+    def __process_response(self, command_response_code, response_obj):
         logged_msg = MessageWrapper (response_obj,time.time_ns())
-        self.command_logging.put(command_response_code,logged_msg)
-        logger.debug(f'{logged_msg.time_ns//1000000}:{logged_msg.data}')
         for command_listener in self.command_listeners:
             command_listener.on_command_responsed(logged_msg)
+
+        #Logging
+        if self.command_response_filter.filter(logged_msg) is True:
+            return
+        self.command_logging.put(command_response_code,logged_msg)
+        logger.debug(f'{logged_msg.time_ns//1000000}:{logged_msg.data}')
 
     def __dispatch_command(self, command_obj):
         self.pending_resp_lock.acquire()
@@ -228,10 +273,10 @@ class BackPlaneSimulator(metaclass=Singleton):
             command_obj = command_class()
             command_obj.deserialize(payload)
 
-            self.__logging_command(command_code_value,command_obj)
+            self.__process_command(command_code_value, command_obj)
             response_cmd = self.__dispatch_command(command_obj)
             self.com_handle.send_response(response_cmd)
-            self.__logging_response(response_cmd.u16_ResponseCode,response_cmd)
+            self.__process_response(response_cmd.u16_ResponseCode, response_cmd)
 
 
 

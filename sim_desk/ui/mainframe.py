@@ -124,7 +124,7 @@ class MainFrame(wx.Frame):
         tb1.AddSimpleTool(ID_StartTest, "StartTop", images.run.GetBitmap())
         tb1.AddSimpleTool(ID_StopTest, "StopTest", images.stop.GetBitmap())
         tb1.AddSeparator()
-        tb1.AddSimpleTool(ID_ScreenShot, "ScreenShot", images.widget.GetBitmap())
+        tb1.AddSimpleTool(ID_ScreenShot, "ScreenShot", images.camera.GetBitmap())
         tb1.Realize()
         self.tb = tb1
         self._mgr.AddPane(self.CreateProjectTreeCtrl(), aui.AuiPaneInfo().
@@ -252,8 +252,8 @@ class MainFrame(wx.Frame):
 
 
     def onScreenShot(self,evt):
-        relpath = os.path.relpath(os.path.dirname(__file__), "..")
-        screenshot_folder = os.path.join(relpath,"screenshot")
+        dirname = os.path.dirname(__file__)
+        screenshot_folder = os.path.join(dirname,"../screenshot")
         if self.squish_runner:
             name = time.strftime('%Y%b%d_%H_%M_%S.png', time.localtime())
             full_path_name = os.path.join(screenshot_folder,name)

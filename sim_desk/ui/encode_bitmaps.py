@@ -72,6 +72,8 @@ command_lines = [
     "-a -F -n slot icons/slot.png images.py",     
     "-a -F -n flex icons/flex.ico images.py",
     "-a -F -n array icons/array.png images.py",
+    "-a -F -n camera icons/icons8-camera-24.png images.py",
+
     ]
 
 
