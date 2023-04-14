@@ -13,6 +13,8 @@ import threading
 from utils.singleton import Singleton
 from gx_communication import comport as comp
 from gx_communication import gx_commands as commands
+from gx_communication.gx_commands import Command as GX1Command
+from gx_communication.gx_commands import Response as GX1Response
 import logging
 from gx_communication.gx_command_codes import *
 from gx_communication import RD1055_format
@@ -63,11 +65,19 @@ def test_crc(self):
     crc = generateCrcBytes([0x80, 0x00, 0x09, 0x00, 0x46, 0xc0, 0x00])
     print(self.bytes_hex_print(crc))
 
+
 class MessageWrapper(object):
     def __init__(self,command_obj,time_ns):
         self.sequence = 0
         self.time_ns = time_ns
         self.data = command_obj
+        if isinstance(command_obj,GX1Command):
+            self.code = command_obj.u16_CommandCode
+        else:
+            self.cod = command_obj.u16_ResponseCode - 1
+
+    def __getattr__(self,name):
+        return getattr(self.data,name)
 
 class BackPlaneSimulator(metaclass=Singleton):
     def __init__(self ):
@@ -78,9 +88,12 @@ class BackPlaneSimulator(metaclass=Singleton):
         self.pending_resp_lock = threading.Lock()
         self.command_response_pending = {}
         self.command_logging = simple_queue.MessageDictQueue()
-        self.command_listeners = []
+        self.command_listeners = list()
 
     def start(self, com_port="COM3"):
+        self.command_listeners.clear()
+        self.command_logging.clear()
+        self.command_response_pending.clear()
         if self.receive_thread is not None and self.receive_thread.is_alive():
             return False
         self.com_port = com_port
@@ -92,10 +105,13 @@ class BackPlaneSimulator(metaclass=Singleton):
         return self.receive_thread.is_alive()
 
     def stop(self):
+        self.command_listeners.clear()
+        self.command_logging.clear()
+        self.command_response_pending.clear()
         if self.receive_thread is not None and self.receive_thread.is_alive():
             self.receive_thread_stop = True
-            self.com_handle.disconnect()
             self.receive_thread.join(1)
+            self.com_handle.disconnect()
 
         return not self.receive_thread.is_alive()
 

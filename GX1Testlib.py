@@ -15,7 +15,7 @@ curfiledir = os.path.dirname(__file__)
 sys.path.append(os.path.dirname(curfiledir))
 from robot import utils
 from robot.libraries.BuiltIn import BuiltIn
-
+from executor_context import ExecutorContext
 from robot.api import logger
 
 
@@ -150,7 +150,8 @@ class GX1Testlib(object):
         self.out_put_dir = None
         self.is_log_inited = False
         self.squish_name_mapping = dict()
-
+        self.system_context = ExecutorContext()
+        self.system_context.set_robot_context(self)
     #####################################################################################################
     ################################listeners #####################################################################
 
@@ -270,6 +271,7 @@ class GX1Testlib(object):
             self.squish_proxy.create_proxy()
             result = self.squish_proxy.connect()
             if result:
+
                 logger.info("Squish tester is started")
             else:
                 logger.error("Squish tester failed to start")

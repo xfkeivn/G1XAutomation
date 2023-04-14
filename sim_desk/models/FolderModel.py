@@ -5,6 +5,7 @@ from sim_desk.models.TreeModel import TreeAction
 import os
 import shutil
 from sim_desk.models.SquishNameFile import *
+from sim_desk.models.Script import *
 from sim_desk.mgr.tag_names import *
 name_file_wildcard = "Name File (*.py)|*.py"
 import json
@@ -97,6 +98,7 @@ class SquishContainer(TreeModel):
         return sim_desk.ui.images.folder_collapse
 
 
+
 class MTICommandContainer(TreeModel):
     def __init__(self, parent):
         TreeModel.__init__(self, parent, "MTI Commands")
@@ -116,3 +118,94 @@ class DAQIOContainer(TreeModel):
 
     def getImage(self):
         return sim_desk.ui.images.folder_collapse
+
+
+class ScenarioPyContainer(TreeModel):
+    def __init__(self, parent):
+        TreeModel.__init__(self, parent, "Scenarios Script")
+        self.label = "Scenarios Script"
+        self.tree_action_list.append(
+            TreeAction("Add a new scenario script file", wx.ID_HIGHEST + 1000, self.add_new))
+        self.tree_action_list.append(
+            TreeAction("Import a new scenario script file", wx.ID_HIGHEST + 1000, self.import_scenario_file))
+
+    def getImage(self):
+        return sim_desk.ui.images.folder_collapse
+
+    def copy_to_project_local_folder(self,src):
+        dirtocopy = os.path.join(self.getRoot().getProjectDir(), TAG_NAME_FOLDER_TESTASSET)
+        abs_path = os.path.join(dirtocopy,os.path.basename(src))
+        shutil.copy(src,abs_path)
+        return abs_path
+
+    def from_json(self,element):
+        if element.get('sub_models') is not None:
+            for name, module in element['sub_models'].items():
+                abs_path = module['properties']['Path']['value']
+                script_model = ScriptModel(self, abs_path)
+            TreeModel.from_json(self,element)
+
+    def import_scenario_file(self,event):
+        dlg = wx.FileDialog(
+            self.getProject_Tree(), message="Choose a file",
+            defaultDir=os.getcwd(),
+            defaultFile="",
+            wildcard=name_file_wildcard,
+            style=wx.FD_OPEN | wx.FD_CHANGE_DIR
+        )
+
+        if dlg.ShowModal() == wx.ID_OK:
+            path = dlg.GetPath()
+            if os.path.exists(path):
+                if self.__isAllready(path):
+                    wx.MessageDialog(None, "Name file Already exists", "Name file not added", wx.OK).ShowModal()
+                    return
+                abs_path = self.copy_to_project_local_folder(path)
+                scriptmodel = ScriptModel(self,abs_path)
+
+                self.addChild(scriptmodel)
+                scriptmodel.populate()
+
+    def add_new(self,event):
+        dlg = wx.TextEntryDialog(self.getProject_Tree(),"Please input a script name","Script Name(.py)")
+        if dlg.ShowModal() == wx.ID_OK:
+            txt:str = dlg.GetValue()
+            assets_folder = os.path.join(self.getRoot().getProjectDir(), TAG_NAME_FOLDER_TESTASSET)
+            script_file_name = os.path.join(assets_folder,txt)
+            scriptmodel = ScriptModel(self,script_file_name)
+            current_path = os.path.dirname(__file__)
+            class_name:str = txt.rstrip(".py")
+            root_path = os.path.join(current_path,"../..")
+            template_file = os.path.join(root_path,"scenario_template.py")
+            with open(template_file,"r") as template_file:
+                txt = template_file.read()
+                txt = txt.replace("{{Scenario_Name}}",class_name.capitalize())
+                with open(script_file_name,"w") as script_file:
+                    script_file.write(txt)
+
+    def start_all_scenarios(self):
+        for sce in self.getModelChildren():
+            name = sce.getPropertyByName('Name').getStringValue()
+            self.start_scenario(name)
+
+    def stop_all_scenarios(self):
+        for sce in self.getModelChildren():
+            name = sce.getPropertyByName('Name').getStringValue()
+            self.stop_scenario(name)
+
+    def start_scenario(self,scenario_name):
+        for sce in self.getModelChildren():
+            if sce.getPropertyByName('Name').getStringValue() == scenario_name:
+                if sce.getPropertyByName('Enabled').getStringValue() == "True":
+                    obj = sce.register_scenario()
+                    if obj is not None:
+                        obj.start_scenario()
+
+    def stop_scenario(self,scenario_name):
+        for sce in self.getModelChildren():
+            if sce.getPropertyByName('Name').getStringValue() == scenario_name:
+                if sce.getPropertyByName('Enabled').getStringValue() == "True":
+                    if sce.scenario_object is not None:
+                        sce.scenario_object.stop_scenario()
+
+

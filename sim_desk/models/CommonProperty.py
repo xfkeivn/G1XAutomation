@@ -87,7 +87,7 @@ class BoolProperty(CommonProperty):
         self.wxproperty.SetValueFromString (self.getStringValue())
         return self.wxproperty
 
-    def from_xml(self,element):
+    def from_json(self,element):
         stringvalue  =  element.get("value")
         if stringvalue == "true" :
             self.stringvalue = "True"
@@ -158,7 +158,7 @@ class EnumProperty(CommonProperty):
     def setValues(self,enumvalues):
         self.enumvalues = enumvalues  
 
-    def from_xml(self,element):
+    def from_json(self,element):
         self.strin = element.get("value")
         self.stringvalue = self.strin
 

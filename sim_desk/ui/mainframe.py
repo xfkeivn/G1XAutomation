@@ -1,7 +1,9 @@
+import threading
+
 import wx
 import os
 from sim_desk import constant
-import subprocess
+from sim_desk.mgr.context import SimDeskContext
 from sim_desk.mgr.appconfig import AppConfig
 from sim_desk.ui.propertygrid import PropertyGridPanel
 from sim_desk.ui.project_tree import ProjectTreeCtrl
@@ -10,8 +12,10 @@ from sim_desk.models.Project import Project
 from sim_desk.models.TreeModel import EVT_MODEL_DIRTYSTATE_CHANGE_EVENT
 from sim_desk.ui.console import Console
 from sim_desk.models import TreeModel
-from sim_desk.mgr.context import CONSOLE
+from sim_desk.ui.scrip_editor import PythonSTC
 from BackPlaneSimulator import BackPlaneSimulator as BPS
+from sim_desk.ui.screenframe import MyScrolledPanel
+import executor_context
 try:
     from agw import aui
 except ImportError:  # if it's not there locally, try the wxPython lib.
@@ -35,19 +39,22 @@ ID_ScreenShot = wx.ID_HIGHEST + 30
 ID_FirstLastestProject = wx.ID_HIGHEST + 40
 
 
-
 class MainFrame(wx.Frame):
 
     def __init__(self, parent, id=wx.ID_ANY, title="", pos=wx.DefaultPosition, size=wx.DefaultSize,
                  style=wx.DEFAULT_FRAME_STYLE | wx.SUNKEN_BORDER):
 
         wx.Frame.__init__(self, parent, id, title, pos, size, style)
+        SimDeskContext().set_main_frame(self)
         self._mgr = aui.AuiManager()
         self._mgr.SetManagedWindow(self)
         self.SetIcon(images.main.GetIcon())
         self.sb = statusbar.StatusBar(self)
         self.SetStatusBar(self.sb)
+        self.screen_window = None
         self.process = None
+        self.notebook = None
+        self.screen_image = None
         self.BuildPanes()
         self.CreateMenuBar()
         self.BindEvents()
@@ -56,13 +63,16 @@ class MainFrame(wx.Frame):
         self.__fast_open_projects_list = []
         self.appconfig = AppConfig()
         self.SetTitle("G1X Simulator Control Desk")
+
         self.append_projects_to_fast_open(self.appconfig.getProjectHistoryList())
         # when the ui is all done, set the IO to Console
-        CONSOLE = self.console
         self.bps = BPS()
         self.squish_runner = None
+
         self.init()
         self._mgr.Update()
+        executor_context.ExecutorContext().set_gui_context(self)
+
 
     def init(self):
         projecthistories = self.appconfig.getProjectHistoryList()
@@ -127,7 +137,7 @@ class MainFrame(wx.Frame):
                           Bottom().MinimizeButton(True).Icon(images.viewconsole.GetBitmap()))
 
         self._mgr.AddPane(self.CreateNotebook(), aui.AuiPaneInfo().Name("Desk").Caption("Desk").
-                          Centre())
+                          Centre().CloseButton(False).CaptionVisible(False))
         self._mgr.AddPane(tb1, aui.AuiPaneInfo().Name("tb1").Caption("Big Toolbar").ToolbarPane().Top())
         self.original_perspective = self._mgr.SavePerspective()
 
@@ -169,14 +179,16 @@ class MainFrame(wx.Frame):
     def __del__(self):
         pass
 
+    @property
+    def squisher(self):
+        return self.squish_runner
+
     def onStart(self, evt):
         self.SetWindowStyle(wx.CAPTION | wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.RESIZE_BORDER)
         com_port_val = self.active_project.getPropertyByName("COM").getStringValue()
         result = self.bps.start(com_port_val)
         enabled_squish = self.active_project.squish_container.getPropertyByName("Enabled")
-
         if result and enabled_squish.getStringValue() == "True":
-
             ip_prop = self.active_project.squish_container.getPropertyByName("IP")
             aut_prop = self.active_project.squish_container.getPropertyByName("AUT")
             private_key = self.active_project.squish_container.getPropertyByName("PrivateKey")
@@ -188,6 +200,9 @@ class MainFrame(wx.Frame):
                 self.squish_runner.create_proxy()
                 self.squish_runner.connect()
                 self.active_project.squish_runner = self.squish_runner
+                self.screen_window.start()
+                #self.timer.Start(500)
+        self.active_project.scenario_py_container.start_all_scenarios()
         if result:
             self.__onRuntimeState()
 
@@ -227,6 +242,8 @@ class MainFrame(wx.Frame):
         self.tb.Realize()
 
     def onStop(self, evt):
+        self.active_project.scenario_py_container.stop_all_scenarios()
+        self.screen_window.stop()
         if self.bps.stop():
             self.__onNormalState()
             self.SetWindowStyle(wx.DEFAULT_FRAME_STYLE | wx.SUNKEN_BORDER)
@@ -235,9 +252,12 @@ class MainFrame(wx.Frame):
 
 
     def onScreenShot(self,evt):
+        relpath = os.path.relpath(os.path.dirname(__file__), "..")
+        screenshot_folder = os.path.join(relpath,"screenshot")
         if self.squish_runner:
             name = time.strftime('%Y%b%d_%H_%M_%S.png', time.localtime())
-            self.squish_runner.screen_save(name)
+            full_path_name = os.path.join(screenshot_folder,name)
+            self.squish_runner.screen_save(full_path_name)
 
     def OnPaneClose(self, evt):
         # print "close pane"
@@ -277,7 +297,7 @@ class MainFrame(wx.Frame):
 
     def OnClose(self, event):
 
-        if self.__Close_Active_Project() == False:
+        if self.__Close_Active_Project() is False:
             event.Veto()
             return
         self._mgr.UnInit()
@@ -304,9 +324,27 @@ class MainFrame(wx.Frame):
         self.OpenProject(projectdir)
         self.__onNormalState()
 
-    def onDriverManager(self, evt):
-        dmw = DMW(self)
-        dmw.run()
+    def add_new_notebook_page(self, ctrl,page_name):
+        return self.notebook.AddPage(ctrl,page_name)
+
+    def load_script_model(self,model):
+        filename = os.path.basename(model.script_file_path)
+        page_count = self.notebook.GetPageCount()
+        page_exists = False
+        page_stc = None
+        for idx in range(page_count):
+            txt = self.notebook.GetPageText(idx)
+            if filename == txt:
+                self.notebook.SetSelection(idx)
+                page_stc = self.notebook.GetPage(idx)
+                page_exists = True
+                break
+        if page_exists is False:
+            page_stc = PythonSTC(self.notebook,wx.ID_ANY)
+            idx = self.add_new_notebook_page(page_stc,filename)
+            self.notebook.SetSelection(idx)
+        return page_stc
+
 
     def DoUpdate(self):
 
@@ -450,11 +488,16 @@ class MainFrame(wx.Frame):
         return self.propertygridpanel
 
     def CreateNotebook(self):
-
-        # create the notebook off-window to avoid flicker
         client_size = self.GetClientSize()
         ctrl = aui.AuiNotebook(self, -1, wx.Point(client_size.x, client_size.y), wx.Size(430, 200))
 
+        arts = [aui.AuiDefaultTabArt, aui.AuiSimpleTabArt, aui.VC71TabArt, aui.FF2TabArt,
+                aui.VC8TabArt, aui.ChromeTabArt]
+        self.screen_window = MyScrolledPanel(self)
+        ctrl.AddPage(self.screen_window,"Screen")
+
+        # create the notebook off-window to avoid flicker
+        self.notebook = ctrl
         return ctrl
 
 #

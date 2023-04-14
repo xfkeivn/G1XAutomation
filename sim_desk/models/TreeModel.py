@@ -164,6 +164,10 @@ class TreeModel():
             else:
                 pass
 
+    def save(self):
+        for child in self.children_models:
+            child.save()
+
 
     def getLabel(self):
         return self.label
@@ -222,7 +226,6 @@ class TreeModel():
     def isDirty(self):
         return self.getRoot().is_Dirty
 
-
     def setDirty(self,flag= True):
         self.getRoot().is_Dirty = flag
         dsc_evt= DirtyStateChangedEvent(dirtystate = flag)
@@ -234,7 +237,7 @@ class TreeModel():
             child.close()
     
     def onActivate(self):
-        if self.getProject_Tree()!=None:
+        if self.getProject_Tree() is not None:
             self.getProperties_Tree().setModel(self)
 
         

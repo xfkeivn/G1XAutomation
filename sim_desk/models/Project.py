@@ -1,12 +1,13 @@
-from sim_desk.models.FolderModel import CommandResponseContainer,SquishContainer,MTICommandContainer,DAQIOContainer
+from sim_desk.models.FolderModel import CommandResponseContainer,SquishContainer,MTICommandContainer,DAQIOContainer, ScenarioPyContainer
 import os
 from sim_desk.mgr.appconfig import AppConfig
-from sim_desk import mgr
+from utils.logging import logger
 import json
 import copy
 from sim_desk.models.CommandResponse import *
 from sim_desk.mgr.tag_names import *
 from serial.tools.list_ports import comports
+from sim_desk.mgr.context import SimDeskContext
 
 
 class Project(TreeModel):
@@ -30,6 +31,8 @@ class Project(TreeModel):
         self.project_config['Project']['name'] = self.label
         self.project_config['Project']['last_perspective'] = None
         self.squish_container = None
+        self.scenario_py_container = None
+        SimDeskContext().set_project_model(self)
 
     def __enum_com_ports(self):
         comPorts = comports()
@@ -60,6 +63,9 @@ class Project(TreeModel):
         self.addChild(model)
         model = DAQIOContainer(self)
         self.addChild(model)
+        model = ScenarioPyContainer(self)
+        self.scenario_py_container = model
+        self.addChild(model)
 
     def __load_json(self, project_dir):
         if not os.path.exists(project_dir):
@@ -82,7 +88,7 @@ class Project(TreeModel):
             self.from_json(self.project_config['Project'])
             self.onActivate()
         except Exception as err:
-            mgr.context.CONSOLE.error(err)
+            logger.error(err)
 
     def create(self, projectname, project_folder_dir):
         self.project_dir = os.path.join(project_folder_dir, projectname)
@@ -116,6 +122,7 @@ class Project(TreeModel):
         self.project_config['Project'].update(json_result)
 
     def save(self):
+        TreeModel.save(self)
         self.to_json()
         if self.isDirty():
             with open(self.project_file, "w") as configfile:
@@ -126,8 +133,8 @@ class Project(TreeModel):
     def from_json(self,element):
         TreeModel.from_json(self,element)
 
-
     def saveDefaultPerspective(self, perspective):
+        self.project_config['Project']['last_perspective'] = perspective
         self.default_perspective = perspective
 
 
