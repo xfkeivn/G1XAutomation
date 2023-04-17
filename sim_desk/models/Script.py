@@ -9,7 +9,7 @@ from sim_desk.models.CommonProperty import StringProperty,BoolProperty
 from sim_desk.mgr.context import SimDeskContext
 from sim_desk.models.TreeModel import TreeAction
 import wx
-from utils.logging import logger
+from utils import logger
 from scenario import Scenario
 from executor_context import ExecutorContext
 SCRIPT_DOC='''
@@ -54,6 +54,9 @@ class ScriptModel(TreeModel):
         pathprop = StringProperty("Name", "Name", editable=False)
         self.addProperties(pathprop)
         basename = os.path.splitext(os.path.basename(self.script_file_path))[0]
+        pathprop.setStringValue(basename)
+        pathprop = StringProperty("Alias", "Alias", editable=True)
+        self.addProperties(pathprop)
         pathprop.setStringValue(basename)
         pathprop = StringProperty("Description", "Description", editable=True)
         self.addProperties(pathprop)

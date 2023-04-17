@@ -9,8 +9,20 @@ TEST_CASE_1_SCREENSHOT
     [Tags]    MAINPAGE    SCREENSHOT    DEMO    stimulation
     Log    this is the test demo, started
     sleep    1s
+    Mouse Xy    722    161
+    sleep    0.5s
     Screen Shot
+    Mouse XY    426    718
     sleep    10s
+    Start Scenario    RampMeasure
+    sleep    10s
+    Stop Scenario    RampMeasure
+    Screen Shot
+    sleep    1s
+    Start Scenario    RampMeasure
+    sleep    5s
+    Stop Scenario    RampMeasure
+    sleep    5s
     Log    this is the test demo, started
     Screen Shot
 

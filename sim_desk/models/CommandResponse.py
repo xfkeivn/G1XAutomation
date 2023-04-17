@@ -17,14 +17,14 @@ from sim_desk.models.CommonProperty import *
 from sim_desk.ui.images import message_reply, signal, slot, did,message
 from BackPlaneSimulator import BackPlaneSimulator as BPS
 from BackPlaneSimulator import CommandResponseFilter
-from sim_desk.models.TreeModel import TREEMODEL_STATUS_NORMAL,TREEMODEL_STATUS_RUNTIME
-
+from sim_desk.models.TreeModel import TREEMODEL_STATUS_NORMAL,TREEMODEL_STATUS_RUNTIME, TreeAction
 
 class CommandResponseModel(TreeModel):
-    def __init__(self,parent,label,response_cls):
+    def __init__(self,parent,label,response_cls,command_cls):
         TreeModel.__init__(self,parent,label)
         self.image = message_reply
         self.response_obj = response_cls()
+        self.command_class = command_cls
 
 
         number_value_property = StringProperty('Command Code', 'Command Code',
@@ -78,6 +78,13 @@ class CommandResponseModel(TreeModel):
             else:
                 CommandResponseFilter().exclude_command(command_code)
 
+    def get_script_snippet(self):
+        snippet = f'    def on_receive_{self.command_class.__name__}(self,commandObj):\n' \
+                  f'        pass\n\n' \
+                  f'    def on_response_{self.command_class.__name__}(self,responseObj):\n' \
+                  f'        pass'
+        return snippet
+
 
 class ElementModel(TreeModel):
     def __init__(self,parent,label,default_value):
@@ -129,6 +136,19 @@ class FieldNumberModel(TreeModel):
             number_value_property = IntProperty(label, label, default_value, editable=True)
 
         self.addProperties(number_value_property)
+        self.tree_action_list.append(
+            TreeAction("Copy", wx.ID_HIGHEST + 1010, self.on_copy))
+
+    def on_copy(self,evt):
+        # Copy the text to the system clipboard
+        clipboard = wx.Clipboard.Get()
+        text = self.get_parameter_name()[0]
+        data = wx.TextDataObject(self.__get_name_without_response_name(text))
+        clipboard.SetData(data)
+
+    def __get_name_without_response_name(self, full_name):
+        parts = full_name.split('.')
+        return ".".join(parts[1:])
 
     def get_parameter_name(self):
         name_list = []
@@ -143,6 +163,11 @@ class FieldNumberModel(TreeModel):
             parent = parent.parent
         reversed_names = reversed(name_list)
         return ".".join(reversed_names),command_code
+
+    def get_script_snippet(self):
+        full_text = self.get_parameter_name()[0]
+        snippet = f'{self.__get_name_without_response_name(full_text)}'
+        return snippet
 
 
     def updateProperty(self,wxprop):
@@ -205,12 +230,22 @@ class ResponseModelGenerator():
 
     def create_command_response_models(self,):
         response_classes = []
+        response_command_mapping = dict()
+        for name in dir(gx_commands):
+            cls_obj = getattr(gx_commands, name)
+            if isinstance(cls_obj, type) and issubclass(cls_obj, Command) and 'Command' not in cls_obj.__name__:
+                response_obj = cls_obj().response
+                response_cls_name = response_obj.__class__.__name__
+                response_command_mapping[response_cls_name] = cls_obj
+
         for name in dir(gx_commands):
             obj = getattr(gx_commands, name)
             if isinstance(obj, type) and issubclass(obj, Response) and 'Response' not in obj.__name__:
                 response_classes.append(obj)
+
         for response_cls in response_classes:
-            model = CommandResponseModel(self.container,response_cls.__name__,response_cls)
+            command_cls = response_command_mapping.get(response_cls.__name__)
+            model = CommandResponseModel(self.container,response_cls.__name__,response_cls,command_cls)
             self.container.addChild(model)
             self.create_field_models(response_cls,model)
 

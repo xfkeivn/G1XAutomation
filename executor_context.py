@@ -1,14 +1,19 @@
 from utils.singleton import Singleton
-from BackPlaneSimulator import BackPlaneSimulator
-from squish.squish_proxy import SquishProxy
 
+
+print (__name__)
 class ExecutorContext(metaclass=Singleton):
     SIMDESK_CONTEXT = "SimDesk"
     ROBOT_CONTEXT = "Robot"
 
     def __init__(self):
+        from BackPlaneSimulator import BackPlaneSimulator
+        from squish.squish_proxy import SquishProxy
         self.context_name = None
         self.context = None
+
+    def is_robot_context(self):
+        return self.context_name == ExecutorContext.ROBOT_CONTEXT
 
     def set_gui_context(self, context):
         self.context_name = ExecutorContext.SIMDESK_CONTEXT

@@ -5,7 +5,7 @@ import serial.tools.list_ports
 from gx_communication import constants
 from gx_communication import gx_commands
 from gx_communication import RD1055_format as rd
-from utils.logging import logger
+from utils import logger
 
 class SerialCmd:
 

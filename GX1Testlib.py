@@ -1,4 +1,5 @@
 import threading
+from executor_context import ExecutorContext
 from sim_desk.models.Project import Project
 from BackPlaneSimulator import BackPlaneSimulator as BPS
 from importlib import reload
@@ -10,14 +11,11 @@ import datetime
 import time
 import os
 import io
-
 curfiledir = os.path.dirname(__file__)
 sys.path.append(os.path.dirname(curfiledir))
 from robot import utils
 from robot.libraries.BuiltIn import BuiltIn
-from executor_context import ExecutorContext
-from robot.api import logger
-
+from utils import logger
 
 class CommandListener(object):
     def __init__(self):
@@ -276,6 +274,8 @@ class GX1Testlib(object):
             else:
                 logger.error("Squish tester failed to start")
                 return
+
+
         else:
             logger.warn("Project is already initialized")
 
@@ -315,6 +315,12 @@ class GX1Testlib(object):
     def find_logged_commands(self,command_code, start_seq=-1,**kwargs):
         return self.gx1_simulator.find_logged_command(command_code,start_seq,**kwargs)
 
+    def start_scenario(self, scenario_name):
+        self.project_model.scenario_py_container.start_scenario(scenario_name)
+
+    def stop_scenario(self, scenario_name):
+        self.project_model.scenario_py_container.stop_scenario(scenario_name)
+
     def screen_shot(self, embedded_image_to_report=True):
 
         """
@@ -337,6 +343,7 @@ class GX1Testlib(object):
             offset (int): The direction and length to drag in pixels.
 
         """
+        offset = int(offset)
         gobj = self._get_obj_from_alias(gobj)
         return self.squish_proxy.list_drag(gobj,offset)
 
@@ -361,6 +368,7 @@ class GX1Testlib(object):
             steps (int): number of ticks to move the mouse wheel.
 
         """
+        steps = int(steps)
         gobj = self._get_obj_from_alias(gobj)
         return self.squish_proxy.mouse_wheel(gobj,steps)
 
@@ -375,6 +383,7 @@ class GX1Testlib(object):
             y (int): position but not in use.
 
         """
+        steps = int(steps)
         return self.squish_proxy.mouse_wheel_screen(x,y,steps)
 
     def long_mouse_drag(self, gobj, steps):
@@ -386,6 +395,7 @@ class GX1Testlib(object):
             steps (int): pixels to drag.
 
         """
+        steps = int(steps)
         gobj = self._get_obj_from_alias(gobj)
         return self.squish_proxy.long_mouse_drag(gobj,steps)
 
@@ -410,6 +420,8 @@ class GX1Testlib(object):
             y (int): the pixels on the y axis.
 
         """
+        x = int(x)
+        y = int(y)
         return self.squish_proxy.mouse_xy(x,y)
 
     def long_mouse_click(self, gobj, x, y):
@@ -420,6 +432,8 @@ class GX1Testlib(object):
             y (int): the pixels on the y axis.
 
         """
+        x = int(x)
+        y = int(y)
         gobj = self._get_obj_from_alias(gobj)
         return self.squish_proxy.long_mouse_click(gobj,x,y)
 

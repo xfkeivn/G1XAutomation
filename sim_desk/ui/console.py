@@ -1,7 +1,7 @@
 import logging
 import wx
 import threading
-from utils.logging import logger
+from utils.sim_desk_logging import logger
 
 
 class WxTextCtrlHandler(logging.Handler):

@@ -6,8 +6,10 @@ from sim_desk.models.TreeModel import EVT_ADD_TO_TREE_EVENT
 from sim_desk.models.TreeModel import EVT_REMOVE_FROM_TREE_EVENT
 from sim_desk.models.TreeModel import EVT_UPDATE_TREE_ITEM_IMAGE
 from sim_desk.models.TreeModel import EVT_UPDATE_TREE_ITEM_LABEL
-from sim_desk.models.CommandResponse import FieldNumberModel
-from utils.logging import logger
+from sim_desk.models.CommandResponse import FieldNumberModel,CommandResponseModel
+from utils import logger
+
+
 class ProjectTreeCtrl( wx.TreeCtrl ):
     def __init__(self,parent,id, pos, size, style):
         wx.TreeCtrl.__init__(self, parent, id,pos, size,style)
@@ -217,9 +219,15 @@ class ProjectTreeCtrl( wx.TreeCtrl ):
     def OnDrag(self,evt):
         item = self.GetSelection()
         if item is not None and item.IsOk():
-            itemmodel= self.GetPyData(item)
-
-
+            itemmodel= self.GetItemData(item)
+            if isinstance(itemmodel,CommandResponseModel) or isinstance(itemmodel, FieldNumberModel):
+                snippet = itemmodel.get_script_snippet()
+                if snippet != "":
+                    data = wx.TextDataObject("model")
+                    data.SetText(snippet)
+                    dropSource = wx.DropSource(self)
+                    dropSource.SetData(data)
+                    dropSource.DoDragDrop(wx.Drag_AllowMove)
                 
   
         

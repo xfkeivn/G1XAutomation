@@ -16,6 +16,7 @@ from sim_desk.ui.scrip_editor import PythonSTC
 from BackPlaneSimulator import BackPlaneSimulator as BPS
 from sim_desk.ui.screenframe import MyScrolledPanel
 import executor_context
+import subprocess
 try:
     from agw import aui
 except ImportError:  # if it's not there locally, try the wxPython lib.
@@ -36,6 +37,7 @@ ID_StartTest = wx.ID_HIGHEST + 26
 ID_StopTest = wx.ID_HIGHEST + 27
 ID_ClearLog = wx.ID_HIGHEST + 29
 ID_ScreenShot = wx.ID_HIGHEST + 30
+ID_Robot = wx.ID_HIGHEST + 31
 ID_FirstLastestProject = wx.ID_HIGHEST + 40
 
 
@@ -121,10 +123,12 @@ class MainFrame(wx.Frame):
         tb1.AddSimpleTool(ID_ViewProperties, "ViewProperties", images.viewprop.GetBitmap())
         tb1.AddSimpleTool(ID_ViewConsole, "ViewConsole", images.viewconsole.GetBitmap())
         tb1.AddSeparator()
-        tb1.AddSimpleTool(ID_StartTest, "StartTop", images.run.GetBitmap())
+        tb1.AddSimpleTool(ID_StartTest, "StartTest", images.run.GetBitmap())
         tb1.AddSimpleTool(ID_StopTest, "StopTest", images.stop.GetBitmap())
         tb1.AddSeparator()
         tb1.AddSimpleTool(ID_ScreenShot, "ScreenShot", images.camera.GetBitmap())
+        tb1.Realize()
+        tb1.AddSimpleTool(ID_Robot, "Start RIDE", images.robot.GetBitmap())
         tb1.Realize()
         self.tb = tb1
         self._mgr.AddPane(self.CreateProjectTreeCtrl(), aui.AuiPaneInfo().
@@ -174,6 +178,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU_RANGE, self.onOpenProject, id=ID_FirstLastestProject, id2=ID_FirstLastestProject + 7)
         self.Bind(wx.EVT_MENU, self.onStart, id=ID_StartTest)
         self.Bind(wx.EVT_MENU, self.onStop, id=ID_StopTest)
+        self.Bind(wx.EVT_MENU, self.on_start_robot, id=ID_Robot)
         self.Bind(wx.EVT_MENU, self.clearlog, id=ID_ClearLog)
 
     def __del__(self):
@@ -182,6 +187,16 @@ class MainFrame(wx.Frame):
     @property
     def squisher(self):
         return self.squish_runner
+
+    def on_start_robot(self, evt):
+        # Activate the virtual environment
+        venv_path = os.path.join(os.path.dirname(__file__),"../../venv")
+        activate_script = os.path.join(venv_path, 'Scripts', 'activate.bat')
+        subprocess.call(activate_script, shell=True)
+
+        # Start the subprocess using the virtual environment's Python interpreter
+        python_path = os.path.join(venv_path, 'Scripts', 'python.exe')
+        subprocess.Popen([python_path, os.path.join(venv_path,'Scripts','ride.py')])
 
     def onStart(self, evt):
         self.SetWindowStyle(wx.CAPTION | wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.RESIZE_BORDER)

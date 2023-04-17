@@ -1,7 +1,7 @@
 from sim_desk.models.FolderModel import CommandResponseContainer,SquishContainer,MTICommandContainer,DAQIOContainer, ScenarioPyContainer
 import os
 from sim_desk.mgr.appconfig import AppConfig
-from utils.logging import logger
+from utils import logger
 import json
 import copy
 from sim_desk.models.CommandResponse import *
@@ -30,8 +30,8 @@ class Project(TreeModel):
         self.project_config.setdefault('Project', {})
         self.project_config['Project']['name'] = self.label
         self.project_config['Project']['last_perspective'] = None
-        self.squish_container = None
-        self.scenario_py_container = None
+        self.squish_container: SquishContainer = None
+        self.scenario_py_container: ScenarioPyContainer = None
         SimDeskContext().set_project_model(self)
 
     def __enum_com_ports(self):

@@ -7,8 +7,9 @@ import shutil
 from sim_desk.models.SquishNameFile import *
 from sim_desk.models.Script import *
 from sim_desk.mgr.tag_names import *
+from utils import logger
 name_file_wildcard = "Name File (*.py)|*.py"
-import json
+
 
 class CommandResponseContainer(TreeModel):
     def __init__(self,parent):
@@ -185,27 +186,34 @@ class ScenarioPyContainer(TreeModel):
 
     def start_all_scenarios(self):
         for sce in self.getModelChildren():
-            name = sce.getPropertyByName('Name').getStringValue()
+            name = sce.getPropertyByName('Alias').getStringValue()
             self.start_scenario(name)
 
     def stop_all_scenarios(self):
         for sce in self.getModelChildren():
-            name = sce.getPropertyByName('Name').getStringValue()
+            name = sce.getPropertyByName('Alias').getStringValue()
             self.stop_scenario(name)
 
     def start_scenario(self,scenario_name):
         for sce in self.getModelChildren():
-            if sce.getPropertyByName('Name').getStringValue() == scenario_name:
+            if sce.getPropertyByName('Alias').getStringValue() == scenario_name:
                 if sce.getPropertyByName('Enabled').getStringValue() == "True":
                     obj = sce.register_scenario()
                     if obj is not None:
                         obj.start_scenario()
+                        logger.info(f'The scenario {scenario_name} is started')
+                else:
+                    logger.warn(f'The scenario {scenario_name} is disabled in the configuration')
+                    break
 
-    def stop_scenario(self,scenario_name):
+    def stop_scenario(self, scenario_name):
         for sce in self.getModelChildren():
-            if sce.getPropertyByName('Name').getStringValue() == scenario_name:
+            if sce.getPropertyByName('Alias').getStringValue() == scenario_name:
                 if sce.getPropertyByName('Enabled').getStringValue() == "True":
                     if sce.scenario_object is not None:
                         sce.scenario_object.stop_scenario()
-
+                        logger.info(f'The scenario {scenario_name} is stopped')
+                else:
+                    logger.warn(f'The scenario {scenario_name} is disabled in the configuration')
+                    break
 

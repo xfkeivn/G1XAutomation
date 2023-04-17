@@ -17,7 +17,7 @@ import psutil
 import subprocess
 import time
 from project_specific import names
-from utils.logging import logger
+from utils import logger
 import queue
 
 def find_process(pname):

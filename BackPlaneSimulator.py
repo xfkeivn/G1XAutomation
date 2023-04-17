@@ -22,7 +22,7 @@ from gx_communication.bsnUtil import generateCrcBytes
 from threading import Thread
 import time
 from utils import simple_queue
-from utils.logging import logger
+from utils import logger
 
 
 # mapping of the command code with the Command

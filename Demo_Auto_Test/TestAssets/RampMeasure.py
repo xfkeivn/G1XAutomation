@@ -1,5 +1,5 @@
 from scenario import Scenario
-from utils.logging import logger
+from utils import logger
 
 class Rampmeasure(Scenario):
     """
@@ -25,7 +25,7 @@ class Rampmeasure(Scenario):
 
     def on_response_SetStimulationSettingCmd(self,response):
 
-         logger.info(str(response))
+         logger.info(str(response.data))
 
 
     def on_receive_GetMeasuredChannelsCmd(self,commandobj):
@@ -74,8 +74,8 @@ class Rampmeasure(Scenario):
         """
         logger.info("stop")
 
+    def on_response_GetStatusCmd(self,responseObj):
+        pass
 
-
-
-
-
+    def on_response_GetMeasuredChannelsCmd(self,responseObj):
+        logger.info(f'u16_TempRef = {responseObj.data.ar_measured_channels[0].u16_TempRef}')

@@ -36,7 +36,7 @@ else:
 class DropTarget(wx.DropTarget):
     def __init__(self,editor):
         wx.DropTarget.__init__(self)
-        self.data = wx.CustomDataObject("model")
+        self.data = wx.TextDataObject("model")
         self.SetDataObject(self.data)
         self.editor = editor
 
@@ -56,7 +56,7 @@ class DropTarget(wx.DropTarget):
     def OnData(self, x, y, d):
 
         if self.GetData():
-            datastr = self.data.GetData()
+            datastr = self.data.GetText()
             pos = self.editor.GetInsertionPoint()
             self.editor.InsertText(pos,datastr)
         return d  

@@ -5,7 +5,7 @@ from squish.squish_proxy import SquishProxy
 from BackPlaneSimulator import BackPlaneSimulator
 from threading import Thread
 from BackPlaneSimulator import Command_Code_Class_Mapping
-
+from utils import logger
 
 class Scenario(Thread):
     def __init__(self):
@@ -18,10 +18,14 @@ class Scenario(Thread):
         self.response_callbacks = dict()
         self.command_code_name_mapping = dict()
         self.command_name_code_mapping = dict()
+        self.response_code_name_mapping = dict()
+        self.response_name_code_mapping = dict()
         self.__scenario_started = False
         for command_code, command_cls in Command_Code_Class_Mapping.items():
             self.command_code_name_mapping[command_code] = command_cls.__name__
             self.command_name_code_mapping[command_cls.__name__] = command_code
+            self.response_code_name_mapping[command_code] = command_cls.__name__
+            self.response_name_code_mapping[command_cls.__name__] = command_code
 
         for method in self.object_methods:
             if method.startswith("on_receive_"):
@@ -29,8 +33,8 @@ class Scenario(Thread):
                 command_code = self.command_name_code_mapping.get(command_name)
                 self.command_callbacks[command_code] = method
             if method.startswith("on_response_"):
-                command_name = method[10:]
-                command_code = self.command_name_code_mapping.get(command_name)
+                command_name = method[12:]
+                command_code = self.response_name_code_mapping.get(command_name)
                 self.response_callbacks[command_code] = method
 
     @property
