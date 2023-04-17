@@ -7,8 +7,6 @@ class ExecutorContext(metaclass=Singleton):
     ROBOT_CONTEXT = "Robot"
 
     def __init__(self):
-        from BackPlaneSimulator import BackPlaneSimulator
-        from squish.squish_proxy import SquishProxy
         self.context_name = None
         self.context = None
 
@@ -25,6 +23,7 @@ class ExecutorContext(metaclass=Singleton):
 
     @property
     def squisher_runner(self):
+        from squish.squish_proxy import SquishProxy
         squisher:SquishProxy = None
         if self.context_name == ExecutorContext.SIMDESK_CONTEXT:
             from sim_desk.mgr.context import SimDeskContext
@@ -35,6 +34,7 @@ class ExecutorContext(metaclass=Singleton):
 
     @property
     def simulator(self):
+        from BackPlaneSimulator import BackPlaneSimulator
         simulator:BackPlaneSimulator = None
         if self.context_name == ExecutorContext.SIMDESK_CONTEXT:
             simulator  = self.context.bps

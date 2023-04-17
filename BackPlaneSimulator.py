@@ -128,7 +128,7 @@ class BackPlaneSimulator(metaclass=Singleton):
         self.command_response_filter = CommandResponseFilter()
 
     def start(self, com_port="COM3"):
-        self.command_listeners.clear()
+        #self.command_listeners.clear()
         self.command_logging.clear()
         self.command_response_pending.clear()
         if self.receive_thread is not None and self.receive_thread.is_alive():
@@ -154,7 +154,8 @@ class BackPlaneSimulator(metaclass=Singleton):
         return not self.receive_thread.is_alive()
 
     def add_command_listener(self, listener):
-        self.command_listeners.append(listener)
+        if listener not in self.command_listeners:
+            self.command_listeners.append(listener)
 
     def set_command_pending_response(self,command_code, command_response_obj):
         if command_code not in Command_Code_Class_Mapping:
