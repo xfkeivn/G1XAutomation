@@ -203,12 +203,10 @@ class ProjectTreeCtrl( wx.TreeCtrl ):
             model.onActivate()       
         event.Skip()
 
-
     def OnActivate(self, event):
         if self.item:
             pass
-        
-        
+
     def OnCompareItems(self, item1, item2):
         t1 = self.GetItemText(item1)
         t2 = self.GetItemText(item2)

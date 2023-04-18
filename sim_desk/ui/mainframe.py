@@ -9,12 +9,12 @@ from sim_desk.ui.propertygrid import PropertyGridPanel
 from sim_desk.ui.project_tree import ProjectTreeCtrl
 from sim_desk.ui.wizards.NewProjectWizard import NewProjectWizard as NPW
 from sim_desk.models.Project import Project
-from sim_desk.models.TreeModel import EVT_MODEL_DIRTYSTATE_CHANGE_EVENT
-from sim_desk.ui.console import Console
-from sim_desk.models import TreeModel
+from sim_desk.models.TreeModel import *
 from sim_desk.ui.scrip_editor import PythonSTC
 from BackPlaneSimulator import BackPlaneSimulator as BPS
 from sim_desk.ui.screenframe import MyScrolledPanel
+from sim_desk.ui.ImagePanel import *
+from sim_desk.ui.console import Console
 import executor_context
 import subprocess
 try:
@@ -65,7 +65,7 @@ class MainFrame(wx.Frame):
         self.__fast_open_projects_list = []
         self.appconfig = AppConfig()
         self.SetTitle("G1X Simulator Control Desk")
-
+        self.feature_detection_panel = None
         self.append_projects_to_fast_open(self.appconfig.getProjectHistoryList())
         # when the ui is all done, set the IO to Console
         self.bps = BPS()
@@ -240,7 +240,7 @@ class MainFrame(wx.Frame):
 
     def __onNormalState(self):
         if self.active_project:
-            self.active_project.set_model_status(TreeModel.TREEMODEL_STATUS_NORMAL)
+            self.active_project.set_model_status(TREEMODEL_STATUS_NORMAL)
             toolcount = self.tb.GetToolCount()
             for toolindex in range(toolcount):
                 tool = self.tb.FindToolByIndex(toolindex)
@@ -249,7 +249,7 @@ class MainFrame(wx.Frame):
                     self.tb.EnableTool(ID_SaveProject, self.active_project.isDirty())
         self.tb.EnableTool(ID_StopTest, False)
         self.sb.SetText1("Project is Editing")
-        self.sb.SetStatus(TreeModel.TREEMODEL_STATUS_NORMAL)
+        self.sb.SetStatus(TREEMODEL_STATUS_NORMAL)
         self.GetMenuBar().EnableTop(0, True)
         self.GetMenuBar().EnableTop(1, True)
         self.GetMenuBar().EnableTop(2, True)
@@ -509,8 +509,10 @@ class MainFrame(wx.Frame):
         arts = [aui.AuiDefaultTabArt, aui.AuiSimpleTabArt, aui.VC71TabArt, aui.FF2TabArt,
                 aui.VC8TabArt, aui.ChromeTabArt]
         self.screen_window = MyScrolledPanel(self)
-        ctrl.AddPage(self.screen_window,"Screen")
-
+        self.feature_detection_panel = ImagePanel(self)
+        ctrl.AddPage(self.screen_window, "Screen")
+        ctrl.AddPage(self.feature_detection_panel, "Image Features")
+        SimDeskContext().set_image_feature_panel(self.feature_detection_panel)
         # create the notebook off-window to avoid flicker
         self.notebook = ctrl
         return ctrl

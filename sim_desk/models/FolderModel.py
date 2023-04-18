@@ -3,12 +3,13 @@ import sim_desk
 import wx
 from sim_desk.models.TreeModel import TreeAction
 import os
+from sim_desk.models.ImageModel import *
 import shutil
 from sim_desk.models.SquishNameFile import *
 from sim_desk.models.Script import *
 from sim_desk.mgr.tag_names import *
 from utils import logger
-name_file_wildcard = "Name File (*.py)|*.py"
+name_file_wildcard = "Name File (*.png)|*.png"
 
 
 class CommandResponseContainer(TreeModel):
@@ -119,6 +120,58 @@ class DAQIOContainer(TreeModel):
 
     def getImage(self):
         return sim_desk.ui.images.folder_collapse
+
+
+class ImageProcessingContainer(TreeModel):
+    def __init__(self, parent):
+        TreeModel.__init__(self, parent, "Image Features")
+        self.label = "Image Features"
+        self.tree_action_list.append(
+            TreeAction("Import Image File", wx.ID_HIGHEST + 2000, self.import_image_file))
+
+    def getImage(self):
+        return sim_desk.ui.images.folder_collapse
+
+    def from_json(self,element):
+        if element.get('sub_models') is not None:
+            for name, module in element['sub_models'].items():
+                abs_path = module['properties']['Path']['value']
+                image_model = ImageModel(self, abs_path)
+                self.addChild(image_model)
+        TreeModel.from_json(self,element)
+
+    def import_image_file(self,evt):
+        dlg = wx.FileDialog(
+            self.getProject_Tree(), message="Choose a file",
+            defaultDir=os.getcwd(),
+            defaultFile="",
+            wildcard=name_file_wildcard,
+            style=wx.FD_OPEN | wx.FD_CHANGE_DIR
+        )
+
+        if dlg.ShowModal() == wx.ID_OK:
+            path = dlg.GetPath()
+            if os.path.exists(path):
+                if self.__isAllready(path):
+                    wx.MessageDialog(None, "Name file Already exists", "Name file not added", wx.OK).ShowModal()
+                    return
+                abs_path = self.copy_to_project_local_folder(path)
+                image_model = ImageModel(self, abs_path)
+                self.addChild(image_model)
+                image_model.populate()
+
+
+    def copy_to_project_local_folder(self,src):
+        dirtocopy = os.path.join(self.getRoot().getProjectDir(), TAG_NAME_FOLDER_TESTASSET)
+        abs_path = os.path.join(dirtocopy,os.path.basename(src))
+        shutil.copy(src,abs_path)
+        return abs_path
+
+    def __isAllready(self,absname):
+        for dbcmodel in self.getModelChildren():
+            if dbcmodel.getLabel() == os.path.exists(absname):
+                return True
+        return False
 
 
 class ScenarioPyContainer(TreeModel):

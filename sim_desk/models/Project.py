@@ -1,4 +1,4 @@
-from sim_desk.models.FolderModel import CommandResponseContainer,SquishContainer,MTICommandContainer,DAQIOContainer, ScenarioPyContainer
+from sim_desk.models.FolderModel import CommandResponseContainer,SquishContainer,MTICommandContainer,DAQIOContainer,ImageProcessingContainer, ScenarioPyContainer
 import os
 from sim_desk.mgr.appconfig import AppConfig
 from utils import logger
@@ -31,6 +31,7 @@ class Project(TreeModel):
         self.project_config['Project']['name'] = self.label
         self.project_config['Project']['last_perspective'] = None
         self.squish_container: SquishContainer = None
+        self.image_processing_container: ImageProcessingContainer = None
         self.scenario_py_container: ScenarioPyContainer = None
         SimDeskContext().set_project_model(self)
 
@@ -51,12 +52,10 @@ class Project(TreeModel):
         self.project_file = os.path.join(self.project_dir, "project.json")
         self.label = os.path.basename(self.project_dir)
         self.getPropertyByName('Location').setStringValue(self.project_file)
-
         model = CommandResponseContainer(self)
         self.addChild(model)
         generator = ResponseModelGenerator(model)
         generator.create_command_response_models()
-
         self.squish_container = SquishContainer(self)
         self.addChild(self.squish_container)
         model = MTICommandContainer(self)
@@ -65,6 +64,9 @@ class Project(TreeModel):
         self.addChild(model)
         model = ScenarioPyContainer(self)
         self.scenario_py_container = model
+        self.addChild(model)
+        model = ImageProcessingContainer(self)
+        self.image_processing_container = model
         self.addChild(model)
 
     def __load_json(self, project_dir):

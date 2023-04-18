@@ -7,6 +7,13 @@ class SimDeskContext(metaclass=Singleton):
         from sim_desk.models.Project import Project
         self.__main_frame:MainFrame = None
         self.__project_model:Project = None
+        self.__image_feature_panel = None
+
+    def set_image_feature_panel(self, image_feature_panel):
+        self.__image_feature_panel = image_feature_panel
+
+    def get_image_feature_panel(self):
+        return self.__image_feature_panel
 
     def set_main_frame(self,main_frame):
 

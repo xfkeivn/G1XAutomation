@@ -33,17 +33,17 @@ def parse_squish_name_file(name_file):
 class SquishName(TreeModel):
     def __init__(self, parent, name, name_object):
         TreeModel.__init__(self, parent, name)
-        pathprop = StringProperty("Name", "Name", editable=False)
-        pathprop.setStringValue(name)
-        pathprop.setSavable(False)
-        self.addProperties(pathprop)
-        pathprop = StringProperty("Object", "Object", editable=False)
-        pathprop.setSavable(False)
-        pathprop.setStringValue(str(name_object))
-        self.addProperties(pathprop)
-        pathprop = StringProperty("Alias", "Alias", editable=True)
-        pathprop.setSavable(True)
-        self.addProperties(pathprop)
+        name_prop = StringProperty("Name", "Name", editable=False)
+        name_prop.setStringValue(name)
+        name_prop.setSavable(False)
+        self.addProperties(name_prop)
+        object_prop = StringProperty("Object", "Object", editable=False)
+        object_prop.setSavable(False)
+        object_prop.setStringValue(str(name_object))
+        self.addProperties(object_prop)
+        alias_prop = StringProperty("Alias", "Alias", editable=True)
+        alias_prop.setSavable(True)
+        self.addProperties(alias_prop)
         self.tree_action_list.append(
             TreeAction("Mouse Click", wx.ID_HIGHEST + 1011, self.mouse_click))
 
@@ -56,7 +56,6 @@ class SquishName(TreeModel):
         self.getRoot().squish_runner.mouse_click(obj)
 
 
-
 class SquishNameFile(TreeModel):
     def __init__(self, parent, squish_file_path=None):
         TreeModel.__init__(self, parent, os.path.basename(squish_file_path))
@@ -64,10 +63,10 @@ class SquishNameFile(TreeModel):
         if self.filepath is not None:
             self.label = os.path.basename(self.filepath)
         self.tree_action_list.append(TreeAction("Remove", wx.ID_HIGHEST + 1001, self.remove_self))
-        pathprop = StringProperty("Path", "Path", editable=False)
-        pathprop.setStringValue(self.filepath)
-        pathprop.setSavable(False)
-        self.addProperties(pathprop)
+        path_prop = StringProperty("Path", "Path", editable=False)
+        path_prop.setStringValue(self.filepath)
+        path_prop.setSavable(False)
+        self.addProperties(path_prop)
 
     def populate(self):
         names = parse_squish_name_file(self.filepath)
@@ -77,7 +76,6 @@ class SquishNameFile(TreeModel):
 
     def from_json(self,element):
         TreeModel.from_json(self,element)
-
 
     def getImage(self):
         return flex
