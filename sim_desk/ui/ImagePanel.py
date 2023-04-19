@@ -3,7 +3,6 @@ import wx.lib.scrolledpanel as scrolled
 import os
 
 
-
 class ImagePanel(scrolled.ScrolledPanel):
     def __init__(self, parent):
         scrolled.ScrolledPanel.__init__(self, parent)
@@ -54,13 +53,13 @@ class ImagePanel(scrolled.ScrolledPanel):
                         self.canvas_panel.SetCursor(wx.Cursor(wx.CURSOR_HAND))
                     elif self.current_region.inAnchor1(pos.x,pos.y):
                         self.current_region.editmode = EDIT_MODE_RESIZING_XY
-                        self.canvas_panel.SetCursor( wx.Cursor(wx.CURSOR_SIZENWSE))
+                        self.canvas_panel.SetCursor(wx.Cursor(wx.CURSOR_SIZENWSE))
                     elif self.current_region.inAnchor2(pos.x, pos.y):
                         self.current_region.editmode = EDIT_MODE_RESIZING_Y
-                        self.canvas_panel.SetCursor( wx.Cursor(wx.CURSOR_SIZENS))
+                        self.canvas_panel.SetCursor(wx.Cursor(wx.CURSOR_SIZENS))
                     elif self.current_region.inAnchor3(pos.x, pos.y):
                         self.current_region.editmode = EDIT_MODE_RESIZING_X
-                        self.canvas_panel.SetCursor( wx.Cursor(wx.CURSOR_SIZEWE))
+                        self.canvas_panel.SetCursor(wx.Cursor(wx.CURSOR_SIZEWE))
 
             if event.ButtonDown():
                 pos = event.GetPosition()
@@ -101,6 +100,8 @@ class ImagePanel(scrolled.ScrolledPanel):
                         self.current_region.move(pos.x, pos.y)
 
     def loadImage(self, imageobj):
+        w,h = imageobj.image.GetWidth(),imageobj.image.GetHeight()
+        self.SetSizeWH(w,h)
         if self.imageobj is None or self.imageobj is not imageobj:
             self.imageobj = imageobj
             self.canvas_panel.SetSizeHints(imageobj.image.GetWidth(), imageobj.image.GetHeight())
