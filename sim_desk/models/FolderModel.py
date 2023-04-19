@@ -1,16 +1,13 @@
 from sim_desk.models.TreeModel import TreeModel
 import sim_desk
-import wx
-from sim_desk.models.TreeModel import TreeAction
-import os
 from sim_desk.models.ImageModel import *
 import shutil
 from sim_desk.models.SquishNameFile import *
 from sim_desk.models.Script import *
 from sim_desk.mgr.tag_names import *
 from utils import logger
-name_file_wildcard = "Name File (*.png)|*.png"
-
+python_file_wildcard = "Script File (*.py)|*.py"
+image_file_wildcard = "Image File (*.png)|*.png"
 
 class CommandResponseContainer(TreeModel):
     def __init__(self,parent):
@@ -69,14 +66,14 @@ class SquishContainer(TreeModel):
             self.getProject_Tree(), message="Choose a file",
             defaultDir=os.getcwd(),
             defaultFile="",
-            wildcard=name_file_wildcard,
+            wildcard=python_file_wildcard,
             style=wx.FD_OPEN | wx.FD_CHANGE_DIR
         )
 
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
             if os.path.exists(path):
-                if self.__isAllready(path):
+                if self.isAllready(path):
                     wx.MessageDialog(None, "Name file Already exists", "Name file not added", wx.OK).ShowModal()
                     return
                 abs_path = self.copy_to_project_local_folder(path)
@@ -84,7 +81,7 @@ class SquishContainer(TreeModel):
                 self.addChild(squish_name_file)
                 squish_name_file.populate()
 
-    def __isAllready(self,absname):
+    def isAllready(self,absname):
         for dbcmodel in self.getModelChildren():
             if dbcmodel.getLabel() == os.path.exists(absname):
                 return True
@@ -145,14 +142,14 @@ class ImageProcessingContainer(TreeModel):
             self.getProject_Tree(), message="Choose a file",
             defaultDir=os.getcwd(),
             defaultFile="",
-            wildcard=name_file_wildcard,
+            wildcard=image_file_wildcard,
             style=wx.FD_OPEN | wx.FD_CHANGE_DIR
         )
 
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
             if os.path.exists(path):
-                if self.__isAllready(path):
+                if self.isAllready(path):
                     wx.MessageDialog(None, "Name file Already exists", "Name file not added", wx.OK).ShowModal()
                     return
                 abs_path = self.copy_to_project_local_folder(path)
@@ -161,17 +158,7 @@ class ImageProcessingContainer(TreeModel):
                 image_model.populate()
 
 
-    def copy_to_project_local_folder(self,src):
-        dirtocopy = os.path.join(self.getRoot().getProjectDir(), TAG_NAME_FOLDER_TESTASSET)
-        abs_path = os.path.join(dirtocopy,os.path.basename(src))
-        shutil.copy(src,abs_path)
-        return abs_path
 
-    def __isAllready(self,absname):
-        for dbcmodel in self.getModelChildren():
-            if dbcmodel.getLabel() == os.path.exists(absname):
-                return True
-        return False
 
 
 class ScenarioPyContainer(TreeModel):
@@ -204,21 +191,18 @@ class ScenarioPyContainer(TreeModel):
             self.getProject_Tree(), message="Choose a file",
             defaultDir=os.getcwd(),
             defaultFile="",
-            wildcard=name_file_wildcard,
+            wildcard=python_file_wildcard,
             style=wx.FD_OPEN | wx.FD_CHANGE_DIR
         )
 
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
             if os.path.exists(path):
-                if self.__isAllready(path):
+                if self.isAllready(path):
                     wx.MessageDialog(None, "Name file Already exists", "Name file not added", wx.OK).ShowModal()
                     return
                 abs_path = self.copy_to_project_local_folder(path)
-                scriptmodel = ScriptModel(self,abs_path)
-
-                self.addChild(scriptmodel)
-                scriptmodel.populate()
+                ScriptModel(self,abs_path)
 
     def add_new(self,event):
         dlg = wx.TextEntryDialog(self.getProject_Tree(),"Please input a script name","Script Name(.py)")

@@ -24,7 +24,6 @@ import time
 from utils import simple_queue
 from utils import logger
 
-
 # mapping of the command code with the Command
 Command_Code_Class_Mapping = {
     WHO_AM_I_CMD: commands.WhoAmICmd,
@@ -49,10 +48,10 @@ Command_Code_Class_Mapping = {
     GET_THERMAL_RF_SETTING_CMD: commands.GetThermalRFSettingCmd,
     GET_PULSED_RF_SETTING_CMD: commands.GetPulsedRFSettingCmd,
     CTRL_ADJUST_TEMP: commands.AdjustTempCmd,
-    SET_CPLD_REGISTERS:commands.SetCPLDRegCmd,
-    GET_CPLD_REGISTERS:commands.GetCPLDRegCmd,
-    SET_IMPEDANCE_SETTING:commands.SetImpedanceSettingCmd,
-    GET_IMPEDANCE_SETTING:commands.GetImpedanceSettingCmd,
+    SET_CPLD_REGISTERS: commands.SetCPLDRegCmd,
+    GET_CPLD_REGISTERS: commands.GetCPLDRegCmd,
+    SET_IMPEDANCE_SETTING: commands.SetImpedanceSettingCmd,
+    GET_IMPEDANCE_SETTING: commands.GetImpedanceSettingCmd,
 }
 
 
@@ -67,17 +66,14 @@ def test_crc(self):
 
 
 class MessageWrapper(object):
-    def __init__(self,command_obj,time_ns):
+    def __init__(self, command_obj, time_ns):
         self.sequence = 0
         self.time_ns = time_ns
         self.data = command_obj
-        if isinstance(command_obj,GX1Command):
+        if isinstance(command_obj, GX1Command):
             self.code = command_obj.u16_CommandCode
         else:
             self.cod = command_obj.u16_ResponseCode - 1
-
-    def __getattr__(self,name):
-        return getattr(self.data,name)
 
 
 class CommandResponseFilter(metaclass=Singleton):
@@ -89,34 +85,34 @@ class CommandResponseFilter(metaclass=Singleton):
         self.command_filter.clear()
         self.response_filter.clear()
 
-    def exclude_command(self,command_code):
+    def exclude_command(self, command_code):
         if command_code not in self.command_filter:
             self.command_filter.append(command_code)
 
-    def include_command(self,command_code):
-        if command_code  in self.command_filter:
+    def include_command(self, command_code):
+        if command_code in self.command_filter:
             self.command_filter.remove(command_code)
 
-    def exclude_response(self,response_code):
+    def exclude_response(self, response_code):
         if response_code not in self.response_filter:
             self.response_filter.append(response_code)
 
-    def include_response(self,response_code):
-        if response_code  in self.response_filter:
+    def include_response(self, response_code):
+        if response_code in self.response_filter:
             self.response_filter.remove(response_code)
 
-    def filter(self,commandobj):
+    def filter(self, commandobj):
         if isinstance(commandobj.data, GX1Command):
             if commandobj.code in self.command_filter:
                 return True
-        if isinstance(commandobj.data,GX1Response):
+        if isinstance(commandobj.data, GX1Response):
             if commandobj.data.u16_ResponseCode in self.response_filter:
                 return True
         return False
 
 
 class BackPlaneSimulator(metaclass=Singleton):
-    def __init__(self ):
+    def __init__(self):
         self.com_port = 'COM3'
         self.com_handle = None
         self.receive_thread = None
@@ -128,7 +124,7 @@ class BackPlaneSimulator(metaclass=Singleton):
         self.command_response_filter = CommandResponseFilter()
 
     def start(self, com_port="COM3"):
-        #self.command_listeners.clear()
+        # self.command_listeners.clear()
         self.command_logging.clear()
         self.command_response_pending.clear()
         if self.receive_thread is not None and self.receive_thread.is_alive():
@@ -150,14 +146,13 @@ class BackPlaneSimulator(metaclass=Singleton):
             self.receive_thread_stop = True
             self.receive_thread.join(1)
             self.com_handle.disconnect()
-
         return not self.receive_thread.is_alive()
 
     def add_command_listener(self, listener):
         if listener not in self.command_listeners:
             self.command_listeners.append(listener)
 
-    def set_command_pending_response(self,command_code, command_response_obj):
+    def set_command_pending_response(self, command_code, command_response_obj):
         if command_code not in Command_Code_Class_Mapping:
             return False
         self.pending_resp_lock.acquire()
@@ -165,43 +160,71 @@ class BackPlaneSimulator(metaclass=Singleton):
         self.pending_resp_lock.release()
         return True
 
-    def set_command_pending_response_by_parameters(self,command_code, **kwargs):
+    def set_command_pending_response_by_parameters(self, command_code, **kwargs):
+
         if command_code not in Command_Code_Class_Mapping:
             return False
         self.pending_resp_lock.acquire()
-        response_obj = self.command_response_pending.get(command_code)
-        if response_obj is None:
-            command_class = Command_Code_Class_Mapping.get(command_code)
-            response_obj = command_class().response
-            self.command_response_pending[command_code] = response_obj
-        self.__set_pending_response_filed_values(response_obj,**kwargs)
+        try:
+            response_obj = self.command_response_pending.get(command_code)
+            if response_obj is None:
+                command_class = Command_Code_Class_Mapping.get(command_code)
+                response_obj = command_class().response
+                self.command_response_pending[command_code] = response_obj
+            self.__set_pending_response_filed_values(response_obj, **kwargs)
+        except Exception as err:
+            logger.error(err)
         self.pending_resp_lock.release()
         return True
 
-    def __match_conditions(self, command_obj,**kwargs):
-        return True
+    def __match_conditions(self, wrapper_obj, **kwargs):
+        message_obj = wrapper_obj.data
+        match = True
+        for key, value in kwargs.items():
+            key = key.strip()
+            key_parts = key.split('.')
+            if key_parts[0] == message_obj.__class__.__name__:
+                key_parts = key_parts[1:]
+            layers = len(key_parts)
+            layer = 0
+            upper_layer_attr = message_obj
+            layer_attr = None
+            for key_part in key_parts:
+                layer_attr = self.__get_attr(key_part, upper_layer_attr)
+                if layer == layers - 1:
+                    break
+                else:
+                    upper_layer_attr = layer_attr
+                layer += 1
+            if layer_attr is not None:
+                val = getattr(upper_layer_attr, key_part)
+                if val != int(value):
+                    match = False
+                    break
+            return match
 
     def find_logged_commands(self, command_code, after_seq_id=-1, **kwargs):
         logged_commands = self.command_logging.get_all_retain_specific(command_code)
-        return [logged_command for logged_command in logged_commands if logged_command.sequence > after_seq_id and self.__match_conditions(logged_command) ]
+        return [logged_command for logged_command in logged_commands if
+                logged_command.sequence > after_seq_id and self.__match_conditions(logged_command, **kwargs)]
 
     def clean_logged_command_queue(self):
         self.command_logging.clear()
 
-    def __get_attr(self,key_name,parent_attr):
+    def __get_attr(self, key_name, parent_attr):
         if '[' not in key_name:
             return getattr(parent_attr, key_name)
         else:
             start_idx = key_name.find('[')
             end_idx = key_name.find(']')
             attrname = key_name[0:start_idx]
-            index = int(key_name[start_idx+1:end_idx])
-            keyattr = parent_attr
+            index = int(key_name[start_idx + 1:end_idx])
+            keyattr = getattr(parent_attr,attrname)
             if keyattr is None:
                 return None
             return keyattr[index]
 
-    def __set_pending_response_filed_values(self,pending_response_obj,**kwargs):
+    def __set_pending_response_filed_values(self, pending_response_obj, **kwargs):
         for key, value in kwargs.items():
             key = key.strip()
             key_parts = key.split('.')
@@ -212,35 +235,35 @@ class BackPlaneSimulator(metaclass=Singleton):
             upper_layer_attr = pending_response_obj
             layer_attr = None
             for key_part in key_parts:
-                layer_attr = self.__get_attr(key_part,upper_layer_attr)
+                layer_attr = self.__get_attr(key_part, upper_layer_attr)
                 if layer == layers - 1:
                     break
                 else:
                     upper_layer_attr = layer_attr
                 layer += 1
             if layer_attr is not None:
-                setattr(upper_layer_attr,key_part,value)
+                setattr(upper_layer_attr, key_part, value)
 
     def __process_command(self, command_code, command_obj):
         logged_msg = MessageWrapper(command_obj, time.time_ns())
         for command_listener in self.command_listeners:
             command_listener.on_command_received(logged_msg)
-        #Logging
+        # Logging
         if self.command_response_filter.filter(logged_msg) is True:
             return
-        self.command_logging.put(command_code,logged_msg)
+        self.command_logging.put(command_code, logged_msg)
         logger.debug(f'{logged_msg.time_ns // 1000000}:{logged_msg.data}')
 
     def __process_response(self, command_response_code, response_obj):
-        logged_msg = MessageWrapper (response_obj,time.time_ns())
+        logged_msg = MessageWrapper(response_obj, time.time_ns())
         for command_listener in self.command_listeners:
             command_listener.on_command_responsed(logged_msg)
 
-        #Logging
+        # Logging
         if self.command_response_filter.filter(logged_msg) is True:
             return
-        self.command_logging.put(command_response_code,logged_msg)
-        logger.debug(f'{logged_msg.time_ns//1000000}:{logged_msg.data}')
+        self.command_logging.put(command_response_code, logged_msg)
+        logger.debug(f'{logged_msg.time_ns // 1000000}:{logged_msg.data}')
 
     def __dispatch_command(self, command_obj):
         self.pending_resp_lock.acquire()
@@ -278,6 +301,3 @@ class BackPlaneSimulator(metaclass=Singleton):
             response_cmd = self.__dispatch_command(command_obj)
             self.com_handle.send_response(response_cmd)
             self.__process_response(response_cmd.u16_ResponseCode, response_cmd)
-
-
-

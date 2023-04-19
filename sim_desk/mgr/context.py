@@ -5,9 +5,10 @@ class SimDeskContext(metaclass=Singleton):
     def __init__(self):
         from sim_desk.ui.mainframe import MainFrame
         from sim_desk.models.Project import Project
+        from sim_desk.ui.ImagePanel import ImagePanel
         self.__main_frame:MainFrame = None
         self.__project_model:Project = None
-        self.__image_feature_panel = None
+        self.__image_feature_panel:ImagePanel = None
 
     def set_image_feature_panel(self, image_feature_panel):
         self.__image_feature_panel = image_feature_panel

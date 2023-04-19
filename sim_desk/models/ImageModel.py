@@ -1,20 +1,16 @@
-import wx
-
-from sim_desk.models.TreeModel import TreeModel
 from sim_desk.models.CommonProperty import *
 from sim_desk.models.TreeModel import *
 from sim_desk.ui.images import *
 from sim_desk.mgr.context import SimDeskContext
 from sim_desk.ui.ImagePanel import ImagePanel
 import os
-import uuid
 EDIT_MODE_MOVING = 0
 EDIT_MODE_RESIZING_XY = 1
 EDIT_MODE_RESIZING_X = 2
 EDIT_MODE_RESIZING_Y = 3
 ANCHORSIZE = 10
 
-
+from executor_context import ExecutorContext
 class FeatureRectModel(TreeModel):
     DETECTION_TYPE_OCR = 1
     DETECTION_TYPE_STRUCTURE_SIMILARITY = 2
@@ -52,10 +48,9 @@ class FeatureRectModel(TreeModel):
         self.feature_type = self.DETECTION_TYPE_OCR
         self.editmode = EDIT_MODE_RESIZING_XY
         self.mouse_pos = None
-
-        self.image_rect = wx.Rect(0, 0, self.parent.image.GetWidth(), self.parent.image.GetHeight())
         self.selected = False
-        self.font = wx.Font(14, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+        self.image_rect = wx.Rect(0, 0, 1024, 768)
+        #self.font = wx.Font(14, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
 
         self.tree_action_list.append(
             TreeAction("Remove", wx.ID_HIGHEST + 1011, self.remove_self))
@@ -122,7 +117,7 @@ class FeatureRectModel(TreeModel):
         gcdc.DrawRectangle(self.x, self.y, self.width, self.height)
         name = self.getPropertyByName("Alias").getStringValue()
         dc.SetTextForeground(wx.BLUE)
-        w,h = SimDeskContext().get_image_feature_panel().GetTextExtent(name)
+        w,h = SimDeskContext().get_image_feature_panel().canvas_panel.GetTextExtent(name)
         dc.DrawText(name or "", self.x + self.width / 2 - w / 2, self.y + self.height / 2 - h / 2)
 
     def inRange(self, x, y):
@@ -150,10 +145,10 @@ class FeatureRectModel(TreeModel):
         updateh = max(self.height, height)
         self.width = width
         self.height = height
-        SimDeskContext().get_image_feature_panel().RefreshRect(wx.Rect(self.x, self.y, updatew, updateh).Inflate(ANCHORSIZE, ANCHORSIZE))
+        SimDeskContext().get_image_feature_panel().canvas_panel.RefreshRect(wx.Rect(self.x, self.y, updatew, updateh).Inflate(ANCHORSIZE, ANCHORSIZE))
 
     def refresh(self):
-        SimDeskContext().get_image_feature_panel().RefreshRect(wx.Rect(self.x, self.y, self.width, self.height).Inflate(ANCHORSIZE, ANCHORSIZE))
+        SimDeskContext().get_image_feature_panel().canvas_panel.RefreshRect(wx.Rect(self.x, self.y, self.width, self.height).Inflate(ANCHORSIZE, ANCHORSIZE))
 
     def move(self, x, y):
         r1 = wx.Rect(self.x, self.y, self.width, self.height)
@@ -169,8 +164,12 @@ class FeatureRectModel(TreeModel):
             r2 = wx.Rect(x, y, self.width, self.height)
             r = r1.Union(r2)
             self.mouse_pos = wx.Point(x, y)
-            SimDeskContext().get_image_feature_panel().RefreshRect(r.Inflate(10, 10))
+            SimDeskContext().get_image_feature_panel().canvas_panel.RefreshRect(r.Inflate(10, 10))
 
+    def onActivate(self):
+        TreeModel.onActivate(self)
+        if not ExecutorContext().is_robot_context():
+            self.region_prop.setStringValue((f'({self.x},{self.y},{self.width},{self.height})'))
 
 class ImageModel(TreeModel):
     def __init__(self, parent, file_path):
@@ -196,7 +195,7 @@ class ImageModel(TreeModel):
         self.tree_action_list.append(
             TreeAction("Remove", wx.ID_HIGHEST + 1011, self.remove_self))
         self.path = path_prop.getStringValue()
-        self.image = wx.Image(self.path, wx.BITMAP_TYPE_ANY)
+        self.image = None
 
     def deselect_all(self):
         for rect in self.getModelChildren():
@@ -213,14 +212,18 @@ class ImageModel(TreeModel):
 
     def onActivate(self):
         TreeModel.onActivate(self)
-        SimDeskContext().get_image_feature_panel().loadImage(self)
+        if not ExecutorContext().is_robot_context():
+            self.image = wx.Image(self.path, wx.BITMAP_TYPE_ANY)
+            SimDeskContext().get_image_feature_panel().loadImage(self)
+            SimDeskContext().get_main_frame().show_feature_annotation_page()
 
     def getImage(self):
         return flex
 
     def populate(self):
-        imagepanel: ImagePanel = SimDeskContext().get_image_feature_panel()
-        imagepanel.loadImage(self)
+        if not ExecutorContext().is_robot_context():
+            imagepanel: ImagePanel = SimDeskContext().get_image_feature_panel()
+            imagepanel.loadImage(self)
 
     def remove_self(self, event):
         dlg = wx.MessageDialog(self.getProject_Tree(), 'Please Confirm to delete',
@@ -230,7 +233,13 @@ class ImageModel(TreeModel):
                                )
         result = dlg.ShowModal()
         if result == wx.ID_YES:
+            path = self.getPropertyByName("Path").getStringValue()
+            if os.path.exists(path):
+                os.remove(path)
+            SimDeskContext().get_image_feature_panel().canvas_panel.imageobj = None
+            SimDeskContext().get_image_feature_panel().canvas_panel.Refresh()
             self.remove()
+
         dlg.Destroy()
 
     def getRegion(self, x, y):
@@ -243,6 +252,7 @@ class ImageModel(TreeModel):
     def selectRegion(self, region):
 
         SimDeskContext().get_image_feature_panel().selectRegion(region)
+        region.onActivate()
         region.select()
         region.refresh()
 

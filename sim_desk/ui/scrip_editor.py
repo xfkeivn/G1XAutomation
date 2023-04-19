@@ -196,6 +196,7 @@ class PythonSTC(stc.StyledTextCtrl):
         self.RegisterImage(3, wx.ArtProvider.GetBitmap(wx.ART_COPY, size=(16,16)))
         
         self.projectmodel = None
+        self.script_model = None
 
 
     def assignProject(self,projectmodel):

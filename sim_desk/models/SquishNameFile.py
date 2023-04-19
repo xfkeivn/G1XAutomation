@@ -88,5 +88,8 @@ class SquishNameFile(TreeModel):
                                )
         result = dlg.ShowModal()
         if result == wx.ID_YES:
+            path = self.getPropertyByName("Path").getStringValue()
+            if os.path.exists(path):
+                os.remove(path)
             self.remove()
         dlg.Destroy()

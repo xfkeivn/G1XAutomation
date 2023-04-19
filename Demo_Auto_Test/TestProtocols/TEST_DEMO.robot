@@ -46,3 +46,12 @@ TEST_CASE_2_CLICK_AND_SCREEN_SHOT
     Mouse Click    PulseRF
     Screen Shot
     Log    this is the test demo, started
+
+TEST_CASE_3_COMMAND_SEARCH
+    Log    this test is for testing the search command logged in the queue
+    Clean Command Logging Queue
+    sleep    5s
+    @{command_list}    Find Logged Commands    0xC049    0    ar_measured_channels[0].u8_TempRefAvailable=1
+    ${message_count}    Get Length    ${command_list}
+    Log    ${command_list[0].data.ar_measured_channels[0].u16_TempRef}
+    Log    ${command_list[1].data.ar_measured_channels[0].u16_TempRef}

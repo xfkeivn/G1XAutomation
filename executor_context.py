@@ -1,7 +1,6 @@
 from utils.singleton import Singleton
 
 
-print (__name__)
 class ExecutorContext(metaclass=Singleton):
     SIMDESK_CONTEXT = "SimDesk"
     ROBOT_CONTEXT = "Robot"

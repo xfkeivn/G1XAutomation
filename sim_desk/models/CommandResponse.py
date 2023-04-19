@@ -92,8 +92,6 @@ class ElementModel(TreeModel):
         self.default_value = default_value
         self.image = did
 
-
-
 class FieldRecordArrayModel(TreeModel):
     def __init__(self,parent,label,record_type_obj,default_value):
         TreeModel.__init__(self,parent,label)
@@ -108,7 +106,7 @@ class FieldRecordArrayModel(TreeModel):
                     self.create_array_element(ele)
 
     def create_array_element(self,ele):
-        elemnt_model = ElementModel(self,f'{self.record_type_obj.__name__}[{len(self.children_models)}]',ele)
+        elemnt_model = ElementModel(self,f'[{len(self.children_models)}]',ele)
         self.addChild(elemnt_model)
         model_generator = self.getRoot().model_generator
         model_generator.create_field_models(self.record_type_obj, elemnt_model)
@@ -162,7 +160,12 @@ class FieldNumberModel(TreeModel):
                 break
             parent = parent.parent
         reversed_names = reversed(name_list)
-        return ".".join(reversed_names),command_code
+        full_name = ''
+        for name in reversed_names:
+            if not name.startswith("["):
+                full_name += "."
+            full_name += name
+        return full_name,command_code
 
     def get_script_snippet(self):
         full_text = self.get_parameter_name()[0]

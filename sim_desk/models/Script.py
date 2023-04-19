@@ -1,6 +1,8 @@
 import os.path
 import sys
 import importlib
+
+import executor_context
 from sim_desk.models.TreeModel import TreeModel
 import sim_desk.ui.images
 from sim_desk.models.TreeModel import TREEMODEL_STATUS_NORMAL
@@ -74,17 +76,16 @@ class ScriptModel(TreeModel):
 
     def onActivate(self):
         TreeModel.onActivate(self)
-
-        page_stc = SimDeskContext().get_main_frame().load_script_model(self)
-        if self.model_editor is None:
-            if not os.path.exists(self.script_file_path):
-                with open(self.script_file_path,"w") as sf:
-                    sf.close()
-
+        if not executor_context.ExecutorContext().is_robot_context():
+            page_stc = SimDeskContext().get_main_frame().load_script_model(self)
+            if self.model_editor is None:
+                if not os.path.exists(self.script_file_path):
+                    with open(self.script_file_path,"w") as sf:
+                        sf.close()
+            self.model_editor = page_stc
             with open(self.script_file_path,"r") as file:
                 all_txt = file.read()
                 page_stc.SetText(all_txt)
-        self.model_editor = page_stc
 
     def get_script_editor(self):
         return self.model_editor
@@ -138,5 +139,10 @@ class ScriptModel(TreeModel):
                                )
         result = dlg.ShowModal()
         if result == wx.ID_YES:
+            if self.model_editor is not None:
+                SimDeskContext().get_main_frame().unload_script_model(self)
+            path = self.getPropertyByName("Path").getStringValue()
+            if os.path.exists(path):
+                os.remove(path)
             self.remove()
         dlg.Destroy()

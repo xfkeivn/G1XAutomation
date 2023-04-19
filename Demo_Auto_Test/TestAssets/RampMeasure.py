@@ -31,8 +31,8 @@ class Rampmeasure(Scenario):
     def on_receive_GetMeasuredChannelsCmd(self,commandobj):
         command_code = commandobj.code
         kw = dict()
-        kw["ar_measured_channels.MeasuredChannelParam[0].u8_TempRefAvailable"] = 1
-        kw["ar_measured_channels.MeasuredChannelParam[0].u16_TempRef"] = self.temp//10
+        kw["ar_measured_channels[0].u8_TempRefAvailable"] = 1
+        kw["ar_measured_channels[0].u16_TempRef"] = self.temp//10
         if self.temp <400:
             self.temp+=5
 

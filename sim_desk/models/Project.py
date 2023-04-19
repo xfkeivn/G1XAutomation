@@ -1,3 +1,4 @@
+import executor_context
 from sim_desk.models.FolderModel import CommandResponseContainer,SquishContainer,MTICommandContainer,DAQIOContainer,ImageProcessingContainer, ScenarioPyContainer
 import os
 from sim_desk.mgr.appconfig import AppConfig
@@ -8,7 +9,7 @@ from sim_desk.models.CommandResponse import *
 from sim_desk.mgr.tag_names import *
 from serial.tools.list_ports import comports
 from sim_desk.mgr.context import SimDeskContext
-
+import executor_context
 
 class Project(TreeModel):
     def __init__(self, projectname):
@@ -33,7 +34,8 @@ class Project(TreeModel):
         self.squish_container: SquishContainer = None
         self.image_processing_container: ImageProcessingContainer = None
         self.scenario_py_container: ScenarioPyContainer = None
-        SimDeskContext().set_project_model(self)
+        if not executor_context.ExecutorContext().is_robot_context():
+            SimDeskContext().set_project_model(self)
 
     def __enum_com_ports(self):
         comPorts = comports()

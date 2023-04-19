@@ -313,7 +313,9 @@ class GX1Testlib(object):
         return self.gx1_simulator.clean_logged_command_queue()
 
     def find_logged_commands(self,command_code, start_seq=-1,**kwargs):
-        return self.gx1_simulator.find_logged_command(command_code,start_seq,**kwargs)
+        start_seq = int(start_seq)
+        command_code = int(command_code,16)
+        return self.gx1_simulator.find_logged_commands(command_code,start_seq,**kwargs)
 
     def start_scenario(self, scenario_name):
         self.project_model.scenario_py_container.start_scenario(scenario_name)
@@ -441,6 +443,15 @@ class GX1Testlib(object):
 if __name__ == "__main__":
     gx1_testlib = GX1Testlib()
     gx1_testlib.init_test()
+    gx1_testlib.mouse_xy(722,161)
+    gx1_testlib.start_scenario("RampMeasure")
+    time.sleep(10)
+    gx1_testlib.start_scenario("RampMeasure")
+    gx1_testlib.clean_command_logging_queue()
+    KWG = dict()
+    time.sleep(5)
+    KWG["ar_measured_channels.MeasuredChannelParam[0].u8_TempRefAvailable"] = 1
+    command_lists = gx1_testlib.find_logged_commands(0xC049,0,**KWG)
 
     gx1_testlib.mouse_click("OneTouch")
     time.sleep(1)

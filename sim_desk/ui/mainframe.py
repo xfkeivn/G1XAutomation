@@ -40,7 +40,7 @@ ID_ScreenShot = wx.ID_HIGHEST + 30
 ID_Robot = wx.ID_HIGHEST + 31
 ID_FirstLastestProject = wx.ID_HIGHEST + 40
 
-
+NOTE_PAGE_NAME_IMAGE_FEATURE = "Image Features"
 class MainFrame(wx.Frame):
 
     def __init__(self, parent, id=wx.ID_ANY, title="", pos=wx.DefaultPosition, size=wx.DefaultSize,
@@ -55,7 +55,7 @@ class MainFrame(wx.Frame):
         self.SetStatusBar(self.sb)
         self.screen_window = None
         self.process = None
-        self.notebook = None
+        self.notebook: aui.AuiNotebook = None
         self.screen_image = None
         self.BuildPanes()
         self.CreateMenuBar()
@@ -181,6 +181,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.on_start_robot, id=ID_Robot)
         self.Bind(wx.EVT_MENU, self.clearlog, id=ID_ClearLog)
 
+
     def __del__(self):
         pass
 
@@ -223,7 +224,7 @@ class MainFrame(wx.Frame):
 
     def __onRuntimeState(self):
         if self.active_project:
-            self.active_project.set_model_status(TreeModel.TREEMODEL_STATUS_RUNTIME)
+            self.active_project.set_model_status(TREEMODEL_STATUS_RUNTIME)
 
         toolcount = self.tb.GetToolCount()
         for toolindex in range(toolcount):
@@ -280,6 +281,10 @@ class MainFrame(wx.Frame):
 
     def OnNotebookPageClose(self, evt):
         # print "close pane"
+        page_index = evt.GetSelection()
+        page = self.notebook.GetPage(page_index)
+        if isinstance(page,PythonSTC):
+            page.script_model.save()
         evt.Skip()
 
     def showPane(self, evt):
@@ -340,7 +345,28 @@ class MainFrame(wx.Frame):
         self.__onNormalState()
 
     def add_new_notebook_page(self, ctrl,page_name):
-        return self.notebook.AddPage(ctrl,page_name)
+        self.notebook.AddPage(ctrl,page_name)
+        return self.notebook.GetPageCount()-1
+
+    def show_feature_annotation_page(self):
+        page_count = self.notebook.GetPageCount()
+
+        for idx in range(page_count):
+            txt = self.notebook.GetPageText(idx)
+            if NOTE_PAGE_NAME_IMAGE_FEATURE == txt:
+                self.notebook.SetSelection(idx)
+                page_stc = self.notebook.GetPage(idx)
+                page_exists = True
+                break
+
+    def unload_script_model(self,model):
+        filename = os.path.basename(model.script_file_path)
+        page_count = self.notebook.GetPageCount()
+        for idx in range(page_count):
+            txt = self.notebook.GetPageText(idx)
+            if filename == txt:
+                self.notebook.RemovePage(idx)
+                break
 
     def load_script_model(self,model):
         filename = os.path.basename(model.script_file_path)
@@ -356,6 +382,7 @@ class MainFrame(wx.Frame):
                 break
         if page_exists is False:
             page_stc = PythonSTC(self.notebook,wx.ID_ANY)
+            page_stc.script_model = model
             idx = self.add_new_notebook_page(page_stc,filename)
             self.notebook.SetSelection(idx)
         return page_stc
@@ -511,7 +538,7 @@ class MainFrame(wx.Frame):
         self.screen_window = MyScrolledPanel(self)
         self.feature_detection_panel = ImagePanel(self)
         ctrl.AddPage(self.screen_window, "Screen")
-        ctrl.AddPage(self.feature_detection_panel, "Image Features")
+        ctrl.AddPage(self.feature_detection_panel, NOTE_PAGE_NAME_IMAGE_FEATURE)
         SimDeskContext().set_image_feature_panel(self.feature_detection_panel)
         # create the notebook off-window to avoid flicker
         self.notebook = ctrl

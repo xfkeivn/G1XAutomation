@@ -1,41 +1,19 @@
 import wx
-import wx.lib.scrolledpanel as scrolled
-import os
+from sim_desk.mgr.context import SimDeskContext
 
 
-class ImagePanel(scrolled.ScrolledPanel):
+class DrawPanel(wx.Panel):
     def __init__(self, parent):
-        scrolled.ScrolledPanel.__init__(self, parent)
-        self.canvas_panel = wx.Panel(self)
-        self.frameSizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.frameSizer.Add(self.canvas_panel, 1, wx.EXPAND)
-        self.SetSizer(self.frameSizer)
-        self.Layout()
-        self.canvas_panel.Bind(wx.EVT_PAINT, self.onPaint)
-        self.canvas_panel.Bind(wx.EVT_MOUSE_EVENTS, self.on_mouse_event)
-        self.SetAutoLayout(1)
-        self.SetupScrolling()
+        wx.Panel.__init__(self, parent, wx.ID_ANY)
+        self.parent = parent
+        self.mainframe = SimDeskContext().get_main_frame()
+        self.Bind(wx.EVT_PAINT, self.onPaint)
+        self.Bind(wx.EVT_MOUSE_EVENTS, self.on_mouse_event)
+        self.SetMinSize(wx.Size(1024, 768))
+        self.SetMaxSize(wx.Size(1024, 768))
+        self.SetDoubleBuffered(True)
         self.imageobj = None
         self.current_region = None
-        self.all_regions = []
-        self.SetDoubleBuffered(True)
-
-    def deleteRegion(self,uid):
-        for region in self.imageobj.feature_regions:
-            config = self.imageobj.rect_config_map[region]
-            if config.get('uuid') == uid:
-                self.imageobj.feature_regions.remove(region)
-                region.refresh()
-                break
-
-    def deleteImage(self, uid):
-        if self.imageobj is not None:
-            if self.imageobj.imageconfig['uuid'] == uid:
-                self.imageobj = None
-
-    def selectRegion(self,region):
-        if self.imageobj is not None:
-            self.current_region = region
 
     def on_mouse_event(self, event):
         from sim_desk.models.ImageModel import EDIT_MODE_MOVING, EDIT_MODE_RESIZING_XY, EDIT_MODE_RESIZING_X, \
@@ -46,20 +24,20 @@ class ImagePanel(scrolled.ScrolledPanel):
             if event.Moving():
                 pos = event.GetPosition()
                 if self.imageobj.getRegion(pos.x, pos.y) is None:
-                    self.canvas_panel.SetCursor(wx.Cursor(wx.CURSOR_DEFAULT))
+                    self.SetCursor(wx.Cursor(wx.CURSOR_DEFAULT))
                 if self.current_region is not None:
                     if self.current_region.inRange(pos.x, pos.y):
                         self.current_region.editmode = EDIT_MODE_MOVING
-                        self.canvas_panel.SetCursor(wx.Cursor(wx.CURSOR_HAND))
+                        self.SetCursor(wx.Cursor(wx.CURSOR_HAND))
                     elif self.current_region.inAnchor1(pos.x,pos.y):
                         self.current_region.editmode = EDIT_MODE_RESIZING_XY
-                        self.canvas_panel.SetCursor(wx.Cursor(wx.CURSOR_SIZENWSE))
+                        self.SetCursor(wx.Cursor(wx.CURSOR_SIZENWSE))
                     elif self.current_region.inAnchor2(pos.x, pos.y):
                         self.current_region.editmode = EDIT_MODE_RESIZING_Y
-                        self.canvas_panel.SetCursor(wx.Cursor(wx.CURSOR_SIZENS))
+                        self.SetCursor(wx.Cursor(wx.CURSOR_SIZENS))
                     elif self.current_region.inAnchor3(pos.x, pos.y):
                         self.current_region.editmode = EDIT_MODE_RESIZING_X
-                        self.canvas_panel.SetCursor(wx.Cursor(wx.CURSOR_SIZEWE))
+                        self.SetCursor(wx.Cursor(wx.CURSOR_SIZEWE))
 
             if event.ButtonDown():
                 pos = event.GetPosition()
@@ -67,6 +45,7 @@ class ImagePanel(scrolled.ScrolledPanel):
                 if region is not None:
                     region.mouse_pos = pos
                     self.current_region = region
+                    self.imageobj.deselect_all()
                     self.imageobj.selectRegion(self.current_region)
                 else:
                     self.imageobj.deselect_all()
@@ -99,25 +78,51 @@ class ImagePanel(scrolled.ScrolledPanel):
                     elif self.current_region.editmode == EDIT_MODE_MOVING:
                         self.current_region.move(pos.x, pos.y)
 
-    def loadImage(self, imageobj):
-        w,h = imageobj.image.GetWidth(),imageobj.image.GetHeight()
-        self.SetSizeWH(w,h)
-        if self.imageobj is None or self.imageobj is not imageobj:
-            self.imageobj = imageobj
-            self.canvas_panel.SetSizeHints(imageobj.image.GetWidth(), imageobj.image.GetHeight())
-            self.Layout()
-            self.SetupScrolling()
-            self.canvas_panel.Refresh()
-
     def onPaint(self, event):
-        dc = wx.BufferedPaintDC(self.canvas_panel)
+        dc = wx.BufferedPaintDC(self)
         #dc = wx.PaintDC(self.canvas_panel)  # Must create a PaintDC.
         # Get the working rectangle we can draw in
-        if self.imageobj is not None:
+        if self.imageobj is not None and self.imageobj.image is not None:
             dc.DrawBitmap(wx.Bitmap(self.imageobj.image), 0, 0)
             for featurereg in self.imageobj.getModelChildren():
                 featurereg.draw(dc)
+        else:
+            dc.Clear()
         event.Skip()
+
+
+class ImagePanel(wx.ScrolledWindow):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.canvas_panel = DrawPanel(self)
+
+        self.frameSizer = wx.BoxSizer(wx.VERTICAL)
+        self.frameSizer.Add(self.canvas_panel, 0, wx.EXPAND,10)
+        self.SetSizer(self.frameSizer)
+        self.canvas_panel.SetMinSize(wx.Size(1024, 768))
+
+        self.SetScrollRate(10, 10)
+        self.SetVirtualSize(1024, 768)
+        self.current_region = None
+        self.SetDoubleBuffered(True)
+        self.Layout()
+
+    def selectRegion(self,region):
+        if self.canvas_panel.imageobj is not None:
+            self.current_region = region
+
+
+    def loadImage(self, imageobj):
+        #w,h = imageobj.image.GetWidth(),imageobj.image.GetHeight()
+        if self.canvas_panel.imageobj is None or self.canvas_panel.imageobj is not imageobj:
+            self.canvas_panel.imageobj = imageobj
+            self.canvas_panel.current_region = None
+            #self.SetVirtualSize(imageobj.image.GetWidth(),imageobj.image.GetHeight())
+            self.Layout()
+            self.canvas_panel.Refresh()
+        self.canvas_panel.Refresh()
+
+
 
 
 if __name__ == "__main__":

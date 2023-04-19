@@ -64,7 +64,7 @@ class Scenario(Thread):
     def on_command_received(self,command_obj):
         if self.__scenario_started is False:
             return
-        command_code = command_obj.u16_CommandCode
+        command_code = command_obj.data.u16_CommandCode
         callback_method = self.command_callbacks.get(command_code)
         if callback_method is not None:
             getattr(self, callback_method)(command_obj)
@@ -72,7 +72,7 @@ class Scenario(Thread):
     def on_command_responsed(self, response_obj):
         if self.__scenario_started is False:
             return
-        response_code = response_obj.u16_ResponseCode
+        response_code = response_obj.data.u16_ResponseCode
         command_code = response_code - 1
         callback_method = self.response_callbacks.get(command_code)
         if callback_method is not None:
