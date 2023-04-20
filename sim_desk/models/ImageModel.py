@@ -166,8 +166,8 @@ class FeatureRectModel(TreeModel):
             self.mouse_pos = wx.Point(x, y)
             SimDeskContext().get_image_feature_panel().canvas_panel.RefreshRect(r.Inflate(10, 10))
 
-    def onActivate(self):
-        TreeModel.onActivate(self)
+    def on_activate(self):
+        TreeModel.on_activate(self)
         if not ExecutorContext().is_robot_context():
             self.region_prop.setStringValue((f'({self.x},{self.y},{self.width},{self.height})'))
 
@@ -210,11 +210,11 @@ class ImageModel(TreeModel):
                 self.addChild(feature_model)
         TreeModel.from_json(self,element)
 
-    def onActivate(self):
-        TreeModel.onActivate(self)
+    def on_activate(self):
+        TreeModel.on_activate(self)
         if not ExecutorContext().is_robot_context():
             self.image = wx.Image(self.path, wx.BITMAP_TYPE_ANY)
-            SimDeskContext().get_image_feature_panel().loadImage(self)
+            SimDeskContext().get_image_feature_panel().load_image(self)
             SimDeskContext().get_main_frame().show_feature_annotation_page()
 
     def getImage(self):
@@ -223,7 +223,7 @@ class ImageModel(TreeModel):
     def populate(self):
         if not ExecutorContext().is_robot_context():
             imagepanel: ImagePanel = SimDeskContext().get_image_feature_panel()
-            imagepanel.loadImage(self)
+            imagepanel.load_image(self)
 
     def remove_self(self, event):
         dlg = wx.MessageDialog(self.getProject_Tree(), 'Please Confirm to delete',
@@ -251,8 +251,8 @@ class ImageModel(TreeModel):
 
     def selectRegion(self, region):
 
-        SimDeskContext().get_image_feature_panel().selectRegion(region)
-        region.onActivate()
+        SimDeskContext().get_image_feature_panel().select_region(region)
+        region.on_activate()
         region.select()
         region.refresh()
 

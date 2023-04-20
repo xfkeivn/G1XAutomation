@@ -44,8 +44,8 @@ class Project(TreeModel):
     def getProjectDir(self):
         return self.project_dir
 
-    def onActivate(self):
-        TreeModel.onActivate(self)
+    def on_activate(self):
+        TreeModel.on_activate(self)
         # childmodel = self.getChildByTag(TagName.TAG_NAME_SCRIPT)
 
     def init(self, project_dir):
@@ -90,7 +90,7 @@ class Project(TreeModel):
         self.default_perspective = self.project_config['Project']['last_perspective']
         try:
             self.from_json(self.project_config['Project'])
-            self.onActivate()
+            self.on_activate()
         except Exception as err:
             logger.error(err)
 
@@ -113,7 +113,7 @@ class Project(TreeModel):
             json.dump(self.project_config, configfile)
             configfile.close()
         self.save()
-        self.onActivate()
+        self.on_activate()
         return True
 
     def close(self):

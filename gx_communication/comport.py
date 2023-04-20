@@ -1,4 +1,4 @@
-from cobs import cobs
+from gx_communication.cobs import cobs
 import logging
 import serial
 import serial.tools.list_ports

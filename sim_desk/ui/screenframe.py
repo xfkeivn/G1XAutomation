@@ -38,7 +38,7 @@ class ScreenFrame(wx.Panel):
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_PAINT, self.on_paint)
         self.Bind(wx.EVT_TIMER, self.update_image, self.timer)
-        self.Bind(wx.EVT_SIZE,self.onSize)
+        self.Bind(wx.EVT_SIZE, self.on_size)
         self.Bind(wx.EVT_LEFT_DOWN, self.on_left_down)
         self.Bind(wx.EVT_MOTION, self.on_mouse_move)
         self.buffer = None
@@ -91,7 +91,7 @@ class ScreenFrame(wx.Panel):
         self.image = wx.Bitmap(new_image)
         self.Refresh()
 
-    def onSize(self,event):
+    def on_size(self, event):
         self.Refresh()
 
     def on_paint(self, event):

@@ -74,8 +74,8 @@ class ScriptModel(TreeModel):
     def set_script_file_path(self,file_path):
         self.script_file_path = file_path
 
-    def onActivate(self):
-        TreeModel.onActivate(self)
+    def on_activate(self):
+        TreeModel.on_activate(self)
         if not executor_context.ExecutorContext().is_robot_context():
             page_stc = SimDeskContext().get_main_frame().load_script_model(self)
             if self.model_editor is None:

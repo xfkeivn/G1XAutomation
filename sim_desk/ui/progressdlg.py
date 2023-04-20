@@ -13,9 +13,6 @@
 #  limitations under the License.
 
 import wx
-import time
-
-
 
 
 class ProgressObserver(object):
@@ -25,11 +22,8 @@ class ProgressObserver(object):
                                               maximum=100, parent=frame,
                                               style = 0
                                 | wx.PD_APP_MODAL
-                                #| wx.PD_CAN_SKIP
-                                #| wx.PD_ELAPSED_TIME
                                 | wx.PD_ESTIMATED_TIME
                                 | wx.PD_REMAINING_TIME
-                                #| wx.PD_AUTO_HIDE
                                 )
 
     def notify(self):
@@ -37,8 +31,6 @@ class ProgressObserver(object):
 
     def finish(self):
         self._progressbar.Destroy()
-        #self._progressbar.Destory()
-       
 
     def error(self, msg):
         self.finish()

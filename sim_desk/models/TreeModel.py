@@ -234,9 +234,9 @@ class TreeModel():
         for child in self.children_models:
             child.close()
 
-    def onActivate(self):
+    def on_activate(self):
         if self.getProject_Tree() is not None:
-            self.getProperties_Tree().setModel(self)
+            self.getProperties_Tree().set_model(self)
 
     def set_model_status(self, modelstatus):
         self.status = modelstatus

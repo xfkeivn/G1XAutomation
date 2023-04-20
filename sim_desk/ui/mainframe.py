@@ -1,19 +1,12 @@
-"""
-File Name: {file_name}
-Author: Kevin Xu
-Description: This is the mainframe window of the sim desk
-Last Modified: {git_commit_id} ({git_commit_date})
-"""
 from sim_desk import constant
-from sim_desk.mgr.context import SimDeskContext
 from sim_desk.mgr.appconfig import AppConfig
 from sim_desk.ui.propertygrid import PropertyGridPanel
 from sim_desk.ui.project_tree import ProjectTreeCtrl
-from sim_desk.ui.wizards.NewProjectWizard import NewProjectWizard as NPW
+from sim_desk.ui.wizards.NewProjectWizard import NewProjectWizard as Npw
 from sim_desk.models.Project import Project
 from sim_desk.models.TreeModel import *
 from sim_desk.ui.scrip_editor import PythonSTC
-from BackPlaneSimulator import BackPlaneSimulator as BPS
+from BackPlaneSimulator import BackPlaneSimulator as Bps
 from sim_desk.ui.screenframe import MyScrolledPanel
 from sim_desk.ui.ImagePanel import *
 from sim_desk.ui.console import Console
@@ -41,8 +34,7 @@ ID_StopTest = wx.ID_HIGHEST + 27
 ID_ClearLog = wx.ID_HIGHEST + 29
 ID_ScreenShot = wx.ID_HIGHEST + 30
 ID_Robot = wx.ID_HIGHEST + 31
-ID_FirstLastestProject = wx.ID_HIGHEST + 40
-
+ID_latest_Project = wx.ID_HIGHEST + 40
 NOTE_PAGE_NAME_IMAGE_FEATURE = "Image Features"
 
 
@@ -77,19 +69,19 @@ class MainFrame(wx.Frame):
         self.feature_detection_panel = None
         self.append_projects_to_fast_open(self.appconfig.getProjectHistoryList())
         # when the ui is all done, set the IO to Console
-        self.bps = BPS()
+        self.bps = Bps()
         self.squish_runner = None
-
         self.init()
         self._mgr.Update()
         executor_context.ExecutorContext().set_gui_context(self)
+        self.on_save_project(None)
 
     def init(self):
-        projecthistories = self.appconfig.getProjectHistoryList()
+        project_histories = self.appconfig.getProjectHistoryList()
         # Open Latest Project
-        if len(projecthistories) > 0:
-            lastprojectdir = projecthistories[-1]
-            self.open_project(lastprojectdir)
+        if len(project_histories) > 0:
+            last_project_dir = project_histories[-1]
+            self.open_project(last_project_dir)
         self.__on_normal_state()
         if self.active_project is None:
             self.tb.EnableTool(ID_StartTest, False)
@@ -102,7 +94,6 @@ class MainFrame(wx.Frame):
         file_menu = self.file_menu
         file_menu.Append(ID_NewProject, "New")
         file_menu.Append(ID_ImportProject, "Import")
-        # file_menu.Append(ID_ExportProject, "Export")
         file_menu.Append(wx.ID_EXIT, "Exit")
         view_menu = wx.Menu()
         view_menu.Append(ID_ViewProjects, "Show Projects")
@@ -115,28 +106,30 @@ class MainFrame(wx.Frame):
         mb.Append(file_menu, "&File")
         mb.Append(view_menu, "&View")
         mb.Append(help_menu, "&Help")
-
         self.SetMenuBar(mb)
 
     def build_panes(self):
-
         self.SetMinSize(wx.Size(400, 300))
         tb1 = aui.AuiToolBar(self, -1, wx.DefaultPosition, wx.DefaultSize,
                              agwStyle=aui.AUI_TB_DEFAULT_STYLE | aui.AUI_TB_OVERFLOW)
-        tb1.AddSimpleTool(ID_NewProject, "New Project", images.NewProject.GetBitmap())
-        tb1.AddSimpleTool(ID_SaveProject, "Save Project", images.save_edit.GetBitmap())
-        tb1.AddSimpleTool(ID_ImportProject, "Import Project", images.Import.GetBitmap())
+        tb1.AddSimpleTool(ID_NewProject, "New Project", images.NewProject.GetBitmap(), short_help_string="New Project")
+        tb1.AddSimpleTool(ID_SaveProject, "Save Project", images.save_edit.GetBitmap(),
+                          short_help_string="Save Project")
+        tb1.AddSimpleTool(ID_ImportProject, "Import Project", images.Import.GetBitmap(),
+                          short_help_string="Import Project")
         tb1.AddSeparator()
-        tb1.AddSimpleTool(ID_ViewProjects, "ViewProject", images.viewproj.GetBitmap())
-        tb1.AddSimpleTool(ID_ViewProperties, "ViewProperties", images.viewprop.GetBitmap())
-        tb1.AddSimpleTool(ID_ViewConsole, "ViewConsole", images.viewconsole.GetBitmap())
+        tb1.AddSimpleTool(ID_ViewProjects, "ViewProject", images.viewproj.GetBitmap(), short_help_string="Show Project")
+        tb1.AddSimpleTool(ID_ViewProperties, "ViewProperties", images.viewprop.GetBitmap(),
+                          short_help_string="Show Properties")
+        tb1.AddSimpleTool(ID_ViewConsole, "ViewConsole", images.viewconsole.GetBitmap(),
+                          short_help_string="Show Console")
         tb1.AddSeparator()
-        tb1.AddSimpleTool(ID_StartTest, "StartTest", images.run.GetBitmap())
-        tb1.AddSimpleTool(ID_StopTest, "StopTest", images.stop.GetBitmap())
+        tb1.AddSimpleTool(ID_StartTest, "StartTest", images.run.GetBitmap(), short_help_string="Start Manual Test")
+        tb1.AddSimpleTool(ID_StopTest, "StopTest", images.stop.GetBitmap(), short_help_string="Stop Manual Test")
         tb1.AddSeparator()
-        tb1.AddSimpleTool(ID_ScreenShot, "ScreenShot", images.camera.GetBitmap())
+        tb1.AddSimpleTool(ID_ScreenShot, "ScreenShot", images.camera.GetBitmap(), short_help_string="Take Screenshot")
         tb1.Realize()
-        tb1.AddSimpleTool(ID_Robot, "Start RIDE", images.robot.GetBitmap())
+        tb1.AddSimpleTool(ID_Robot, "Start RIDE", images.robot.GetBitmap(), short_help_string="Start RIDE")
         tb1.Realize()
         self.tb = tb1
         self._mgr.AddPane(self.create_project_treectrl(), aui.AuiPaneInfo().
@@ -157,14 +150,14 @@ class MainFrame(wx.Frame):
         self.console.clear()
 
     def append_projects_to_fast_open(self, project_dir_list):
-        for projectdir in project_dir_list:
-            projectdir = os.path.normpath(projectdir)
-            if projectdir not in self.__fast_open_projects_list:
+        for project_dir in project_dir_list:
+            project_dir = os.path.normpath(project_dir)
+            if project_dir not in self.__fast_open_projects_list:
                 if len(self.__fast_open_projects_list) == 0:
                     self.file_menu.AppendSeparator()
-                self.file_menu.Append(ID_FirstLastestProject + len(self.__fast_open_projects_list),
-                                      os.path.basename(projectdir))
-                self.__fast_open_projects_list.append(projectdir)
+                self.file_menu.Append(ID_latest_Project + len(self.__fast_open_projects_list),
+                                      os.path.basename(project_dir))
+                self.__fast_open_projects_list.append(project_dir)
 
     def add_to_center_panel(self, window):
         self._mgr.AddPane(window,
@@ -183,11 +176,14 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.on_about, id=wx.ID_ABOUT)
         self.Bind(aui.EVT_AUI_PANE_CLOSE, self.on_pane_close)
         self.Bind(aui.EVT_AUINOTEBOOK_PAGE_CLOSE, self.On_notebook_page_close)
-        self.Bind(wx.EVT_MENU_RANGE, self.on_open_project, id=ID_FirstLastestProject, id2=ID_FirstLastestProject + 7)
+        self.Bind(wx.EVT_MENU_RANGE, self.on_open_project, id=ID_latest_Project, id2=ID_latest_Project + 7)
         self.Bind(wx.EVT_MENU, self.on_start, id=ID_StartTest)
         self.Bind(wx.EVT_MENU, self.on_stop, id=ID_StopTest)
         self.Bind(wx.EVT_MENU, self.on_start_robot, id=ID_Robot)
         self.Bind(wx.EVT_MENU, self.clear_log, id=ID_ClearLog)
+        self.Bind(wx.EVT_MENU, self.show_pane, id=ID_ViewProperties)
+        self.Bind(wx.EVT_MENU, self.show_pane, id=ID_ViewConsole)
+        self.Bind(wx.EVT_MENU, self.show_pane, id=ID_ViewProjects)
 
     def __del__(self):
         pass
@@ -201,12 +197,13 @@ class MainFrame(wx.Frame):
         venv_path = os.path.join(os.path.dirname(__file__), "../../venv")
         activate_script = os.path.join(venv_path, 'Scripts', 'activate.bat')
         subprocess.call(activate_script, shell=True)
-
         # Start the subprocess using the virtual environment's Python interpreter
         python_path = os.path.join(venv_path, 'Scripts', 'python.exe')
         subprocess.Popen([python_path, os.path.join(venv_path, 'Scripts', 'ride.py')])
 
     def on_start(self, evt):
+        # silently save the project
+        self.on_save_project(None)
         self.SetWindowStyle(wx.CAPTION | wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.RESIZE_BORDER)
         com_port_val = self.active_project.getPropertyByName("COM").getStringValue()
         result = self.bps.start(com_port_val)
@@ -231,14 +228,17 @@ class MainFrame(wx.Frame):
     def __on_runtime_state(self):
         if self.active_project:
             self.active_project.set_model_status(TREEMODEL_STATUS_RUNTIME)
-
-        toolcount = self.tb.GetToolCount()
-        for toolindex in range(toolcount):
-            tool = self.tb.FindToolByIndex(toolindex)
+        tool_count = self.tb.GetToolCount()
+        for tool_index in range(tool_count):
+            tool = self.tb.FindToolByIndex(tool_index)
             self.tb.EnableTool(tool.GetId(), False)
         self.tb.EnableTool(ID_ScreenShot, True)
+        self.tb.EnableTool(ID_ClearLog, True)
+        self.tb.EnableTool(ID_ViewProperties, True)
+        self.tb.EnableTool(ID_ViewConsole, True)
+        self.tb.EnableTool(ID_ViewProjects, True)
         self.tb.EnableTool(ID_StopTest, True)
-        self.sb.SetText1("Project is running")
+        self.sb.set_text1("Project is running")
         self.GetMenuBar().EnableTop(0, False)
         self.GetMenuBar().EnableTop(1, False)
         self.GetMenuBar().EnableTop(2, False)
@@ -247,15 +247,15 @@ class MainFrame(wx.Frame):
     def __on_normal_state(self):
         if self.active_project:
             self.active_project.set_model_status(TREEMODEL_STATUS_NORMAL)
-            toolcount = self.tb.GetToolCount()
-            for toolindex in range(toolcount):
-                tool = self.tb.FindToolByIndex(toolindex)
+            tool_count = self.tb.GetToolCount()
+            for tool_index in range(tool_count):
+                tool = self.tb.FindToolByIndex(tool_index)
                 self.tb.EnableTool(tool.GetId(), True)
                 if tool.GetId() == ID_SaveProject:
                     self.tb.EnableTool(ID_SaveProject, self.active_project.isDirty())
         self.tb.EnableTool(ID_StopTest, False)
-        self.sb.SetText1("Project is Editing")
-        self.sb.SetStatus(TREEMODEL_STATUS_NORMAL)
+        self.sb.set_text1("Project is Editing")
+        self.sb.set_status(TREEMODEL_STATUS_NORMAL)
         self.GetMenuBar().EnableTop(0, True)
         self.GetMenuBar().EnableTop(1, True)
         self.GetMenuBar().EnableTop(2, True)
@@ -345,7 +345,7 @@ class MainFrame(wx.Frame):
             self.open_project(prjdir)
 
     def on_open_project(self, evt):
-        index = evt.Id - ID_FirstLastestProject
+        index = evt.Id - ID_latest_Project
         projectdir = self.__fast_open_projects_list[index]
         self.open_project(projectdir)
         self.__on_normal_state()
@@ -432,13 +432,13 @@ class MainFrame(wx.Frame):
         dlg.Destroy()
 
     def assign_project(self, projectmodel):
-        self.projecttree.assignProject(projectmodel)
-        self.property_grid_panel.assignProject(projectmodel)
+        self.projecttree.assign_project(projectmodel)
+        self.property_grid_panel.assign_project(projectmodel)
         self.active_project.console = self.console
 
     def on_new_project(self, event):
         if self.__close_active_project():
-            newwizard = NPW(self)
+            newwizard = Npw(self)
             if newwizard.run():
                 projectname, projectdir = newwizard.getProjectName(), newwizard.getProjectDir()
                 if not os.path.exists(os.path.join(projectdir, projectname)):

@@ -52,7 +52,6 @@ class DropTarget(wx.DropTarget):
     def OnDragOver(self, x, y, d):
         return d
 
-
     def OnData(self, x, y, d):
 
         if self.GetData():
@@ -60,6 +59,7 @@ class DropTarget(wx.DropTarget):
             pos = self.editor.GetInsertionPoint()
             self.editor.InsertText(pos,datastr)
         return d  
+
 
 class PythonSTC(stc.StyledTextCtrl):
 
@@ -86,7 +86,6 @@ class PythonSTC(stc.StyledTextCtrl):
         #self.SetViewEOL(True)
         #self.SetEOLMode(stc.STC_EOL_CRLF)
         #self.SetUseAntiAliasing(True)
-        
         self.SetEdgeMode(stc.STC_EDGE_BACKGROUND)
         self.SetEdgeColumn(78)
 
@@ -197,7 +196,6 @@ class PythonSTC(stc.StyledTextCtrl):
         
         self.projectmodel = None
         self.script_model = None
-
 
     def assignProject(self,projectmodel):
         projectmodel.scripteditor = self

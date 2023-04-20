@@ -7,7 +7,7 @@ class DrawPanel(wx.Panel):
         wx.Panel.__init__(self, parent, wx.ID_ANY)
         self.parent = parent
         self.mainframe = SimDeskContext().get_main_frame()
-        self.Bind(wx.EVT_PAINT, self.onPaint)
+        self.Bind(wx.EVT_PAINT, self.on_paint)
         self.Bind(wx.EVT_MOUSE_EVENTS, self.on_mouse_event)
         self.SetMinSize(wx.Size(1024, 768))
         self.SetMaxSize(wx.Size(1024, 768))
@@ -46,7 +46,7 @@ class DrawPanel(wx.Panel):
                     region.mouse_pos = pos
                     self.current_region = region
                     self.imageobj.deselect_all()
-                    self.imageobj.selectRegion(self.current_region)
+                    self.imageobj.select_region(self.current_region)
                 else:
                     self.imageobj.deselect_all()
                     from sim_desk.models.ImageModel import FeatureRectModel
@@ -78,10 +78,8 @@ class DrawPanel(wx.Panel):
                     elif self.current_region.editmode == EDIT_MODE_MOVING:
                         self.current_region.move(pos.x, pos.y)
 
-    def onPaint(self, event):
+    def on_paint(self, event):
         dc = wx.BufferedPaintDC(self)
-        #dc = wx.PaintDC(self.canvas_panel)  # Must create a PaintDC.
-        # Get the working rectangle we can draw in
         if self.imageobj is not None and self.imageobj.image is not None:
             dc.DrawBitmap(wx.Bitmap(self.imageobj.image), 0, 0)
             for featurereg in self.imageobj.getModelChildren():
@@ -107,22 +105,18 @@ class ImagePanel(wx.ScrolledWindow):
         self.SetDoubleBuffered(True)
         self.Layout()
 
-    def selectRegion(self,region):
+    def select_region(self, region):
         if self.canvas_panel.imageobj is not None:
             self.current_region = region
 
+    def load_image(self, imageobj):
 
-    def loadImage(self, imageobj):
-        #w,h = imageobj.image.GetWidth(),imageobj.image.GetHeight()
         if self.canvas_panel.imageobj is None or self.canvas_panel.imageobj is not imageobj:
             self.canvas_panel.imageobj = imageobj
             self.canvas_panel.current_region = None
-            #self.SetVirtualSize(imageobj.image.GetWidth(),imageobj.image.GetHeight())
             self.Layout()
             self.canvas_panel.Refresh()
         self.canvas_panel.Refresh()
-
-
 
 
 if __name__ == "__main__":
