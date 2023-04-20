@@ -20,3 +20,6 @@ where the application is running, normally check vmnet8, and it will start from 
 2. set the output dir in the run setting 
 3. start the squishPyServer.py to start the server, update the IP, the private key file and name of attachable before running, will be updated soon to start by test
 4. start running you test 
+# OCR
+1. install the OCR in the tool folder and make sure download the language file you need 
+2. set the installation dir to the environment
