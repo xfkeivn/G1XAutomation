@@ -1,3 +1,14 @@
+"""
+@author: Kevin Xu
+@license: (C) Copyright 2021-2025, Boston Scientific Corporation Limited.
+@contact: xuf@bsci.com
+@software: GX1
+@file: BackPlaneSimulator.py
+@time: 2023/4/20 15:02
+@desc:
+"""
+
+
 import numpy as np
 from PIL import Image
 from utils.singleton import Singleton
