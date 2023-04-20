@@ -124,6 +124,21 @@ class ImageProcessingContainer(TreeModel):
         self.tree_action_list.append(
             TreeAction("Import Image File", wx.ID_HIGHEST + 2000, self.import_image_file))
 
+    def get_image_object(self, image_alias):
+        for child in self.getModelChildren():
+            if child.getPropertyByName("Alias").getStringValue() == image_alias:
+                return child
+        raise Exception(f"The image alias {image_alias} is not found ")
+
+    def get_feature_rect(self, image_alias,rect_alias):
+        image_object = self.get_image_object(image_alias)
+        for rect in image_object.getModelChildren():
+            alias = rect.getPropertyByName("Alias").getStringValue()
+            if alias == rect_alias:
+                return eval(rect.getPropertyByName("Region").getStringValue())
+        raise Exception(f"The rect alias {rect_alias} is not  found ")
+
+
     def getImage(self):
         return sim_desk.ui.images.folder_collapse
 

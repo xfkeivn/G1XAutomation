@@ -13,26 +13,28 @@ from sim_desk.ui.images import *
 from sim_desk.mgr.context import SimDeskContext
 from sim_desk.ui.ImagePanel import ImagePanel
 import os
+from executor_context import ExecutorContext
+
 EDIT_MODE_MOVING = 0
 EDIT_MODE_RESIZING_XY = 1
 EDIT_MODE_RESIZING_X = 2
 EDIT_MODE_RESIZING_Y = 3
 ANCHORSIZE = 10
 
-from executor_context import ExecutorContext
+
 class FeatureRectModel(TreeModel):
     DETECTION_TYPE_OCR = 1
     DETECTION_TYPE_STRUCTURE_SIMILARITY = 2
     DETECTION_TYPE_PIXEL_SIMILARITY = 3
 
-    def set_region(self,x,y,w,h):
+    def set_region(self, x, y, w, h):
         self.x = x
         self.y = y
         self.width = w
         self.height = h
 
     def get_region(self):
-        return (self.x, self.y, self.width, self.height)
+        return self.x, self.y, self.width, self.height
 
     def __init__(self, parent, name=''):
         TreeModel.__init__(self, parent, name)
@@ -59,7 +61,7 @@ class FeatureRectModel(TreeModel):
         self.mouse_pos = None
         self.selected = False
         self.image_rect = wx.Rect(0, 0, 1024, 768)
-        #self.font = wx.Font(14, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+        # self.font = wx.Font(14, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
 
         self.tree_action_list.append(
             TreeAction("Remove", wx.ID_HIGHEST + 1011, self.remove_self))
@@ -76,11 +78,12 @@ class FeatureRectModel(TreeModel):
         result = dlg.ShowModal()
         if result == wx.ID_YES:
             self.remove()
+        SimDeskContext().get_image_feature_panel().canvas_panel.Refresh()
         dlg.Destroy()
 
-    def from_json(self,element):
-        TreeModel.from_json(self,element)
-        self.x,self.y,self.width,self.height = eval(self.region_prop.getStringValue())
+    def from_json(self, element):
+        TreeModel.from_json(self, element)
+        self.x, self.y, self.width, self.height = eval(self.region_prop.getStringValue())
 
     def to_json(self):
         self.region_prop.stringvalue = (f'({self.x},{self.y},{self.width},{self.height})')
@@ -126,7 +129,7 @@ class FeatureRectModel(TreeModel):
         gcdc.DrawRectangle(self.x, self.y, self.width, self.height)
         name = self.getPropertyByName("Alias").getStringValue()
         dc.SetTextForeground(wx.BLUE)
-        w,h = SimDeskContext().get_image_feature_panel().canvas_panel.GetTextExtent(name)
+        w, h = SimDeskContext().get_image_feature_panel().canvas_panel.GetTextExtent(name)
         dc.DrawText(name or "", self.x + self.width / 2 - w / 2, self.y + self.height / 2 - h / 2)
 
     def inRange(self, x, y):
@@ -154,10 +157,12 @@ class FeatureRectModel(TreeModel):
         updateh = max(self.height, height)
         self.width = width
         self.height = height
-        SimDeskContext().get_image_feature_panel().canvas_panel.RefreshRect(wx.Rect(self.x, self.y, updatew, updateh).Inflate(ANCHORSIZE, ANCHORSIZE))
+        SimDeskContext().get_image_feature_panel().canvas_panel.RefreshRect(
+            wx.Rect(self.x, self.y, updatew, updateh).Inflate(ANCHORSIZE, ANCHORSIZE))
 
     def refresh(self):
-        SimDeskContext().get_image_feature_panel().canvas_panel.RefreshRect(wx.Rect(self.x, self.y, self.width, self.height).Inflate(ANCHORSIZE, ANCHORSIZE))
+        SimDeskContext().get_image_feature_panel().canvas_panel.RefreshRect(
+            wx.Rect(self.x, self.y, self.width, self.height).Inflate(ANCHORSIZE, ANCHORSIZE))
 
     def move(self, x, y):
         r1 = wx.Rect(self.x, self.y, self.width, self.height)
@@ -179,6 +184,7 @@ class FeatureRectModel(TreeModel):
         TreeModel.on_activate(self)
         if not ExecutorContext().is_robot_context():
             self.region_prop.setStringValue((f'({self.x},{self.y},{self.width},{self.height})'))
+
 
 class ImageModel(TreeModel):
     def __init__(self, parent, file_path):
@@ -212,12 +218,12 @@ class ImageModel(TreeModel):
                 rect.selected = False
                 rect.refresh()
 
-    def from_json(self,element):
+    def from_json(self, element):
         if element.get('sub_models') is not None:
             for name, module in element['sub_models'].items():
                 feature_model = FeatureRectModel(self)
                 self.addChild(feature_model)
-        TreeModel.from_json(self,element)
+        TreeModel.from_json(self, element)
 
     def on_activate(self):
         TreeModel.on_activate(self)
@@ -245,25 +251,24 @@ class ImageModel(TreeModel):
             path = self.getPropertyByName("Path").getStringValue()
             if os.path.exists(path):
                 os.remove(path)
-            SimDeskContext().get_image_feature_panel().canvas_panel.imageobj = None
-            SimDeskContext().get_image_feature_panel().canvas_panel.Refresh()
             self.remove()
+            SimDeskContext().get_image_feature_panel().canvas_panel.Refresh()
+            SimDeskContext().get_image_feature_panel().canvas_panel.imageobj = None
 
         dlg.Destroy()
 
-    def getRegion(self, x, y):
+    def get_region(self, x, y):
         for region_model in self.getModelChildren():
-            flag = region_model.inRange(x, y) or region_model.inAnchor1(x, y) or region_model.inAnchor2(x, y) or region_model.inAnchor3(x, y)
+            flag = region_model.inRange(x, y) or region_model.inAnchor1(x, y) or region_model.inAnchor2(x,
+                                                                                                        y) or region_model.inAnchor3(
+                x, y)
             if flag:
                 return region_model
         return None
 
-    def selectRegion(self, region):
+    def select_region(self, region):
 
         SimDeskContext().get_image_feature_panel().select_region(region)
         region.on_activate()
         region.select()
         region.refresh()
-
-
-

@@ -25,6 +25,7 @@ class DrawPanel(wx.Panel):
         self.imageobj = None
         self.current_region = None
 
+
     def on_mouse_event(self, event):
         from sim_desk.models.ImageModel import EDIT_MODE_MOVING, EDIT_MODE_RESIZING_XY, EDIT_MODE_RESIZING_X, \
             EDIT_MODE_RESIZING_Y
@@ -33,7 +34,9 @@ class DrawPanel(wx.Panel):
         else:
             if event.Moving():
                 pos = event.GetPosition()
-                if self.imageobj.getRegion(pos.x, pos.y) is None:
+                self.mainframe.sb.SetStatusText(f"Mouse position: ({pos.x}, {pos.y})")
+                pos = event.GetPosition()
+                if self.imageobj.get_region(pos.x, pos.y) is None:
                     self.SetCursor(wx.Cursor(wx.CURSOR_DEFAULT))
                 if self.current_region is not None:
                     if self.current_region.inRange(pos.x, pos.y):
@@ -51,7 +54,7 @@ class DrawPanel(wx.Panel):
 
             if event.ButtonDown():
                 pos = event.GetPosition()
-                region = self.imageobj.getRegion(pos.x, pos.y)
+                region = self.imageobj.get_region(pos.x, pos.y)
                 if region is not None:
                     region.mouse_pos = pos
                     self.current_region = region

@@ -14,17 +14,23 @@ from BackPlaneSimulator import BackPlaneSimulator as BPS
 from importlib import reload
 from sim_desk.mgr.appconfig import AppConfig
 from squish.squish_proxy import SquishProxy
+from verifier.ocr import TessertOCR
+from verifier.p2p_image_compare import P2PImageCompare
+from PIL import Image
 import sys
+import uuid
 reload(sys)
 import datetime
 import time
 import os
 import io
+
 curfiledir = os.path.dirname(__file__)
 sys.path.append(os.path.dirname(curfiledir))
 from robot import utils
 from robot.libraries.BuiltIn import BuiltIn
 from utils import logger
+
 
 class CommandListener(object):
     def __init__(self):
@@ -44,10 +50,10 @@ class CommandListener(object):
                 modified_filename += c
         return modified_filename
 
-    def exclude_command_code(self,command_code):
+    def exclude_command_code(self, command_code):
         self.command_filters.append(command_code)
 
-    def include_command_code(self,command_code):
+    def include_command_code(self, command_code):
         self.command_filters.remove(command_code)
 
     def open_message_log(self):
@@ -101,18 +107,18 @@ class CommandListener(object):
         # t1 = time.clock()
         if self.is_log_inited:
             self.message_log_lock.acquire()
-            self.ml_stringio.write(msg+"\n")
+            self.ml_stringio.write(msg + "\n")
             self.message_log_lock.release()
 
-    def on_command_received(self,command):
+    def on_command_received(self, command):
         if command.data.u16_CommandCode in self.command_filters:
             return
-        self.__message_logging(f'{command.time_ns//100000}:{command.sequence}:{command.data}')
+        self.__message_logging(f'{command.time_ns // 100000}:{command.sequence}:{command.data}')
 
-    def on_command_responsed(self,response):
+    def on_command_responsed(self, response):
         if response.data.u16_ResponseCode - 1 in self.command_filters:
             return
-        self.__message_logging(f'{response.time_ns//100000}:{response.sequence}:{response.data}')
+        self.__message_logging(f'{response.time_ns // 100000}:{response.sequence}:{response.data}')
 
 
 class GX1Testlib(object):
@@ -157,8 +163,11 @@ class GX1Testlib(object):
         self.out_put_dir = None
         self.is_log_inited = False
         self.squish_name_mapping = dict()
+        self.tessert_ocr = TessertOCR()
+        self.p2p_comparer = P2PImageCompare()
         self.system_context = ExecutorContext()
         self.system_context.set_robot_context(self)
+
     #####################################################################################################
     ################################listeners #####################################################################
 
@@ -185,6 +194,10 @@ class GX1Testlib(object):
         """
         pass
 
+    def _get_unique_image_name(self):
+        my_uuid = uuid.uuid4()
+        return f'Img_{my_uuid}.png'
+
     def _embed_screenshot(self, path, width):
         link = utils.get_link_path(path, self._log_dir)
         logger.info('<a href="%s"><img src="%s" width="%s"></a>'
@@ -195,8 +208,8 @@ class GX1Testlib(object):
         logger.info("Screenshot saved to '<a href=\"%s\">%s</a>'."
                     % (link, path), html=True)
 
-    def _get_obj_from_alias(self,alias):
-        obj = self.squish_name_mapping.get(alias,None)
+    def _get_obj_from_alias(self, alias):
+        obj = self.squish_name_mapping.get(alias, None)
         if obj is None:
             raise Exception(f'There is no squish name {alias} in the name.py')
         return obj
@@ -274,7 +287,7 @@ class GX1Testlib(object):
                 logger.error("GX1 Simulator failed to start")
                 return
 
-            #result = self.squish_proxy.connect()
+            # result = self.squish_proxy.connect()
             self.squish_proxy.create_proxy()
             result = self.squish_proxy.connect()
             if result:
@@ -291,7 +304,7 @@ class GX1Testlib(object):
     def close_test(self):
         """
         Description:
-        Close the simulator and cleanup after the test is done
+        Close all and cleanup after the test is done
         exceptions.
         Arguments:
             None
@@ -310,26 +323,52 @@ class GX1Testlib(object):
             logger.warn("The project is not initialized for testing ")
         self.project_inited = False
 
-    def set_command_response(self,command_code,**response_data):
-        command_code = int(command_code,16)
+    def set_command_response(self, command_code, **response_data):
+        """
+        Set the response data
+        :param command_code: the command code not the response code
+        :param response_data: the leaf field of the response data
+        :return:
+        """
+        command_code = int(command_code, 16)
         key_int_value_map = dict()
         for key, str_value in response_data.items():
             key_int_value_map[key] = int(str_value)
-
-        return self.gx1_simulator.set_command_pending_response_by_parameters(command_code,**key_int_value_map)
+        return self.gx1_simulator.set_command_pending_response_by_parameters(command_code, **key_int_value_map)
 
     def clean_command_logging_queue(self):
+        """
+        Clean the queue
+        :return:
+        """
         return self.gx1_simulator.clean_logged_command_queue()
 
-    def find_logged_commands(self,command_code, start_seq=-1,**kwargs):
+    def find_logged_commands(self, command_code, start_seq=-1, **kwargs):
+        """
+        To find the command or response in the queue
+        :param command_code: the command code or response code
+        :param start_seq: from where to search forward
+        :param kwargs: the matching condition of the field value, key pairs
+        :return:
+        """
         start_seq = int(start_seq)
-        command_code = int(command_code,16)
-        return self.gx1_simulator.find_logged_commands(command_code,start_seq,**kwargs)
+        command_code = int(command_code, 16)
+        return self.gx1_simulator.find_logged_commands(command_code, start_seq, **kwargs)
 
     def start_scenario(self, scenario_name):
+        """
+        Start the stimulation scenario by its alias
+        :param scenario_name:
+        :return:
+        """
         self.project_model.scenario_py_container.start_scenario(scenario_name)
 
     def stop_scenario(self, scenario_name):
+        """
+        Stop the scenario by its alias
+        :param scenario_name:
+        :return:
+        """
         self.project_model.scenario_py_container.stop_scenario(scenario_name)
 
     def screen_shot(self, embedded_image_to_report=True):
@@ -339,10 +378,11 @@ class GX1Testlib(object):
         :param embedded_image_to_report: whether the image should be embedded into report
         :return: the image file location
         """
-        basename = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S.png')
+        #basename = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S.png')
+        basename = self._get_unique_image_name()
         screenshot_name = self._get_screenshot_path(basename)
         self.squish_proxy.screen_save(screenshot_name)
-        if embedded_image_to_report in ["1", "TRUE",True]:
+        if embedded_image_to_report in ["1", "TRUE", True]:
             self._embed_screenshot(screenshot_name, 400)
         return screenshot_name
 
@@ -356,7 +396,7 @@ class GX1Testlib(object):
         """
         offset = int(offset)
         gobj = self._get_obj_from_alias(gobj)
-        return self.squish_proxy.list_drag(gobj,offset)
+        return self.squish_proxy.list_drag(gobj, offset)
 
     def mouse_tap(self, gobj):
         """If object is applicable, perform a touch tap by passing in the Squish object reference.
@@ -381,7 +421,7 @@ class GX1Testlib(object):
         """
         steps = int(steps)
         gobj = self._get_obj_from_alias(gobj)
-        return self.squish_proxy.mouse_wheel(gobj,steps)
+        return self.squish_proxy.mouse_wheel(gobj, steps)
 
     def mouse_wheel_screen(self, x, y, steps):
         """If the Squish object exist, this function will perform a mouse wheel scroll
@@ -395,7 +435,7 @@ class GX1Testlib(object):
 
         """
         steps = int(steps)
-        return self.squish_proxy.mouse_wheel_screen(x,y,steps)
+        return self.squish_proxy.mouse_wheel_screen(x, y, steps)
 
     def long_mouse_drag(self, gobj, steps):
         """If object is applicable, this function will produce a mouse drag operation with a fixed delay of
@@ -408,7 +448,7 @@ class GX1Testlib(object):
         """
         steps = int(steps)
         gobj = self._get_obj_from_alias(gobj)
-        return self.squish_proxy.long_mouse_drag(gobj,steps)
+        return self.squish_proxy.long_mouse_drag(gobj, steps)
 
     def mouse_click(self, gobj):
         """If object is applicable, perform a mouse click by passing in the Squish object reference.
@@ -421,7 +461,7 @@ class GX1Testlib(object):
         """
         gobj = self._get_obj_from_alias(gobj)
         return self.squish_proxy.mouse_click(gobj)
-        #return self.squish_proxy.mouse_click(gobj)
+        # return self.squish_proxy.mouse_click(gobj)
 
     def mouse_xy(self, x, y):
         """Perform a mouse click on the active window.
@@ -433,7 +473,7 @@ class GX1Testlib(object):
         """
         x = int(x)
         y = int(y)
-        return self.squish_proxy.mouse_xy(x,y)
+        return self.squish_proxy.mouse_xy(x, y)
 
     def long_mouse_click(self, gobj, x, y):
         """Perform a long mouse click on the active window.
@@ -446,13 +486,62 @@ class GX1Testlib(object):
         x = int(x)
         y = int(y)
         gobj = self._get_obj_from_alias(gobj)
-        return self.squish_proxy.long_mouse_click(gobj,x,y)
+        return self.squish_proxy.long_mouse_click(gobj, x, y)
+
+    def get_text(self, screenshot_path, image_alias, rect_alias, lang='en'):
+        """
+        Get the text from the image and the feature rect
+        :param screenshot_path: the image path that need to be verified.
+        :param image_alias: the alias of the sample image
+        :param rect_alias: the alias of the sample feature rect
+        :param lang: the language of the text
+        :return: the text
+        """
+
+        feature_rect = self.project_model.image_processing_container.get_feature_rect(image_alias,rect_alias)
+        result = self.tessert_ocr.get_string(screenshot_path, (
+        feature_rect[0], feature_rect[1]),( feature_rect[0] + feature_rect[2], feature_rect[1] + feature_rect[3]))
+        cropped_image = result[1]
+        basename = self._get_unique_image_name()
+        screenshot_name = self._get_screenshot_path(basename)
+        cropped_image.save(screenshot_name)
+        self._embed_screenshot(screenshot_name,feature_rect[2])
+        return result[0]
+
+    def compare_feature_rect(self, screenshot_path, sample_image_alias, sample_rect_alias):
+        """
+        To compare the consistency of image  feature rect
+        :param screenshot_path: the image path that need to be verified.
+        :param sample_image_alias: the alias of the sample image
+        :param sample_rect_alias: the alias of the sample feature rect
+        :return: the consistency
+        """
+        sample_image_path = self.project_model.image_processing_container.get_image_object(sample_image_alias).getPropertyByName("Path").getStringValue()
+        feature_rect = self.project_model.image_processing_container.get_feature_rect(sample_image_alias,sample_rect_alias)
+        img1 = Image.open(screenshot_path)
+        img2 = Image.open(sample_image_path)
+        img1 = img1.crop((feature_rect[0], feature_rect[1], feature_rect[0]+feature_rect[2], feature_rect[1]+feature_rect[3]))
+        img2 = img2.crop((feature_rect[0], feature_rect[1], feature_rect[0]+feature_rect[2], feature_rect[1]+feature_rect[3]))
+        screenshot_name_1 = self._get_screenshot_path(self._get_unique_image_name())
+        img1.save(screenshot_name_1)
+        screenshot_name_2 = self._get_screenshot_path(self._get_unique_image_name())
+        img2.save(screenshot_name_2)
+        self._embed_screenshot(screenshot_name_1, feature_rect[2])
+        self._embed_screenshot(screenshot_name_2, feature_rect[2])
+        ident = self.p2p_comparer.compare(screenshot_path, sample_image_path,feature_rect)
+        return ident
+
+
 
 
 if __name__ == "__main__":
     gx1_testlib = GX1Testlib()
     gx1_testlib.init_test()
-    gx1_testlib.mouse_xy(722,161)
+    gx1_testlib.get_text("", "ElectrodeSetup", "Monopolar")
+
+
+
+    gx1_testlib.mouse_xy(722, 161)
     gx1_testlib.start_scenario("RampMeasure")
     time.sleep(10)
     gx1_testlib.start_scenario("RampMeasure")
@@ -460,17 +549,19 @@ if __name__ == "__main__":
     KWG = dict()
     time.sleep(5)
     KWG["ar_measured_channels.MeasuredChannelParam[0].u8_TempRefAvailable"] = 1
-    command_lists = gx1_testlib.find_logged_commands(0xC049,0,**KWG)
+    command_lists = gx1_testlib.find_logged_commands(0xC049, 0, **KWG)
+
+    gx1_testlib.mouse_xy(109,702)
 
     gx1_testlib.mouse_click("OneTouch")
     time.sleep(1)
     gx1_testlib.mouse_click("Stimulation")
     time.sleep(1)
-    gx1_testlib.set_command_response("0xC046",u8_OutputStatus=1)
-    #tt.start()
+    gx1_testlib.set_command_response("0xC046", u8_OutputStatus=1)
+    # tt.start()
     time.sleep(10)
-    #gx1_testlib.mouse_click("OneTouch")
-    #gx1_testlib.command_listener.open_message_log()
-    #gx1_testlib.screen_shot(1)
+    # gx1_testlib.mouse_click("OneTouch")
+    # gx1_testlib.command_listener.open_message_log()
+    # gx1_testlib.screen_shot(1)
 
     gx1_testlib.close_test()

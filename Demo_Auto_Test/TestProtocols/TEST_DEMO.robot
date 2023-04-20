@@ -5,7 +5,7 @@ Metadata          SW_VERSION    1.0
 Metadata          FW_VERSION    2.0
 Library           ../../GX1Testlib.py
 *** Test Cases ***
-TEST_CASE_1_SCREENSHOT
+TEST_CASE_1_COMMAND_SIMULATION
     [Documentation]    This test case is for demo for the features of DVTFront of GX1.
     [Tags]    MAINPAGE    SCREENSHOT    DEMO    stimulation
     Log    this is the test demo, started
@@ -60,3 +60,21 @@ TEST_CASE_3_COMMAND_SEARCH
     ${message_count}    Get Length    ${command_list}
     Log    ${command_list[0].data.ar_measured_channels[0].u16_TempRef}
     Log    ${command_list[1].data.ar_measured_channels[0].u16_TempRef}
+
+TEST_CASE_4_TEST_OCR
+    Mouse xy    722    161
+    Mouse Xy    109    722
+    SLEEP    1S
+    ${screen_shot_path}    Screen Shot
+    ${text1}    Get Text    ${screen_shot_path}    ElectrodeSetup    Monopolar
+    ${text2}    Get Text    ${screen_shot_path}    ElectrodeSetup    Bipolar
+    Should Be Equal    ${text1}    Monopolar
+    Should Be Equal    ${text2}    Bipolar
+
+TEST_CASE_5_TEST_COMPARE
+    Mouse Click    PulseRF
+    sleep    1s
+    ${image_path}    Screen Shot
+    ${result}    Compare Feature Rect    ${image_path}    PulsedRF    Camera
+    ${result}    Compare Feature Rect    ${image_path}    PulsedRF    Folder
+    ${result}    Compare Feature Rect    ${image_path}    PulsedRF    Setting
