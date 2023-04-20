@@ -1,3 +1,12 @@
+"""
+@author: Kevin Xu
+@license: (C) Copyright 2021-2025, Boston Scientific Corporation Limited.
+@contact: xuf@bsci.com
+@software: BSC_EME_TAF
+@file: logger.py
+@time: 2023/3/25 20:34
+@desc:
+"""
 import logging
 from utils.sim_desk_logging import logger as sim_desk_logger
 from robot.api import logger as robot_logger

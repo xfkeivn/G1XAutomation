@@ -1,3 +1,12 @@
+"""
+@author: Kevin Xu
+@license: (C) Copyright 2021-2025, Boston Scientific Corporation Limited.
+@contact: xuf@bsci.com
+@software: BSC_EME_TAF
+@file: GX1Testlib.py
+@time: 2023/3/25 20:34
+@desc:
+"""
 import threading
 from executor_context import ExecutorContext
 from sim_desk.models.Project import Project

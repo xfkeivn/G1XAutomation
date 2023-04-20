@@ -1,7 +1,15 @@
+"""
+@author: Kevin Xu
+@license: (C) Copyright 2021-2025, Boston Scientific Corporation Limited.
+@contact: xuf@bsci.com
+@software: BSC_EME_TAF
+@file: Script.py
+@time: 2023/3/26 11:35
+@desc:
+"""
 import os.path
 import sys
 import importlib
-
 import executor_context
 from sim_desk.models.TreeModel import TreeModel
 import sim_desk.ui.images

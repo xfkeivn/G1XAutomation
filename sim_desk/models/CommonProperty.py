@@ -1,7 +1,15 @@
+"""
+@author: Kevin Xu
+@license: (C) Copyright 2021-2025, Boston Scientific Corporation Limited.
+@contact: xuf@bsci.com
+@software: BSC_EME_TAF
+@file: CommonProperty.py
+@time: 2023/3/26 11:35
+@desc:
+"""
 from sim_desk.models.TreeModel import TreeModel
 import wx.propgrid as wxpg
 import wx
-
 
 class CommonProperty(TreeModel):
     def __init__(self,name,label=None, defaultvalue=wx.EmptyString,category=None,editable=True):

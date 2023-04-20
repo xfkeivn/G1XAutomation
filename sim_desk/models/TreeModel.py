@@ -1,3 +1,12 @@
+"""
+@author: Kevin Xu
+@license: (C) Copyright 2021-2025, Boston Scientific Corporation Limited.
+@contact: xuf@bsci.com
+@software: BSC_EME_TAF
+@file: TreeModel.py
+@time: 2023/3/26 11:35
+@desc:
+"""
 import sim_desk.ui.images
 from wx.lib.newevent import NewEvent
 import wx

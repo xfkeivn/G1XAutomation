@@ -1,5 +1,13 @@
+"""
+@author: Kevin Xu
+@license: (C) Copyright 2021-2025, Boston Scientific Corporation Limited.
+@contact: xuf@bsci.com
+@software: BSC_EME_TAF
+@file: executor_context.py
+@time: 2023/3/25 20:34
+@desc:
+"""
 from utils.singleton import Singleton
-
 
 class ExecutorContext(metaclass=Singleton):
     SIMDESK_CONTEXT = "SimDesk"

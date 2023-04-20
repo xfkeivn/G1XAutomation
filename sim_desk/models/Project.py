@@ -1,3 +1,12 @@
+"""
+@author: Kevin Xu
+@license: (C) Copyright 2021-2025, Boston Scientific Corporation Limited.
+@contact: xuf@bsci.com
+@software: BSC_EME_TAF
+@file: Project.py
+@time: 2023/3/26 11:35
+@desc:
+"""
 import executor_context
 from sim_desk.models.FolderModel import CommandResponseContainer,SquishContainer,MTICommandContainer,DAQIOContainer,ImageProcessingContainer, ScenarioPyContainer
 import os

@@ -5,7 +5,7 @@
 @license: (C) Copyright 2021-2025, Boston Scientific Corporation Limited.
 @contact: xuf@bsci.com
 @software: BSC_EME_TAF
-@file: utilties.py
+@file: utilities.py
 @time: 2023/4/1 15:07
 @desc:
 """

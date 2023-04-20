@@ -1,3 +1,13 @@
+"""
+@author: Kevin Xu
+@license: (C) Copyright 2021-2025, Boston Scientific Corporation Limited.
+@contact: xuf@bsci.com
+@software: BSC_EME_TAF
+@file: mainframe.py
+@time: 2023/3/26 10:58
+@desc:
+"""
+
 from sim_desk import constant
 from sim_desk.mgr.appconfig import AppConfig
 from sim_desk.ui.propertygrid import PropertyGridPanel
@@ -5,7 +15,7 @@ from sim_desk.ui.project_tree import ProjectTreeCtrl
 from sim_desk.ui.wizards.NewProjectWizard import NewProjectWizard as Npw
 from sim_desk.models.Project import Project
 from sim_desk.models.TreeModel import *
-from sim_desk.ui.scrip_editor import PythonSTC
+from sim_desk.ui.script_editor import PythonSTC
 from BackPlaneSimulator import BackPlaneSimulator as Bps
 from sim_desk.ui.screenframe import MyScrolledPanel
 from sim_desk.ui.ImagePanel import *

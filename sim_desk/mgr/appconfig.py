@@ -1,3 +1,12 @@
+"""
+@author: Kevin Xu
+@license: (C) Copyright 2021-2025, Boston Scientific Corporation Limited.
+@contact: xuf@bsci.com
+@software: BSC_EME_TAF
+@file: appconfig.py
+@time: 2023/3/26 11:35
+@desc:
+"""
 import os
 from sim_desk import constant
 import json
