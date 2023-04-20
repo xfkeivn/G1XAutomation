@@ -52,6 +52,7 @@ Command_Code_Class_Mapping = {
     GET_CPLD_REGISTERS: commands.GetCPLDRegCmd,
     SET_IMPEDANCE_SETTING: commands.SetImpedanceSettingCmd,
     GET_IMPEDANCE_SETTING: commands.GetImpedanceSettingCmd,
+    LAUNCH_APPLICATION:commands.LaunchApplication,
 }
 
 

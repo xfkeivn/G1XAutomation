@@ -578,3 +578,17 @@ class GetMeasuredChannelsResp(Response):
         super().__init__(gx_command_codes.GET_MEASURED_CHANNEL)
         self.ar_measured_channels: List[MeasuredChannelParam] = [MeasuredChannelParam() for i in range(4)]
         self._arrayTypes['ar_measured_channels'] = 'MeasuredChannelParam'
+
+
+class LaunchApplication(Command):
+    def __init__(self):
+        super().__init__(gx_command_codes.LAUNCH_APPLICATION)
+        self.response = LaunchApplicationResp()
+        self.au8_fw_hash_data = [0]*32
+        self.au8_cpld_hash_data = [0] * 32
+        self._arrayLengths = {'au8_fw_hash_data': 32,'au8_cpld_hash_data':32}
+
+
+class LaunchApplicationResp(Response):
+    def __init__(self):
+        super().__init__(gx_command_codes.LAUNCH_APPLICATION)
