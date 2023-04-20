@@ -81,17 +81,6 @@ class SquishContainer(TreeModel):
                 self.addChild(squish_name_file)
                 squish_name_file.populate()
 
-    def isAllready(self,absname):
-        for dbcmodel in self.getModelChildren():
-            if dbcmodel.getLabel() == os.path.exists(absname):
-                return True
-        return False
-
-    def copy_to_project_local_folder(self,src):
-        dirtocopy = os.path.join(self.getRoot().getProjectDir(), TAG_NAME_FOLDER_TESTASSET)
-        abs_path = os.path.join(dirtocopy,os.path.basename(src))
-        shutil.copy(src,abs_path)
-        return abs_path
 
     def getImage(self):
         return sim_desk.ui.images.folder_collapse
@@ -152,13 +141,13 @@ class ImageProcessingContainer(TreeModel):
                 if self.isAllready(path):
                     wx.MessageDialog(None, "Name file Already exists", "Name file not added", wx.OK).ShowModal()
                     return
-                abs_path = self.copy_to_project_local_folder(path)
-                image_model = ImageModel(self, abs_path)
-                self.addChild(image_model)
-                image_model.populate()
+                self.import_it(path);
 
-
-
+    def import_to_asset(self,path):
+        abs_path = self.copy_to_project_local_folder(path)
+        image_model = ImageModel(self, abs_path)
+        self.addChild(image_model)
+        image_model.populate()
 
 
 class ScenarioPyContainer(TreeModel):
@@ -172,12 +161,6 @@ class ScenarioPyContainer(TreeModel):
 
     def getImage(self):
         return sim_desk.ui.images.folder_collapse
-
-    def copy_to_project_local_folder(self,src):
-        dirtocopy = os.path.join(self.getRoot().getProjectDir(), TAG_NAME_FOLDER_TESTASSET)
-        abs_path = os.path.join(dirtocopy,os.path.basename(src))
-        shutil.copy(src,abs_path)
-        return abs_path
 
     def from_json(self,element):
         if element.get('sub_models') is not None:

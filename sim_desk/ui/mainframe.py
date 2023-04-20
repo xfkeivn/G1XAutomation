@@ -1,7 +1,9 @@
-import threading
-
-import wx
-import os
+"""
+File Name: {file_name}
+Author: Kevin Xu
+Description: This is the mainframe window of the sim desk
+Last Modified: {git_commit_id} ({git_commit_date})
+"""
 from sim_desk import constant
 from sim_desk.mgr.context import SimDeskContext
 from sim_desk.mgr.appconfig import AppConfig
@@ -16,7 +18,7 @@ from sim_desk.ui.screenframe import MyScrolledPanel
 from sim_desk.ui.ImagePanel import *
 from sim_desk.ui.console import Console
 import executor_context
-import subprocess
+
 try:
     from agw import aui
 except ImportError:  # if it's not there locally, try the wxPython lib.
@@ -24,6 +26,7 @@ except ImportError:  # if it's not there locally, try the wxPython lib.
 from sim_desk.ui import statusbar, images
 from squish.squish_lib import *
 from squish.squish_proxy import *
+
 ID_NewProject = wx.ID_HIGHEST + 1
 ID_ImportProject = wx.ID_HIGHEST + 2
 ID_ExportProject = wx.ID_HIGHEST + 3
@@ -41,6 +44,8 @@ ID_Robot = wx.ID_HIGHEST + 31
 ID_FirstLastestProject = wx.ID_HIGHEST + 40
 
 NOTE_PAGE_NAME_IMAGE_FEATURE = "Image Features"
+
+
 class MainFrame(wx.Frame):
 
     def __init__(self, parent, id=wx.ID_ANY, title="", pos=wx.DefaultPosition, size=wx.DefaultSize,
@@ -56,10 +61,14 @@ class MainFrame(wx.Frame):
         self.screen_window = None
         self.process = None
         self.notebook: aui.AuiNotebook = None
+        self.property_grid_panel = None
+        self.original_perspective = None
+        self.file_menu = None
         self.screen_image = None
-        self.BuildPanes()
-        self.CreateMenuBar()
-        self.BindEvents()
+        self.tb = None
+        self.build_panes()
+        self.create_menubar()
+        self.bind_events()
         self.active_project = None
         self.squish_runner = None
         self.__fast_open_projects_list = []
@@ -75,19 +84,18 @@ class MainFrame(wx.Frame):
         self._mgr.Update()
         executor_context.ExecutorContext().set_gui_context(self)
 
-
     def init(self):
         projecthistories = self.appconfig.getProjectHistoryList()
         # Open Latest Project
         if len(projecthistories) > 0:
             lastprojectdir = projecthistories[-1]
-            self.OpenProject(lastprojectdir)
-        self.__onNormalState()
+            self.open_project(lastprojectdir)
+        self.__on_normal_state()
         if self.active_project is None:
             self.tb.EnableTool(ID_StartTest, False)
             self.tb.EnableTool(ID_StopTest, False)
 
-    def CreateMenuBar(self):
+    def create_menubar(self):
 
         mb = wx.MenuBar()
         self.file_menu = wx.Menu()
@@ -110,7 +118,7 @@ class MainFrame(wx.Frame):
 
         self.SetMenuBar(mb)
 
-    def BuildPanes(self):
+    def build_panes(self):
 
         self.SetMinSize(wx.Size(400, 300))
         tb1 = aui.AuiToolBar(self, -1, wx.DefaultPosition, wx.DefaultSize,
@@ -131,21 +139,21 @@ class MainFrame(wx.Frame):
         tb1.AddSimpleTool(ID_Robot, "Start RIDE", images.robot.GetBitmap())
         tb1.Realize()
         self.tb = tb1
-        self._mgr.AddPane(self.CreateProjectTreeCtrl(), aui.AuiPaneInfo().
+        self._mgr.AddPane(self.create_project_treectrl(), aui.AuiPaneInfo().
                           Name("ProjectExplorer").Caption("Project Explorer").
                           Left().Layer(2).MinimizeButton(True).Icon(images.viewproj.GetBitmap()))
-        self._mgr.AddPane(self.CreatePropertyGrid(), aui.AuiPaneInfo().
+        self._mgr.AddPane(self.create_property_grid(), aui.AuiPaneInfo().
                           Name("Properties").Caption("Properties").
                           Left().Layer(2).Position(1).MinimizeButton(True).Icon(images.viewprop.GetBitmap()))
-        self._mgr.AddPane(self.CreateConsoleCtrl(), aui.AuiPaneInfo().Name("Console").Caption("Console").
+        self._mgr.AddPane(self.create_console_ctrl(), aui.AuiPaneInfo().Name("Console").Caption("Console").
                           Bottom().MinimizeButton(True).Icon(images.viewconsole.GetBitmap()))
 
-        self._mgr.AddPane(self.CreateNotebook(), aui.AuiPaneInfo().Name("Desk").Caption("Desk").
+        self._mgr.AddPane(self.create_notebook(), aui.AuiPaneInfo().Name("Desk").Caption("Desk").
                           Centre().CloseButton(False).CaptionVisible(False))
         self._mgr.AddPane(tb1, aui.AuiPaneInfo().Name("tb1").Caption("Big Toolbar").ToolbarPane().Top())
         self.original_perspective = self._mgr.SavePerspective()
 
-    def clearlog(self, evt):
+    def clear_log(self, evt):
         self.console.clear()
 
     def append_projects_to_fast_open(self, project_dir_list):
@@ -165,22 +173,21 @@ class MainFrame(wx.Frame):
         self._mgr.Update()
         return window
 
-    def BindEvents(self):
-        self.Bind(wx.EVT_MENU, self.OnNewProject, id=ID_NewProject)
-        self.Bind(wx.EVT_MENU, self.OnSaveProject, id=ID_SaveProject)
-        self.Bind(wx.EVT_MENU, self.OnImportProject, id=ID_ImportProject)
-        self.Bind(wx.EVT_MENU, self.onScreenShot, id = ID_ScreenShot)
-        self.Bind(wx.EVT_CLOSE, self.OnClose)
-        self.Bind(EVT_MODEL_DIRTYSTATE_CHANGE_EVENT, self.onDirtyStateChanged)
-        self.Bind(wx.EVT_MENU, self.OnAbout, id=wx.ID_ABOUT)
-        self.Bind(aui.EVT_AUI_PANE_CLOSE, self.OnPaneClose)
-        self.Bind(aui.EVT_AUINOTEBOOK_PAGE_CLOSE, self.OnNotebookPageClose)
-        self.Bind(wx.EVT_MENU_RANGE, self.onOpenProject, id=ID_FirstLastestProject, id2=ID_FirstLastestProject + 7)
-        self.Bind(wx.EVT_MENU, self.onStart, id=ID_StartTest)
-        self.Bind(wx.EVT_MENU, self.onStop, id=ID_StopTest)
+    def bind_events(self):
+        self.Bind(wx.EVT_MENU, self.on_new_project, id=ID_NewProject)
+        self.Bind(wx.EVT_MENU, self.on_save_project, id=ID_SaveProject)
+        self.Bind(wx.EVT_MENU, self.on_import_project, id=ID_ImportProject)
+        self.Bind(wx.EVT_MENU, self.on_screen_shot, id=ID_ScreenShot)
+        self.Bind(wx.EVT_CLOSE, self.on_close)
+        self.Bind(EVT_MODEL_DIRTYSTATE_CHANGE_EVENT, self.on_dirty_state_changed)
+        self.Bind(wx.EVT_MENU, self.on_about, id=wx.ID_ABOUT)
+        self.Bind(aui.EVT_AUI_PANE_CLOSE, self.on_pane_close)
+        self.Bind(aui.EVT_AUINOTEBOOK_PAGE_CLOSE, self.On_notebook_page_close)
+        self.Bind(wx.EVT_MENU_RANGE, self.on_open_project, id=ID_FirstLastestProject, id2=ID_FirstLastestProject + 7)
+        self.Bind(wx.EVT_MENU, self.on_start, id=ID_StartTest)
+        self.Bind(wx.EVT_MENU, self.on_stop, id=ID_StopTest)
         self.Bind(wx.EVT_MENU, self.on_start_robot, id=ID_Robot)
-        self.Bind(wx.EVT_MENU, self.clearlog, id=ID_ClearLog)
-
+        self.Bind(wx.EVT_MENU, self.clear_log, id=ID_ClearLog)
 
     def __del__(self):
         pass
@@ -191,15 +198,15 @@ class MainFrame(wx.Frame):
 
     def on_start_robot(self, evt):
         # Activate the virtual environment
-        venv_path = os.path.join(os.path.dirname(__file__),"../../venv")
+        venv_path = os.path.join(os.path.dirname(__file__), "../../venv")
         activate_script = os.path.join(venv_path, 'Scripts', 'activate.bat')
         subprocess.call(activate_script, shell=True)
 
         # Start the subprocess using the virtual environment's Python interpreter
         python_path = os.path.join(venv_path, 'Scripts', 'python.exe')
-        subprocess.Popen([python_path, os.path.join(venv_path,'Scripts','ride.py')])
+        subprocess.Popen([python_path, os.path.join(venv_path, 'Scripts', 'ride.py')])
 
-    def onStart(self, evt):
+    def on_start(self, evt):
         self.SetWindowStyle(wx.CAPTION | wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.RESIZE_BORDER)
         com_port_val = self.active_project.getPropertyByName("COM").getStringValue()
         result = self.bps.start(com_port_val)
@@ -212,17 +219,16 @@ class MainFrame(wx.Frame):
                 ip_address = ip_prop.getStringValue()
                 aut_name = aut_prop.getStringValue()
                 private_key_file = private_key.getStringValue()
-                self.squish_runner = SquishProxy(ip_address,private_key_file,aut_name)
+                self.squish_runner = SquishProxy(ip_address, private_key_file, aut_name)
                 self.squish_runner.create_proxy()
                 self.squish_runner.connect()
                 self.active_project.squish_runner = self.squish_runner
                 self.screen_window.start()
-                #self.timer.Start(500)
         self.active_project.scenario_py_container.start_all_scenarios()
         if result:
-            self.__onRuntimeState()
+            self.__on_runtime_state()
 
-    def __onRuntimeState(self):
+    def __on_runtime_state(self):
         if self.active_project:
             self.active_project.set_model_status(TREEMODEL_STATUS_RUNTIME)
 
@@ -233,13 +239,12 @@ class MainFrame(wx.Frame):
         self.tb.EnableTool(ID_ScreenShot, True)
         self.tb.EnableTool(ID_StopTest, True)
         self.sb.SetText1("Project is running")
-        #self.sb.SetStatus(TreeModel.TREEMODEL_STATUS_RUNTIME)
         self.GetMenuBar().EnableTop(0, False)
         self.GetMenuBar().EnableTop(1, False)
         self.GetMenuBar().EnableTop(2, False)
         self.tb.Realize()
 
-    def __onNormalState(self):
+    def __on_normal_state(self):
         if self.active_project:
             self.active_project.set_model_status(TREEMODEL_STATUS_NORMAL)
             toolcount = self.tb.GetToolCount()
@@ -257,37 +262,38 @@ class MainFrame(wx.Frame):
         self.tb.EnableTool(ID_ScreenShot, False)
         self.tb.Realize()
 
-    def onStop(self, evt):
+    def on_stop(self, evt):
         self.active_project.scenario_py_container.stop_all_scenarios()
         self.screen_window.stop()
         if self.bps.stop():
-            self.__onNormalState()
+            self.__on_normal_state()
             self.SetWindowStyle(wx.DEFAULT_FRAME_STYLE | wx.SUNKEN_BORDER)
         if self.squish_runner:
             self.squish_runner.disconnect()
 
-
-    def onScreenShot(self,evt):
+    def on_screen_shot(self, evt):
         dirname = os.path.dirname(__file__)
-        screenshot_folder = os.path.join(dirname,"../screenshot")
+        screenshot_folder = os.path.join(dirname, "../screenshot")
         if self.squish_runner:
             name = time.strftime('%Y%b%d_%H_%M_%S.png', time.localtime())
-            full_path_name = os.path.join(screenshot_folder,name)
+            full_path_name = os.path.join(screenshot_folder, name)
             self.squish_runner.screen_save(full_path_name)
+            self.active_project.image_processing_container.import_to_asset(full_path_name)
+            # load it
 
-    def OnPaneClose(self, evt):
+    def on_pane_close(self, evt):
         # print "close pane"
         evt.Skip()
 
-    def OnNotebookPageClose(self, evt):
+    def On_notebook_page_close(self, evt):
         # print "close pane"
         page_index = evt.GetSelection()
         page = self.notebook.GetPage(page_index)
-        if isinstance(page,PythonSTC):
+        if isinstance(page, PythonSTC):
             page.script_model.save()
         evt.Skip()
 
-    def showPane(self, evt):
+    def show_pane(self, evt):
         id = evt.Id
         if id == ID_ViewProjects:
             self._mgr.ShowPane(self._mgr.GetPaneByName("ProjectExplorer").window, True)
@@ -296,18 +302,18 @@ class MainFrame(wx.Frame):
         elif id == ID_ViewProperties:
             self._mgr.ShowPane(self._mgr.GetPaneByName("Properties").window, True)
 
-    def removePage(self, name):
+    def remove_page(self, name):
         panel = self._mgr.GetPaneByName(name)
         if panel:
             self._mgr.ClosePane(panel)
             self._mgr.DetachPane(panel.window)
             self._mgr.Update()
 
-    def onDirtyStateChanged(self, evt):
+    def on_dirty_state_changed(self, evt):
         self.tb.EnableTool(ID_SaveProject, evt.dirtystate)
         self.tb.Realize()
 
-    def OnSaveProject(self, evt):
+    def on_save_project(self, evt):
         if self.active_project:
             perspective_default = self._mgr.SavePerspective()
             self.active_project.saveDefaultPerspective(perspective_default)
@@ -315,16 +321,16 @@ class MainFrame(wx.Frame):
             self.tb.EnableTool(ID_SaveProject, False)
             self.tb.Realize()
 
-    def OnClose(self, event):
+    def on_close(self, event):
 
-        if self.__Close_Active_Project() is False:
+        if self.__close_active_project() is False:
             event.Veto()
             return
         self._mgr.UnInit()
         self.appconfig.save()
         event.Skip()
 
-    def OnImportProject(self, event):
+    def on_import_project(self, event):
         dlg = wx.FileDialog(
             self, message="Choose a project file",
             defaultDir=os.getcwd(),
@@ -336,17 +342,17 @@ class MainFrame(wx.Frame):
         if dlg.ShowModal() == wx.ID_OK:
             projectpath = dlg.GetPath()
             prjdir = os.path.dirname(projectpath)
-            self.OpenProject(prjdir)
+            self.open_project(prjdir)
 
-    def onOpenProject(self, evt):
+    def on_open_project(self, evt):
         index = evt.Id - ID_FirstLastestProject
         projectdir = self.__fast_open_projects_list[index]
-        self.OpenProject(projectdir)
-        self.__onNormalState()
+        self.open_project(projectdir)
+        self.__on_normal_state()
 
-    def add_new_notebook_page(self, ctrl,page_name):
-        self.notebook.AddPage(ctrl,page_name)
-        return self.notebook.GetPageCount()-1
+    def add_new_notebook_page(self, ctrl, page_name):
+        self.notebook.AddPage(ctrl, page_name)
+        return self.notebook.GetPageCount() - 1
 
     def show_feature_annotation_page(self):
         page_count = self.notebook.GetPageCount()
@@ -359,7 +365,7 @@ class MainFrame(wx.Frame):
                 page_exists = True
                 break
 
-    def unload_script_model(self,model):
+    def unload_script_model(self, model):
         filename = os.path.basename(model.script_file_path)
         page_count = self.notebook.GetPageCount()
         for idx in range(page_count):
@@ -368,7 +374,7 @@ class MainFrame(wx.Frame):
                 self.notebook.RemovePage(idx)
                 break
 
-    def load_script_model(self,model):
+    def load_script_model(self, model):
         filename = os.path.basename(model.script_file_path)
         page_count = self.notebook.GetPageCount()
         page_exists = False
@@ -381,41 +387,36 @@ class MainFrame(wx.Frame):
                 page_exists = True
                 break
         if page_exists is False:
-            page_stc = PythonSTC(self.notebook,wx.ID_ANY)
+            page_stc = PythonSTC(self.notebook, wx.ID_ANY)
             page_stc.script_model = model
-            idx = self.add_new_notebook_page(page_stc,filename)
+            idx = self.add_new_notebook_page(page_stc, filename)
             self.notebook.SetSelection(idx)
         return page_stc
 
-
-    def DoUpdate(self):
-
+    def do_update(self):
         self._mgr.Update()
         self.Refresh()
 
-    def OnEraseBackground(self, event):
-
+    def on_erase_background(self, event):
         event.Skip()
 
-    def OnSize(self, event):
-
+    def on_size(self, event):
         event.Skip()
 
-    def OnUpdateUI(self, event):
+    def on_update_ui(self, event):
         pass
 
-
-    def GetStartPosition(self):
+    def get_start_position(self):
 
         x = 20
         pt = self.ClientToScreen(wx.Point(0, 0))
         return wx.Point(pt.x + x, pt.y + x)
 
-    def OnExit(self, event):
+    def on_exit(self, event):
 
         self.Close(True)
 
-    def OnAbout(self, event):
+    def on_about(self, event):
 
         msg = "This Is The About Dialog Of G1X Sim Desk.\n\n" + \
               "Author: Kevin Xu @ 25 March 2023\n\n" + \
@@ -430,20 +431,20 @@ class MainFrame(wx.Frame):
         dlg.ShowModal()
         dlg.Destroy()
 
-    def assignProject(self, projectmodel):
+    def assign_project(self, projectmodel):
         self.projecttree.assignProject(projectmodel)
-        self.propertygridpanel.assignProject(projectmodel)
+        self.property_grid_panel.assignProject(projectmodel)
         self.active_project.console = self.console
 
-    def OnNewProject(self, event):
-        if self.__Close_Active_Project():
+    def on_new_project(self, event):
+        if self.__close_active_project():
             newwizard = NPW(self)
             if newwizard.run():
                 projectname, projectdir = newwizard.getProjectName(), newwizard.getProjectDir()
                 if not os.path.exists(os.path.join(projectdir, projectname)):
                     self.active_project = Project(projectname)
                     self.active_project.saveDefaultPerspective(self._mgr.SavePerspective())
-                    self.assignProject(self.active_project)
+                    self.assign_project(self.active_project)
                     self.active_project.create(projectname, projectdir)
                     self.active_project.setDirty()
                     self.tb.EnableTool(ID_SaveProject, False)
@@ -454,11 +455,11 @@ class MainFrame(wx.Frame):
                 else:
                     wx.MessageBox("The project already exist, please check!")
 
-    def OpenProject(self, projectdir):
-        if self.__Close_Active_Project():
+    def open_project(self, projectdir):
+        if self.__close_active_project():
             projectname = os.path.basename(projectdir)
             self.active_project = Project(projectname)
-            self.assignProject(self.active_project)
+            self.assign_project(self.active_project)
             self.active_project.open(projectdir)
             defaultperspecitve = self.active_project.getDefaultPerspective()
 
@@ -473,7 +474,7 @@ class MainFrame(wx.Frame):
             self.SetTitle("GX1 Simulator Desktop --" + self.active_project.getLabel())
             # self.__onNormalState()
 
-    def __Close_Active_Project(self):
+    def __close_active_project(self):
 
         if self.active_project is None:
             return True
@@ -496,7 +497,7 @@ class MainFrame(wx.Frame):
         self.append_projects_to_fast_open([self.active_project.project_dir])
         return True
 
-    def ShowPageInCentrePane(self, panel_label):
+    def show_page_in_centre_pane(self, panel_label):
         panel = self._mgr.GetPaneByName(panel_label)
         if panel is not None:
             notebooks = self._mgr.GetNotebooks()
@@ -514,22 +515,22 @@ class MainFrame(wx.Frame):
                 self._mgr.DetachPane(panel.window)
                 self.add_to_center_panel(panel.window)
 
-    def CreateConsoleCtrl(self):
+    def create_console_ctrl(self):
         self.console = Console(self)
         return self.console
 
-    def CreateProjectTreeCtrl(self):
+    def create_project_treectrl(self):
 
         self.projecttree = ProjectTreeCtrl(self, -1, wx.Point(0, 0), wx.Size(200, 250),
                                            wx.TR_DEFAULT_STYLE | wx.NO_BORDER)
         return self.projecttree
 
-    def CreatePropertyGrid(self):
-        self.propertygridpanel = PropertyGridPanel(self, wx.ID_ANY)
+    def create_property_grid(self):
+        self.property_grid_panel = PropertyGridPanel(self, wx.ID_ANY)
 
-        return self.propertygridpanel
+        return self.property_grid_panel
 
-    def CreateNotebook(self):
+    def create_notebook(self):
         client_size = self.GetClientSize()
         ctrl = aui.AuiNotebook(self, -1, wx.Point(client_size.x, client_size.y), wx.Size(430, 200))
 
