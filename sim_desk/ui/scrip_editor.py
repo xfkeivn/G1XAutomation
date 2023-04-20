@@ -227,7 +227,7 @@ class PythonSTC(stc.StyledTextCtrl):
                 #self.AutoCompShow(0, st)
 
                 kw = keyword.kwlist[:]
-                kw.append("zzzzzz?2")
+                kw.append("set_command_pending_response_by_parameters")
                 kw.append("aaaaa?2")
                 kw.append("__init__?3")
                 kw.append("zzaaaaa?2")

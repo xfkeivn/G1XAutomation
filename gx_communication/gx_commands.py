@@ -2,6 +2,7 @@ from gx_communication import gx_command_codes
 from gx_communication import serializable
 from typing import List
 
+
 class Command(serializable.Serializable, serializable.Deserializable):
     """
     Base class for RD1055 commands.
@@ -29,10 +30,6 @@ class Command(serializable.Serializable, serializable.Deserializable):
         self.response = None
 
 
-
-
-
-
 class Response(serializable.Serializable, serializable.Deserializable):
     """
     Base class for RD1055 command responses.
@@ -50,7 +47,6 @@ class Response(serializable.Serializable, serializable.Deserializable):
         super(serializable.Serializable, self).__init__()
         self.u16_ResponseCode = commandCode + 0x1
         self.u16_ErrorCode = 0x0000
-
 
 
 class WhoAmICmd(Command):
@@ -166,11 +162,11 @@ class GetStimulationSettingCmd(Command):
         self.response = GetStimulationSettingResponse()
 
 
-
 class GetStimulationSettingResponse(Response):
     """
     ---------
     """
+
     def __init__(self):
         super().__init__(gx_command_codes.GET_STIMULATION_SETTING_CMD)
         self.u8_ControlSetting = 0x00
@@ -186,10 +182,6 @@ class GetStimulationSettingResponse(Response):
 class SetStimulationSettingResp(Response):
     def __init__(self):
         super().__init__(gx_command_codes.SET_STIMULATION_SETTING_CMD)
-
-
-
-
 
 
 class SetThermalRFSettingCmd(Command):
@@ -220,12 +212,11 @@ class SetThermalRFSettingResp(Response):
         super().__init__(gx_command_codes.SET_THERMAL_RF_SETTING_CMD)
 
 
-
-
 class GetThermalRFSettingResp(Response):
     """
     ---------
     """
+
     def __init__(self):
         super().__init__(gx_command_codes.GET_THERMAL_RF_SETTING_CMD)
         self.u8_TRFMode = 0x00
@@ -297,13 +288,6 @@ class GetPulsedRFSettingCmd(Command):
         self.response = GetPulsedRFSettingResp()
 
 
-
-
-
-
-
-
-
 class GetFwImagePropertiesCmd(Command):
     """
     ---------
@@ -317,9 +301,6 @@ class GetFwImagePropertiesCmd(Command):
 class GetFwImagePropertiesResp(Response):
     def __init__(self):
         super().__init__(gx_command_codes.GET_FW_IMAGE_PROPERTIES_CMD)
-
-
-
 
 
 class CtrlResetTimerCmd(Command):
@@ -336,8 +317,6 @@ class CtrlResetTimerCmd(Command):
 class CtrlResetTimerResp(Response):
     def __init__(self):
         super().__init__(gx_command_codes.CTRL_RESET_TIMER_CMD)
-
-
 
 
 # BW **********************************************
@@ -403,11 +382,6 @@ class AdjustCurrentResp(Response):
         super().__init__(gx_command_codes.CTRL_ADJUST_CURR)
 
 
-
-
-
-
-
 class AdjustTempCmd(Command):
     """
     ---------
@@ -464,7 +438,6 @@ class SetImpedanceVolumeResp(Response):
         super().__init__(gx_command_codes.SET_IMPEDANCE_VOLUME_CMD)
 
 
-
 class SetImpedanceSettingCmd(Command):
     """
     ---------
@@ -492,12 +465,12 @@ class GetImpedanceSettingCmd(Command):
         self.response = GetImpedanceSettingResp()
 
 
-
 class GetImpedanceSettingResp(Response):
     def __init__(self):
         super().__init__(gx_command_codes.GET_IMPEDANCE_SETTING)
         self.u16_open_circuit_impedance = 0x00
         self.u16_short_circuit_impedance = 0x00
+
 
 class SetCPLDRegCmd(Command):
     """
@@ -599,12 +572,9 @@ class MeasuredChannelParam(serializable.Serializable):
     def __str__(self):
         return serializable.Serializable.__str__(self)
 
+
 class GetMeasuredChannelsResp(Response):
     def __init__(self):
         super().__init__(gx_command_codes.GET_MEASURED_CHANNEL)
         self.ar_measured_channels: List[MeasuredChannelParam] = [MeasuredChannelParam() for i in range(4)]
         self._arrayTypes['ar_measured_channels'] = 'MeasuredChannelParam'
-
-
-
-

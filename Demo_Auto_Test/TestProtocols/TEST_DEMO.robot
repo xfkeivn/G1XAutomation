@@ -2,6 +2,7 @@
 Suite Setup       init_test
 Suite Teardown    close_test
 Metadata          SW_VERSION    1.0
+Metadata          FW_VERSION    2.0
 Library           ../../GX1Testlib.py
 *** Test Cases ***
 TEST_CASE_1_SCREENSHOT
@@ -14,6 +15,7 @@ TEST_CASE_1_SCREENSHOT
     Screen Shot
     Mouse XY    426    718
     sleep    10s
+    Start Scenario    ImpedanceRamp
     Start Scenario    RampMeasure
     sleep    10s
     Stop Scenario    RampMeasure
@@ -22,12 +24,14 @@ TEST_CASE_1_SCREENSHOT
     Start Scenario    RampMeasure
     sleep    5s
     Stop Scenario    RampMeasure
+    Stop Scenario    ImpedanceRamp
     sleep    5s
     Log    this is the test demo, started
     Screen Shot
 
 TEST_CASE_2_CLICK_AND_SCREEN_SHOT
     [Documentation]    This is the second case
+    [Tags]    VOLTAGE    POWER
     Log    this is the test demo, started
     sleep    1s
     Mouse Click    OneTouch
@@ -48,6 +52,7 @@ TEST_CASE_2_CLICK_AND_SCREEN_SHOT
     Log    this is the test demo, started
 
 TEST_CASE_3_COMMAND_SEARCH
+    [Tags]    VOLTAGE    STIMULATION
     Log    this test is for testing the search command logged in the queue
     Clean Command Logging Queue
     sleep    5s

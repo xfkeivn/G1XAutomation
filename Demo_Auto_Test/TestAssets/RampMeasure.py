@@ -35,7 +35,6 @@ class Rampmeasure(Scenario):
         kw["ar_measured_channels[0].u16_TempRef"] = self.temp//10
         if self.temp <400:
             self.temp+=5
-
         elif self.temp > 700:
 
             self.temp-= 5
