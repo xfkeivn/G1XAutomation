@@ -20,6 +20,7 @@ from BackPlaneSimulator import BackPlaneSimulator as Bps
 from sim_desk.ui.screenframe import MyScrolledPanel
 from sim_desk.ui.ImagePanel import *
 from sim_desk.ui.console import Console
+from sim_desk.ui.progressdlg import ProgressObserver
 import executor_context
 
 try:
@@ -80,11 +81,13 @@ class MainFrame(wx.Frame):
         self.append_projects_to_fast_open(self.appconfig.getProjectHistoryList())
         # when the ui is all done, set the IO to Console
         self.bps = Bps()
+        self.squish_started = False
         self.squish_runner = None
         self.init()
         self._mgr.Update()
         executor_context.ExecutorContext().set_gui_context(self)
         self.on_save_project(None)
+        self.progress_dialog = None
 
     def init(self):
         project_histories = self.appconfig.getProjectHistoryList()
@@ -218,7 +221,10 @@ class MainFrame(wx.Frame):
         com_port_val = self.active_project.getPropertyByName("COM").getStringValue()
         result = self.bps.start(com_port_val)
         enabled_squish = self.active_project.squish_container.getPropertyByName("Enabled")
+        # wait for the SW to start and send command
         if result and enabled_squish.getStringValue() == "True":
+            #
+            self.progress_dialog = ProgressObserver(self,"Wait for Application Started","Start the SW application first")
             ip_prop = self.active_project.squish_container.getPropertyByName("IP")
             aut_prop = self.active_project.squish_container.getPropertyByName("AUT")
             private_key = self.active_project.squish_container.getPropertyByName("PrivateKey")
@@ -228,9 +234,12 @@ class MainFrame(wx.Frame):
                 private_key_file = private_key.getStringValue()
                 self.squish_runner = SquishProxy(ip_address, private_key_file, aut_name)
                 self.squish_runner.create_proxy()
+                self.progress_dialog.update(30,"connecting squishing..")
+                self.progress_dialog.notify()
                 self.squish_runner.connect()
                 self.active_project.squish_runner = self.squish_runner
                 self.screen_window.start()
+                self.progress_dialog.finish()
         self.active_project.scenario_py_container.start_all_scenarios()
         if result:
             self.__on_runtime_state()
@@ -280,6 +289,7 @@ class MainFrame(wx.Frame):
             self.SetWindowStyle(wx.DEFAULT_FRAME_STYLE | wx.SUNKEN_BORDER)
         if self.squish_runner:
             self.squish_runner.disconnect()
+        self.squish_started = False
 
     def on_screen_shot(self, evt):
         dirname = os.path.dirname(__file__)

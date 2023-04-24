@@ -149,6 +149,9 @@ class BackPlaneSimulator(metaclass=Singleton):
             self.com_handle.disconnect()
         return not self.receive_thread.is_alive()
 
+    def remove_command_listener(self,listener):
+        self.command_listeners.remove(listener)
+
     def add_command_listener(self, listener):
         if listener not in self.command_listeners:
             self.command_listeners.append(listener)
