@@ -224,7 +224,7 @@ class MainFrame(wx.Frame):
         # wait for the SW to start and send command
         if result and enabled_squish.getStringValue() == "True":
             #
-            self.progress_dialog = ProgressObserver(self,"Wait for Application Started","Start the SW application first")
+            #self.progress_dialog = ProgressObserver(self,"Wait for Application Started","Start the SW application first")
             ip_prop = self.active_project.squish_container.getPropertyByName("IP")
             aut_prop = self.active_project.squish_container.getPropertyByName("AUT")
             private_key = self.active_project.squish_container.getPropertyByName("PrivateKey")
@@ -234,12 +234,12 @@ class MainFrame(wx.Frame):
                 private_key_file = private_key.getStringValue()
                 self.squish_runner = SquishProxy(ip_address, private_key_file, aut_name)
                 self.squish_runner.create_proxy()
-                self.progress_dialog.update(30,"connecting squishing..")
-                self.progress_dialog.notify()
+                #self.progress_dialog.update(30,"connecting squishing..")
+                #self.progress_dialog.notify()
                 self.squish_runner.connect()
                 self.active_project.squish_runner = self.squish_runner
                 self.screen_window.start()
-                self.progress_dialog.finish()
+                #self.progress_dialog.finish()
         self.active_project.scenario_py_container.start_all_scenarios()
         if result:
             self.__on_runtime_state()
@@ -294,6 +294,8 @@ class MainFrame(wx.Frame):
     def on_screen_shot(self, evt):
         dirname = os.path.dirname(__file__)
         screenshot_folder = os.path.join(dirname, "../screenshot")
+        if not os.path.exists(screenshot_folder):
+            os.mkdir(screenshot_folder)
         if self.squish_runner:
             name = time.strftime('%Y%b%d_%H_%M_%S.png', time.localtime())
             full_path_name = os.path.join(screenshot_folder, name)
