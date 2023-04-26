@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 6.0.2 (Python 3.8.0 on win32)" generated="20230421 17:12:46.641" rpa="false" schemaversion="3">
+<suite id="s1" name="Robot Interactive Console" source="c:\Users\xuf\.vscode\extensions\robocorp.robotframework-lsp-1.10.0\src\robotframework_ls\vendored\robotframework_interactive\robot_interactive_console.robot">
+<test id="s1-t1" name="Default Task/Test" line="5">
+<kw name="Interpreter Main Loop" library="MainLoop">
+<kw name="Mouse xy">
+<arg>722</arg>
+<arg>161</arg>
+<msg timestamp="20230421 17:12:48.188" level="FAIL">No keyword with name 'Mouse xy' found.</msg>
+<status status="FAIL" starttime="20230421 17:12:48.188" endtime="20230421 17:12:48.188"/>
+</kw>
+<kw name="Mouse Xy">
+<arg>109</arg>
+<arg>722</arg>
+<status status="NOT RUN" starttime="20230421 17:12:48.191" endtime="20230421 17:12:48.191"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>1S</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" starttime="20230421 17:12:48.192" endtime="20230421 17:12:48.192"/>
+</kw>
+<kw name="Screen Shot">
+<var>${screen_shot_path}</var>
+<status status="NOT RUN" starttime="20230421 17:12:48.197" endtime="20230421 17:12:48.197"/>
+</kw>
+<kw name="Get Text">
+<var>${text1}</var>
+<arg>${screen_shot_path}</arg>
+<arg>ElectrodeSetup</arg>
+<arg>Monopolar</arg>
+<status status="NOT RUN" starttime="20230421 17:12:48.202" endtime="20230421 17:12:48.203"/>
+</kw>
+<kw name="Get Text">
+<var>${text2}</var>
+<arg>${screen_shot_path}</arg>
+<arg>ElectrodeSetup</arg>
+<arg>Bipolar</arg>
+<status status="NOT RUN" starttime="20230421 17:12:48.207" endtime="20230421 17:12:48.208"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${text1}</arg>
+<arg>Monopolar</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" starttime="20230421 17:12:48.208" endtime="20230421 17:12:48.208"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${text2}</arg>
+<arg>Bipolar</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="NOT RUN" starttime="20230421 17:12:48.209" endtime="20230421 17:12:48.209"/>
+</kw>
+<status status="PASS" starttime="20230421 17:12:46.668" endtime="20230421 17:12:54.367"/>
+</kw>
+<status status="PASS" starttime="20230421 17:12:46.668" endtime="20230421 17:12:54.368"/>
+</test>
+<status status="PASS" starttime="20230421 17:12:46.642" endtime="20230421 17:12:54.369"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="1" fail="0" skip="0" id="s1" name="Robot Interactive Console">Robot Interactive Console</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

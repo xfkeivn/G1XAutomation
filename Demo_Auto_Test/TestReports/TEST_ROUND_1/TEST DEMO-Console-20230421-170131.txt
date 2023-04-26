@@ -1,0 +1,31 @@
+command: robot -A C:\Users\xuf\AppData\Local\Temp\RIDEq4ph9bnd.d\argfile.txt --listener D:\Workspace\GX1\G1XAutomation\venv\lib\site-packages\robotide\contrib\testrunner\TestRunnerAgent.py:20184:False D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestProtocols\TEST_DEMO.robot
+
+TestRunnerAgent: Running under CPython 3.8.0
+
+
+=============================================================================================================
+TEST DEMO                                                                                                    
+=============================================================================================================
+
+TEST_CASE_1_COMMAND_SIMULATION :: This test case is for demo for the features of DVTFront of GX1.    | PASS |
+-------------------------------------------------------------------------------------------------------------
+
+TEST_CASE_4_TEST_OCR                                                                                 | PASS |
+-------------------------------------------------------------------------------------------------------------
+
+TEST_CASE_5_TEST_COMPARE                                                                             | PASS |
+-------------------------------------------------------------------------------------------------------------
+
+TEST DEMO                                                                                            | PASS |
+3 tests, 3 passed, 0 failed
+=============================================================================================================
+Debug:   D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\TEST DEMO-Message-20230421-170131.log
+Output:  D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\TEST DEMO-Output-20230421-170131.xml
+
+Log:     D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\TEST DEMO-Log-20230421-170131.html
+
+Report:  D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\TEST DEMO-Report-20230421-170131.html
+
+
+
+Test finished 20230421 17:02:14

@@ -1,0 +1,286 @@
+==============================================================================
+20230425 17:13:58.496 - INFO - + START SUITE: TEST DEMO [ ]
+==============================================================================
+20230425 17:13:58.496 - INFO - +- START SETUP: GX1Testlib.Init Test [ ]
+20230425 17:13:58.497 - INFO - Loading the project at D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test
+20230425 17:13:58.524 - INFO - Squish Hook 192.168.80.130, gx1, C:\Users\xuf\.ssh\bsci
+20230425 17:13:58.524 - INFO - Demo_Auto_Test has been loaded successfully
+20230425 17:13:58.541 - INFO - connecting to device
+20230425 17:13:58.547 - INFO - COM Port COM1 created successfully
+20230425 17:13:58.658 - INFO - GX1 Simulator is started
+20230425 17:14:01.048 - INFO - Squish tester is started
+20230425 17:14:01.049 - INFO - found router: gx1.development.squish_server
+20230425 17:14:01.049 - INFO - +- END SETUP: GX1Testlib.Init Test (2553)
+------------------------------------------------------------------------------
+20230425 17:14:01.049 - INFO - +- START TEST: TEST_CASE_1_COMMAND_SIMULATION [ ]
+------------------------------------------------------------------------------
+20230425 17:14:01.050 - INFO - +-- START KEYWORD: BuiltIn.Log [ this is the test demo, started ]
+20230425 17:14:01.051 - INFO - this is the test demo, started
+20230425 17:14:01.051 - INFO - +-- END KEYWORD: BuiltIn.Log (1)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:01.051 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 1s ]
+20230425 17:14:02.052 - INFO - Slept 1 second
+20230425 17:14:02.052 - INFO - +-- END KEYWORD: BuiltIn.Sleep (1001)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:02.052 - INFO - +-- START KEYWORD: GX1Testlib.Mouse Xy [ 722 | 161 ]
+20230425 17:14:02.526 - INFO - +-- END KEYWORD: GX1Testlib.Mouse Xy (474)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:02.527 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 0.5s ]
+20230425 17:14:03.029 - INFO - Slept 500 milliseconds
+20230425 17:14:03.029 - INFO - +-- END KEYWORD: BuiltIn.Sleep (502)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:03.029 - INFO - +-- START KEYWORD: GX1Testlib.Screen Shot [ ]
+20230425 17:14:03.149 - INFO - <a href="Img_d482691c-4682-4a68-8f37-1b7d8f84ef06.png"><img src="Img_d482691c-4682-4a68-8f37-1b7d8f84ef06.png" width="400"></a>
+20230425 17:14:03.149 - INFO - +-- END KEYWORD: GX1Testlib.Screen Shot (120)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:03.150 - INFO - +-- START KEYWORD: GX1Testlib.Mouse Xy [ 426 | 718 ]
+20230425 17:14:03.588 - INFO - +-- END KEYWORD: GX1Testlib.Mouse Xy (439)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:03.589 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 10s ]
+20230425 17:14:13.595 - INFO - Slept 10 seconds
+20230425 17:14:13.595 - INFO - +-- END KEYWORD: BuiltIn.Sleep (10006)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:13.596 - INFO - +-- START KEYWORD: GX1Testlib.Start Scenario [ ImpedanceRamp ]
+20230425 17:14:13.597 - INFO - The scenario ImpedanceRamp is started
+20230425 17:14:13.597 - INFO - +-- END KEYWORD: GX1Testlib.Start Scenario (1)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:13.597 - INFO - +-- START KEYWORD: GX1Testlib.Start Scenario [ RampMeasure ]
+20230425 17:14:13.605 - INFO - started
+20230425 17:14:13.606 - INFO - The scenario RampMeasure is started
+20230425 17:14:13.606 - INFO - +-- END KEYWORD: GX1Testlib.Start Scenario (9)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:13.606 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 10s ]
+20230425 17:14:23.614 - INFO - Slept 10 seconds
+20230425 17:14:23.614 - INFO - +-- END KEYWORD: BuiltIn.Sleep (10008)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:23.614 - INFO - +-- START KEYWORD: GX1Testlib.Stop Scenario [ RampMeasure ]
+20230425 17:14:23.615 - INFO - stop
+20230425 17:14:23.615 - INFO - The scenario RampMeasure is stopped
+20230425 17:14:23.615 - INFO - +-- END KEYWORD: GX1Testlib.Stop Scenario (1)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:23.615 - INFO - +-- START KEYWORD: GX1Testlib.Screen Shot [ ]
+20230425 17:14:23.738 - INFO - <a href="Img_cf6f795f-c20e-4af9-b960-4e0cf7985968.png"><img src="Img_cf6f795f-c20e-4af9-b960-4e0cf7985968.png" width="400"></a>
+20230425 17:14:23.739 - INFO - +-- END KEYWORD: GX1Testlib.Screen Shot (123)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:23.739 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 1s ]
+20230425 17:14:24.741 - INFO - Slept 1 second
+20230425 17:14:24.741 - INFO - +-- END KEYWORD: BuiltIn.Sleep (1002)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:24.741 - INFO - +-- START KEYWORD: GX1Testlib.Start Scenario [ RampMeasure ]
+20230425 17:14:24.743 - INFO - started
+20230425 17:14:24.743 - INFO - The scenario RampMeasure is started
+20230425 17:14:24.745 - INFO - +-- END KEYWORD: GX1Testlib.Start Scenario (2)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:24.745 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 5s ]
+20230425 17:14:29.754 - INFO - Slept 5 seconds
+20230425 17:14:29.754 - INFO - +-- END KEYWORD: BuiltIn.Sleep (5009)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:29.755 - INFO - +-- START KEYWORD: GX1Testlib.Stop Scenario [ RampMeasure ]
+20230425 17:14:29.755 - INFO - stop
+20230425 17:14:29.755 - INFO - The scenario RampMeasure is stopped
+20230425 17:14:29.755 - INFO - +-- END KEYWORD: GX1Testlib.Stop Scenario (0)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:29.756 - INFO - +-- START KEYWORD: GX1Testlib.Stop Scenario [ ImpedanceRamp ]
+20230425 17:14:29.756 - INFO - The scenario ImpedanceRamp is stopped
+20230425 17:14:29.756 - INFO - +-- END KEYWORD: GX1Testlib.Stop Scenario (0)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:29.756 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 5s ]
+20230425 17:14:34.769 - INFO - Slept 5 seconds
+20230425 17:14:34.770 - INFO - +-- END KEYWORD: BuiltIn.Sleep (5013)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:34.770 - INFO - +-- START KEYWORD: BuiltIn.Log [ this is the test demo, started ]
+20230425 17:14:34.770 - INFO - this is the test demo, started
+20230425 17:14:34.770 - INFO - +-- END KEYWORD: BuiltIn.Log (0)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:34.771 - INFO - +-- START KEYWORD: GX1Testlib.Screen Shot [ ]
+20230425 17:14:34.863 - INFO - <a href="Img_3a0996ed-c310-4f09-8ccc-1493eaa20c51.png"><img src="Img_3a0996ed-c310-4f09-8ccc-1493eaa20c51.png" width="400"></a>
+20230425 17:14:34.864 - INFO - +-- END KEYWORD: GX1Testlib.Screen Shot (94)
+------------------------------------------------------------------------------
+20230425 17:14:34.866 - INFO - +- END TEST: TEST_CASE_1_COMMAND_SIMULATION (33815)
+------------------------------------------------------------------------------
+20230425 17:14:34.867 - INFO - +- START TEST: TEST_CASE_2_CLICK_AND_SCREEN_SHOT [ ]
+------------------------------------------------------------------------------
+20230425 17:14:34.867 - INFO - +-- START KEYWORD: BuiltIn.Log [ this is the test demo, started ]
+20230425 17:14:34.868 - INFO - this is the test demo, started
+20230425 17:14:34.868 - INFO - +-- END KEYWORD: BuiltIn.Log (1)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:34.868 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 1s ]
+20230425 17:14:35.873 - INFO - Slept 1 second
+20230425 17:14:35.875 - INFO - +-- END KEYWORD: BuiltIn.Sleep (1005)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:35.875 - INFO - +-- START KEYWORD: GX1Testlib.Mouse Click [ OneTouch ]
+20230425 17:14:35.895 - INFO - +-- END KEYWORD: GX1Testlib.Mouse Click (19)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:35.895 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 5s ]
+20230425 17:14:40.909 - INFO - Slept 5 seconds
+20230425 17:14:40.909 - INFO - +-- END KEYWORD: BuiltIn.Sleep (5014)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:40.909 - INFO - +-- START KEYWORD: GX1Testlib.Screen Shot [ ]
+20230425 17:14:41.015 - INFO - <a href="Img_1bc7410c-0676-4769-ba5f-acad6cb9289e.png"><img src="Img_1bc7410c-0676-4769-ba5f-acad6cb9289e.png" width="400"></a>
+20230425 17:14:41.016 - INFO - +-- END KEYWORD: GX1Testlib.Screen Shot (106)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:41.016 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 1s ]
+20230425 17:14:42.021 - INFO - Slept 1 second
+20230425 17:14:42.021 - INFO - +-- END KEYWORD: BuiltIn.Sleep (1005)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:42.022 - INFO - +-- START KEYWORD: GX1Testlib.Mouse Click [ Stimulation ]
+20230425 17:14:42.446 - INFO - +-- END KEYWORD: GX1Testlib.Mouse Click (425)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:42.447 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 1s ]
+20230425 17:14:43.448 - INFO - Slept 1 second
+20230425 17:14:43.448 - INFO - +-- END KEYWORD: BuiltIn.Sleep (1001)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:43.448 - INFO - +-- START KEYWORD: GX1Testlib.Set Command Response [ C046 | u8_OutputStatus=1 | u8_ButtonStatus=1 ]
+20230425 17:14:43.449 - INFO - +-- END KEYWORD: GX1Testlib.Set Command Response (1)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:43.449 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 1s ]
+20230425 17:14:44.461 - INFO - Slept 1 second
+20230425 17:14:44.461 - INFO - +-- END KEYWORD: BuiltIn.Sleep (1012)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:44.461 - INFO - +-- START KEYWORD: GX1Testlib.Screen Shot [ ]
+20230425 17:14:44.586 - INFO - <a href="Img_9307a7f5-e4a8-47a3-9127-02dc6219cd3d.png"><img src="Img_9307a7f5-e4a8-47a3-9127-02dc6219cd3d.png" width="400"></a>
+20230425 17:14:44.587 - INFO - +-- END KEYWORD: GX1Testlib.Screen Shot (125)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:44.587 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 1s ]
+20230425 17:14:45.591 - INFO - Slept 1 second
+20230425 17:14:45.592 - INFO - +-- END KEYWORD: BuiltIn.Sleep (1004)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:45.592 - INFO - +-- START KEYWORD: GX1Testlib.Set Command Response [ C046 | u8_OutputStatus=0 | u8_ButtonStatus=1 ]
+20230425 17:14:45.592 - INFO - +-- END KEYWORD: GX1Testlib.Set Command Response (0)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:45.592 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 1s ]
+20230425 17:14:46.599 - INFO - Slept 1 second
+20230425 17:14:46.599 - INFO - +-- END KEYWORD: BuiltIn.Sleep (1007)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:46.599 - INFO - +-- START KEYWORD: GX1Testlib.Screen Shot [ ]
+20230425 17:14:46.702 - INFO - <a href="Img_e65865cb-1c01-4e13-9cbb-a4aa341468bc.png"><img src="Img_e65865cb-1c01-4e13-9cbb-a4aa341468bc.png" width="400"></a>
+20230425 17:14:46.702 - INFO - +-- END KEYWORD: GX1Testlib.Screen Shot (103)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:46.703 - INFO - +-- START KEYWORD: GX1Testlib.Mouse Click [ PulseRF ]
+20230425 17:14:47.073 - INFO - +-- END KEYWORD: GX1Testlib.Mouse Click (370)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:47.074 - INFO - +-- START KEYWORD: GX1Testlib.Screen Shot [ ]
+20230425 17:14:47.210 - INFO - <a href="Img_da8c6ec4-b93f-4c63-803c-b894a041c778.png"><img src="Img_da8c6ec4-b93f-4c63-803c-b894a041c778.png" width="400"></a>
+20230425 17:14:47.210 - INFO - +-- END KEYWORD: GX1Testlib.Screen Shot (136)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:47.210 - INFO - +-- START KEYWORD: BuiltIn.Log [ this is the test demo, started ]
+20230425 17:14:47.210 - INFO - this is the test demo, started
+20230425 17:14:47.211 - INFO - +-- END KEYWORD: BuiltIn.Log (1)
+------------------------------------------------------------------------------
+20230425 17:14:47.212 - INFO - +- END TEST: TEST_CASE_2_CLICK_AND_SCREEN_SHOT (12345)
+------------------------------------------------------------------------------
+20230425 17:14:47.212 - INFO - +- START TEST: TEST_CASE_3_COMMAND_SEARCH [ ]
+------------------------------------------------------------------------------
+20230425 17:14:47.214 - INFO - +-- START KEYWORD: BuiltIn.Log [ this test is for testing the search command logged in the queue ]
+20230425 17:14:47.214 - INFO - this test is for testing the search command logged in the queue
+20230425 17:14:47.214 - INFO - +-- END KEYWORD: BuiltIn.Log (0)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:47.214 - INFO - +-- START KEYWORD: GX1Testlib.Clean Command Logging Queue [ ]
+20230425 17:14:47.215 - INFO - +-- END KEYWORD: GX1Testlib.Clean Command Logging Queue (1)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:47.215 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 5s ]
+20230425 17:14:52.228 - INFO - Slept 5 seconds
+20230425 17:14:52.228 - INFO - +-- END KEYWORD: BuiltIn.Sleep (5013)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:52.228 - INFO - +-- START KEYWORD: GX1Testlib.Find Logged Commands [ 0xC049 | 0 | ar_measured_channels[0].u8_TempRefAvailable=1 ]
+20230425 17:14:52.229 - INFO - @{command_list} = [ <BackPlaneSimulator.MessageWrapper object at 0x000001E257DDB1C0> | <BackPlaneSimulator.MessageWrapper object at 0x000001E257DDB040> | <BackPlaneSimulator.MessageWrapper object at 0x000001E257DDB130>...
+20230425 17:14:52.229 - INFO - +-- END KEYWORD: GX1Testlib.Find Logged Commands (1)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:52.229 - INFO - +-- START KEYWORD: BuiltIn.Get Length [ ${command_list} ]
+20230425 17:14:52.230 - INFO - Length is 5
+20230425 17:14:52.230 - INFO - ${message_count} = 5
+20230425 17:14:52.230 - INFO - +-- END KEYWORD: BuiltIn.Get Length (1)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:52.230 - INFO - +-- START KEYWORD: BuiltIn.Log [ ${command_list[0].data.ar_measured_channels[0].u16_TempRef} ]
+20230425 17:14:52.231 - INFO - 11
+20230425 17:14:52.231 - INFO - +-- END KEYWORD: BuiltIn.Log (1)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:52.231 - INFO - +-- START KEYWORD: BuiltIn.Log [ ${command_list[1].data.ar_measured_channels[0].u16_TempRef} ]
+20230425 17:14:52.232 - INFO - 11
+20230425 17:14:52.232 - INFO - +-- END KEYWORD: BuiltIn.Log (1)
+------------------------------------------------------------------------------
+20230425 17:14:52.233 - INFO - +- END TEST: TEST_CASE_3_COMMAND_SEARCH (5020)
+------------------------------------------------------------------------------
+20230425 17:14:52.233 - INFO - +- START TEST: TEST_CASE_4_TEST_OCR [ ]
+------------------------------------------------------------------------------
+20230425 17:14:52.234 - INFO - +-- START KEYWORD: GX1Testlib.Mouse Xy [ 722 | 161 ]
+20230425 17:14:52.564 - INFO - +-- END KEYWORD: GX1Testlib.Mouse Xy (330)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:52.564 - INFO - +-- START KEYWORD: GX1Testlib.Mouse Xy [ 109 | 722 ]
+20230425 17:14:52.898 - INFO - +-- END KEYWORD: GX1Testlib.Mouse Xy (334)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:52.899 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 1S ]
+20230425 17:14:53.899 - INFO - Slept 1 second
+20230425 17:14:53.899 - INFO - +-- END KEYWORD: BuiltIn.Sleep (1000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:53.899 - INFO - +-- START KEYWORD: GX1Testlib.Screen Shot [ ]
+20230425 17:14:54.005 - INFO - <a href="Img_a4709333-49a2-4842-8bd8-5aa6e71beff3.png"><img src="Img_a4709333-49a2-4842-8bd8-5aa6e71beff3.png" width="400"></a>
+20230425 17:14:54.006 - INFO - ${screen_shot_path} = D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\Img_a4709333-49a2-4842-8bd8-5aa6e71beff3.png
+20230425 17:14:54.006 - INFO - +-- END KEYWORD: GX1Testlib.Screen Shot (107)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:54.006 - INFO - +-- START KEYWORD: GX1Testlib.Get Text [ ${screen_shot_path} | ElectrodeSetup | Monopolar ]
+20230425 17:14:54.171 - INFO - <a href="Img_41e2ed19-df54-4486-ade3-41b414071ead.png"><img src="Img_41e2ed19-df54-4486-ade3-41b414071ead.png" width="118"></a>
+20230425 17:14:54.172 - INFO - ${text1} = Monopolar
+20230425 17:14:54.172 - INFO - +-- END KEYWORD: GX1Testlib.Get Text (166)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:54.172 - INFO - +-- START KEYWORD: GX1Testlib.Get Text [ ${screen_shot_path} | ElectrodeSetup | Bipolar ]
+20230425 17:14:54.312 - INFO - <a href="Img_3a3e6734-542a-45cf-bf37-7ae4ac5cd95b.png"><img src="Img_3a3e6734-542a-45cf-bf37-7ae4ac5cd95b.png" width="95"></a>
+20230425 17:14:54.312 - INFO - ${text2} = Bipolar
+20230425 17:14:54.312 - INFO - +-- END KEYWORD: GX1Testlib.Get Text (140)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:54.312 - INFO - +-- START KEYWORD: BuiltIn.Should Be Equal [ ${text1} | Monopolar ]
+20230425 17:14:54.313 - DEBUG - Argument types are:
+<class 'str'>
+<class 'str'>
+20230425 17:14:54.313 - INFO - +-- END KEYWORD: BuiltIn.Should Be Equal (1)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:54.313 - INFO - +-- START KEYWORD: BuiltIn.Should Be Equal [ ${text2} | Bipolar ]
+20230425 17:14:54.313 - DEBUG - Argument types are:
+<class 'str'>
+<class 'str'>
+20230425 17:14:54.313 - INFO - +-- END KEYWORD: BuiltIn.Should Be Equal (0)
+------------------------------------------------------------------------------
+20230425 17:14:54.314 - INFO - +- END TEST: TEST_CASE_4_TEST_OCR (2081)
+------------------------------------------------------------------------------
+20230425 17:14:54.314 - INFO - +- START TEST: TEST_CASE_5_TEST_COMPARE [ ]
+------------------------------------------------------------------------------
+20230425 17:14:54.315 - INFO - +-- START KEYWORD: GX1Testlib.Mouse Click [ PulseRF ]
+20230425 17:14:54.677 - INFO - +-- END KEYWORD: GX1Testlib.Mouse Click (362)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:54.678 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 1s ]
+20230425 17:14:55.689 - INFO - Slept 1 second
+20230425 17:14:55.691 - INFO - +-- END KEYWORD: BuiltIn.Sleep (1012)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:55.691 - INFO - +-- START KEYWORD: GX1Testlib.Screen Shot [ ]
+20230425 17:14:55.789 - INFO - <a href="Img_a0c75fa1-0e2f-4e2b-8605-2ac3fda33648.png"><img src="Img_a0c75fa1-0e2f-4e2b-8605-2ac3fda33648.png" width="400"></a>
+20230425 17:14:55.789 - INFO - ${image_path} = D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\Img_a0c75fa1-0e2f-4e2b-8605-2ac3fda33648.png
+20230425 17:14:55.789 - INFO - +-- END KEYWORD: GX1Testlib.Screen Shot (98)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:55.789 - INFO - +-- START KEYWORD: GX1Testlib.Compare Feature Rect [ ${image_path} | PulsedRF | Camera ]
+20230425 17:14:55.819 - INFO - <a href="Img_4a14fbb8-31ec-4db4-b1f8-e04586520686.png"><img src="Img_4a14fbb8-31ec-4db4-b1f8-e04586520686.png" width="64"></a>
+20230425 17:14:55.820 - INFO - <a href="Img_9c99601f-ac4d-485f-8251-c83371338c0c.png"><img src="Img_9c99601f-ac4d-485f-8251-c83371338c0c.png" width="64"></a>
+20230425 17:14:55.838 - INFO - ${result} = True
+20230425 17:14:55.839 - INFO - +-- END KEYWORD: GX1Testlib.Compare Feature Rect (50)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:55.839 - INFO - +-- START KEYWORD: GX1Testlib.Compare Feature Rect [ ${image_path} | PulsedRF | Folder ]
+20230425 17:14:55.856 - INFO - <a href="Img_15c5da5b-7a88-4693-b0d2-509ee5c5f9d5.png"><img src="Img_15c5da5b-7a88-4693-b0d2-509ee5c5f9d5.png" width="63"></a>
+20230425 17:14:55.856 - INFO - <a href="Img_73b10a9c-3b78-4a40-ac97-e7b6281f092b.png"><img src="Img_73b10a9c-3b78-4a40-ac97-e7b6281f092b.png" width="63"></a>
+20230425 17:14:55.881 - INFO - ${result} = True
+20230425 17:14:55.881 - INFO - +-- END KEYWORD: GX1Testlib.Compare Feature Rect (42)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230425 17:14:55.882 - INFO - +-- START KEYWORD: GX1Testlib.Compare Feature Rect [ ${image_path} | PulsedRF | Setting ]
+20230425 17:14:55.899 - INFO - <a href="Img_792ce936-3364-45b8-9632-e15c4a537d54.png"><img src="Img_792ce936-3364-45b8-9632-e15c4a537d54.png" width="61"></a>
+20230425 17:14:55.900 - INFO - <a href="Img_781669f4-8a8b-4973-9821-312f17329d6f.png"><img src="Img_781669f4-8a8b-4973-9821-312f17329d6f.png" width="61"></a>
+20230425 17:14:55.925 - INFO - ${result} = True
+20230425 17:14:55.925 - INFO - +-- END KEYWORD: GX1Testlib.Compare Feature Rect (44)
+------------------------------------------------------------------------------
+20230425 17:14:55.926 - INFO - +- END TEST: TEST_CASE_5_TEST_COMPARE (1611)
+------------------------------------------------------------------------------
+20230425 17:14:55.926 - INFO - +- START TEARDOWN: GX1Testlib.Close Test [ ]
+20230425 17:14:55.944 - INFO - disconnecting from device
+20230425 17:14:55.954 - INFO - GX1 Simulator is stopped
+20230425 17:14:55.984 - INFO - Squish tester is stopped
+20230425 17:14:55.985 - INFO - +- END TEARDOWN: GX1Testlib.Close Test (59)
+==============================================================================
+20230425 17:14:55.986 - INFO - + END SUITE: TEST DEMO (57724)
+==============================================================================

@@ -1,0 +1,97 @@
+==============================================================================
+20230420 14:10:40.213 - INFO - + START SUITE: TEST DEMO [ ]
+==============================================================================
+20230420 14:10:40.213 - INFO - +- START SETUP: GX1Testlib.Init Test [ ]
+20230420 14:10:40.214 - INFO - Loading the project at D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test
+20230420 14:10:40.234 - INFO - Squish Hook 192.168.80.130, gx1, C:\Users\xuf\.ssh\bsci
+20230420 14:10:40.234 - INFO - Demo_Auto_Test has been loaded successfully
+20230420 14:10:40.252 - INFO - connecting to device
+20230420 14:10:40.257 - INFO - COM Port COM1 created successfully
+20230420 14:10:40.365 - INFO - GX1 Simulator is started
+20230420 14:10:42.792 - INFO - Squish tester is started
+20230420 14:10:42.792 - INFO - found router: gx1.development.squish_server
+20230420 14:10:42.792 - INFO - +- END SETUP: GX1Testlib.Init Test (2579)
+------------------------------------------------------------------------------
+20230420 14:10:42.793 - INFO - +- START TEST: TEST_CASE_4_TEST_OCR [ ]
+------------------------------------------------------------------------------
+20230420 14:10:42.794 - INFO - +-- START KEYWORD: GX1Testlib.Mouse Xy [ 722 | 161 ]
+20230420 14:10:43.274 - INFO - +-- END KEYWORD: GX1Testlib.Mouse Xy (480)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230420 14:10:43.275 - INFO - +-- START KEYWORD: GX1Testlib.Mouse Xy [ 109 | 722 ]
+20230420 14:10:43.690 - INFO - +-- END KEYWORD: GX1Testlib.Mouse Xy (415)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230420 14:10:43.690 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 1S ]
+20230420 14:10:44.691 - INFO - Slept 1 second
+20230420 14:10:44.693 - INFO - +-- END KEYWORD: BuiltIn.Sleep (1002)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230420 14:10:44.693 - INFO - +-- START KEYWORD: GX1Testlib.Screen Shot [ ]
+20230420 14:10:44.816 - INFO - <a href="Img_c9215937-ca0a-4e96-bccf-ea28990a1a18.png"><img src="Img_c9215937-ca0a-4e96-bccf-ea28990a1a18.png" width="400"></a>
+20230420 14:10:44.816 - INFO - ${screen_shot_path} = D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\Img_c9215937-ca0a-4e96-bccf-ea28990a1a18.png
+20230420 14:10:44.817 - INFO - +-- END KEYWORD: GX1Testlib.Screen Shot (124)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230420 14:10:44.817 - INFO - +-- START KEYWORD: GX1Testlib.Get Text [ ${screen_shot_path} | ElectrodeSetup | Monopolar ]
+20230420 14:10:44.972 - INFO - <a href="Img_d5edce36-6350-4c59-99db-3169f119b137.png"><img src="Img_d5edce36-6350-4c59-99db-3169f119b137.png" width="118"></a>
+20230420 14:10:44.973 - INFO - ${text1} = Monopolar
+20230420 14:10:44.973 - INFO - +-- END KEYWORD: GX1Testlib.Get Text (156)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230420 14:10:44.973 - INFO - +-- START KEYWORD: GX1Testlib.Get Text [ ${screen_shot_path} | ElectrodeSetup | Bipolar ]
+20230420 14:10:45.107 - INFO - <a href="Img_253612b6-cd28-4b82-8710-9d5651c0e85d.png"><img src="Img_253612b6-cd28-4b82-8710-9d5651c0e85d.png" width="95"></a>
+20230420 14:10:45.108 - INFO - ${text2} = Bipolar
+20230420 14:10:45.108 - INFO - +-- END KEYWORD: GX1Testlib.Get Text (135)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230420 14:10:45.108 - INFO - +-- START KEYWORD: BuiltIn.Should Be Equal [ ${text1} | Monopolar ]
+20230420 14:10:45.108 - DEBUG - Argument types are:
+<class 'str'>
+<class 'str'>
+20230420 14:10:45.109 - INFO - +-- END KEYWORD: BuiltIn.Should Be Equal (0)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230420 14:10:45.109 - INFO - +-- START KEYWORD: BuiltIn.Should Be Equal [ ${text2} | Bipolar ]
+20230420 14:10:45.109 - DEBUG - Argument types are:
+<class 'str'>
+<class 'str'>
+20230420 14:10:45.109 - INFO - +-- END KEYWORD: BuiltIn.Should Be Equal (0)
+------------------------------------------------------------------------------
+20230420 14:10:45.110 - INFO - +- END TEST: TEST_CASE_4_TEST_OCR (2317)
+------------------------------------------------------------------------------
+20230420 14:10:45.110 - INFO - +- START TEST: TEST_CASE_5_TEST_COMPARE [ ]
+------------------------------------------------------------------------------
+20230420 14:10:45.111 - INFO - +-- START KEYWORD: GX1Testlib.Mouse Click [ PulseRF ]
+20230420 14:10:45.564 - INFO - +-- END KEYWORD: GX1Testlib.Mouse Click (453)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230420 14:10:45.564 - INFO - +-- START KEYWORD: BuiltIn.Sleep [ 1s ]
+20230420 14:10:46.570 - INFO - Slept 1 second
+20230420 14:10:46.571 - INFO - +-- END KEYWORD: BuiltIn.Sleep (1006)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230420 14:10:46.571 - INFO - +-- START KEYWORD: GX1Testlib.Screen Shot [ ]
+20230420 14:10:46.695 - INFO - <a href="Img_b4e2e2fb-766f-46ff-85c8-e564064c5a3f.png"><img src="Img_b4e2e2fb-766f-46ff-85c8-e564064c5a3f.png" width="400"></a>
+20230420 14:10:46.695 - INFO - ${image_path} = D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\Img_b4e2e2fb-766f-46ff-85c8-e564064c5a3f.png
+20230420 14:10:46.696 - INFO - +-- END KEYWORD: GX1Testlib.Screen Shot (124)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230420 14:10:46.696 - INFO - +-- START KEYWORD: GX1Testlib.Compare Feature Rect [ ${image_path} | PulsedRF | Camera ]
+20230420 14:10:46.716 - INFO - <a href="Img_0b0cb810-1cb0-47ef-b751-24a220bbf8eb.png"><img src="Img_0b0cb810-1cb0-47ef-b751-24a220bbf8eb.png" width="64"></a>
+20230420 14:10:46.717 - INFO - <a href="Img_7119ca8a-bef0-459f-858b-c1d94ca2f442.png"><img src="Img_7119ca8a-bef0-459f-858b-c1d94ca2f442.png" width="64"></a>
+20230420 14:10:46.735 - INFO - ${result} = True
+20230420 14:10:46.735 - INFO - +-- END KEYWORD: GX1Testlib.Compare Feature Rect (39)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230420 14:10:46.736 - INFO - +-- START KEYWORD: GX1Testlib.Compare Feature Rect [ ${image_path} | PulsedRF | Folder ]
+20230420 14:10:46.752 - INFO - <a href="Img_4dacae95-ba23-4048-a9c8-74987553d1bb.png"><img src="Img_4dacae95-ba23-4048-a9c8-74987553d1bb.png" width="63"></a>
+20230420 14:10:46.752 - INFO - <a href="Img_4a5532cc-c641-4cf4-8c24-ceec8e33d56a.png"><img src="Img_4a5532cc-c641-4cf4-8c24-ceec8e33d56a.png" width="63"></a>
+20230420 14:10:46.771 - INFO - ${result} = True
+20230420 14:10:46.771 - INFO - +-- END KEYWORD: GX1Testlib.Compare Feature Rect (35)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20230420 14:10:46.771 - INFO - +-- START KEYWORD: GX1Testlib.Compare Feature Rect [ ${image_path} | PulsedRF | Setting ]
+20230420 14:10:46.790 - INFO - <a href="Img_ca57a70a-35b9-4e8b-9483-f63205726462.png"><img src="Img_ca57a70a-35b9-4e8b-9483-f63205726462.png" width="61"></a>
+20230420 14:10:46.790 - INFO - <a href="Img_a960afbf-15b0-4a7d-b708-bf082befbe6c.png"><img src="Img_a960afbf-15b0-4a7d-b708-bf082befbe6c.png" width="61"></a>
+20230420 14:10:46.809 - INFO - ${result} = True
+20230420 14:10:46.810 - INFO - +-- END KEYWORD: GX1Testlib.Compare Feature Rect (39)
+------------------------------------------------------------------------------
+20230420 14:10:46.811 - INFO - +- END TEST: TEST_CASE_5_TEST_COMPARE (1700)
+------------------------------------------------------------------------------
+20230420 14:10:46.811 - INFO - +- START TEARDOWN: GX1Testlib.Close Test [ ]
+20230420 14:10:46.873 - INFO - disconnecting from device
+20230420 14:10:46.882 - INFO - GX1 Simulator is stopped
+20230420 14:10:46.912 - INFO - Squish tester is stopped
+20230420 14:10:46.913 - INFO - +- END TEARDOWN: GX1Testlib.Close Test (102)
+==============================================================================
+20230420 14:10:46.914 - INFO - + END SUITE: TEST DEMO (6921)
+==============================================================================

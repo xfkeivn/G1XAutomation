@@ -1,0 +1,54 @@
+16820684499566:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684499578:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684500579:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684500589:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684501585:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684501609:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684502567:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684502578:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684503587:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684503587:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684504590:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684504590:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684504899:0:GetMeasuredChannelsCmd u16_CommandCode->49224 au8_channels->['0', '0', '0', '0']
+16820684504899:0:GetMeasuredChannelsResp u16_ResponseCode->49225 u16_ErrorCode->0 ar_measured_channels->['MeasuredChannelParam u8_Source->0 u8_Reference->0 u8_Blocked->0 u8_ImpedanceAvailable->1 u16_ImpedanceValue->80 u8_TempSourceAvailable->0 u16_TempSource->0 u8_TempRefAvailable->1 u16_TempRef->12 u16_Timer->0 u8_ElectricalSummaryAvailable->0 u16_Current->0 u16_Voltage->0 u16_Power->0 u16_Width->0', 'MeasuredChannelParam u8_Source->0 u8_Reference->0 u8_Blocked->0 u8_ImpedanceAvailable->0 u16_ImpedanceValue->0 u8_TempSourceAvailable->0 u16_TempSource->0 u8_TempRefAvailable->0 u16_TempRef->0 u16_Timer->0 u8_ElectricalSummaryAvailable->0 u16_Current->0 u16_Voltage->0 u16_Power->0 u16_Width->0', 'MeasuredChannelParam u8_Source->0 u8_Reference->0 u8_Blocked->0 u8_ImpedanceAvailable->0 u16_ImpedanceValue->0 u8_TempSourceAvailable->0 u16_TempSource->0 u8_TempRefAvailable->0 u16_TempRef->0 u16_Timer->0 u8_ElectricalSummaryAvailable->0 u16_Current->0 u16_Voltage->0 u16_Power->0 u16_Width->0', 'MeasuredChannelParam u8_Source->0 u8_Reference->0 u8_Blocked->0 u8_ImpedanceAvailable->0 u16_ImpedanceValue->0 u8_TempSourceAvailable->0 u16_TempSource->0 u8_TempRefAvailable->0 u16_TempRef->0 u16_Timer->0 u8_ElectricalSummaryAvailable->0 u16_Current->0 u16_Voltage->0 u16_Power->0 u16_Width->0']
+16820684505580:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684505590:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684507043:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684507054:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684507699:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684507699:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684508584:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684508584:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684509581:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684509581:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684510602:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684510611:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684511583:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684511583:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684512607:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684512607:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684513583:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684513593:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684514643:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684514653:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684515056:0:GetMeasuredChannelsCmd u16_CommandCode->49224 au8_channels->['0', '0', '0', '0']
+16820684515074:0:GetMeasuredChannelsResp u16_ResponseCode->49225 u16_ErrorCode->0 ar_measured_channels->['MeasuredChannelParam u8_Source->0 u8_Reference->0 u8_Blocked->0 u8_ImpedanceAvailable->1 u16_ImpedanceValue->80 u8_TempSourceAvailable->0 u16_TempSource->0 u8_TempRefAvailable->1 u16_TempRef->12 u16_Timer->0 u8_ElectricalSummaryAvailable->0 u16_Current->0 u16_Voltage->0 u16_Power->0 u16_Width->0', 'MeasuredChannelParam u8_Source->0 u8_Reference->0 u8_Blocked->0 u8_ImpedanceAvailable->0 u16_ImpedanceValue->0 u8_TempSourceAvailable->0 u16_TempSource->0 u8_TempRefAvailable->0 u16_TempRef->0 u16_Timer->0 u8_ElectricalSummaryAvailable->0 u16_Current->0 u16_Voltage->0 u16_Power->0 u16_Width->0', 'MeasuredChannelParam u8_Source->0 u8_Reference->0 u8_Blocked->0 u8_ImpedanceAvailable->0 u16_ImpedanceValue->0 u8_TempSourceAvailable->0 u16_TempSource->0 u8_TempRefAvailable->0 u16_TempRef->0 u16_Timer->0 u8_ElectricalSummaryAvailable->0 u16_Current->0 u16_Voltage->0 u16_Power->0 u16_Width->0', 'MeasuredChannelParam u8_Source->0 u8_Reference->0 u8_Blocked->0 u8_ImpedanceAvailable->0 u16_ImpedanceValue->0 u8_TempSourceAvailable->0 u16_TempSource->0 u8_TempRefAvailable->0 u16_TempRef->0 u16_Timer->0 u8_ElectricalSummaryAvailable->0 u16_Current->0 u16_Voltage->0 u16_Power->0 u16_Width->0']
+16820684515589:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684515599:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684516590:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684516606:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684517575:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684517575:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684518588:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684518598:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684519583:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684519593:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684520589:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684520595:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684521575:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684521575:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684522585:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684522595:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1
+16820684523573:0:GetStatusCmd u16_CommandCode->49222 u8_reversed->0
+16820684523582:0:GetStatusResp u16_ResponseCode->49223 u16_ErrorCode->0 u8_StatusFlags->0 u16_ChannelStatus->0 u8_OutputStatus->0 u8_ButtonStatus->1

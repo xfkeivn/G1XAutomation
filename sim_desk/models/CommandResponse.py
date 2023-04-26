@@ -142,14 +142,25 @@ class FieldNumberModel(TreeModel):
     def __init__(self, parent, label, default_value):
         TreeModel.__init__(self, parent, label)
         self.image = signal
+        is_command_code = self.get_command_response().command_node
         if 'u16_ResponseCode' == label:
             number_value_property = StringProperty(label, label, '%X' % default_value, editable=False)
         else:
-            number_value_property = IntProperty(label, label, default_value, editable=True)
-
+            number_value_property = IntProperty(label, label, default_value, editable=not is_command_code)
+        if 'u16_CommandCode' == label:
+            number_value_property = StringProperty(label, label, '%X' % default_value, editable=False)
         self.addProperties(number_value_property)
         self.tree_action_list.append(
             TreeAction("Copy", wx.ID_HIGHEST + 1010, self.on_copy))
+
+    def get_command_response(self):
+        parent = self.parent
+        while parent is not None:
+            if isinstance(parent, CommandResponseModel):
+                return parent
+            else:
+                parent = parent.parent
+
 
     def on_copy(self, evt):
         # Copy the text to the system clipboard

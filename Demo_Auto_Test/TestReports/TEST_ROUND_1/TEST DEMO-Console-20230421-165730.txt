@@ -1,0 +1,48 @@
+command: robot -A C:\Users\xuf\AppData\Local\Temp\RIDEq4ph9bnd.d\argfile.txt --listener D:\Workspace\GX1\G1XAutomation\venv\lib\site-packages\robotide\contrib\testrunner\TestRunnerAgent.py:20184:False D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestProtocols\TEST_DEMO.robot
+
+TestRunnerAgent: Running under CPython 3.8.0
+
+
+=============================================================================================================
+TEST DEMO                                                                                                    
+=============================================================================================================
+
+TEST_CASE_1_COMMAND_SIMULATION :: This test case is for demo for the features of DVTFront of GX1.    | PASS |
+-------------------------------------------------------------------------------------------------------------
+
+TEST_CASE_2_CLICK_AND_SCREEN_SHOT :: This is the second case                                         | PASS |
+-------------------------------------------------------------------------------------------------------------
+
+TEST_CASE_3_COMMAND_SEARCH                                                                           | PASS |
+-------------------------------------------------------------------------------------------------------------
+
+TEST_CASE_4_TEST_OCR                                                                                 | PASS |
+-------------------------------------------------------------------------------------------------------------
+
+
+
+Exception in thread Thread-2:
+Traceback (most recent call last):
+  File "D:\Squish for Qt 7.0.1\python3\lib\threading.py", line 932, in _bootstrap_inner
+    self.run()
+  File "D:\Squish for Qt 7.0.1\python3\lib\threading.py", line 870, in run
+    self._target(*self._args, **self._kwargs)
+  File "D:\Workspace\GX1\G1XAutomation\BackPlaneSimulator.py", line 304, in __receive_response
+    self.__process_command(command_code_value, command_obj)
+  File "D:\Workspace\GX1\G1XAutomation\BackPlaneSimulator.py", line 254, in __process_command
+    command_listener.on_command_received(logged_msg)
+  File "D:\Workspace\GX1\G1XAutomation\GX1Testlib.py", line 116, in on_command_received
+    self.__message_logging(f'{command.time_ns // 100000}:{command.sequence}:{command.data}')
+  File "D:\Workspace\GX1\G1XAutomation\GX1Testlib.py", line 110, in __message_logging
+    self.ml_stringio.write(msg + "\n")
+ValueError: I/O operation on closed file
+
+[ SENDING STOP SIGNAL ]
+
+Second signal will force exit.
+
+[ SENDING STOP SIGNAL ]
+
+TEST_CASE_5_TEST_COMPARE                                                                             
+
+Test finished 20230421 16:58:55

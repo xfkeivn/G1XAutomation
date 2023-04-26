@@ -1,0 +1,27 @@
+command: robot -A C:\Users\xuf\AppData\Local\Temp\RIDEbcl5nbvv.d\argfile.txt --listener D:\Workspace\GX1\G1XAutomation\venv\lib\site-packages\robotide\contrib\testrunner\TestRunnerAgent.py:5384:False D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestProtocols\TEST_DEMO.robot
+
+TestRunnerAgent: Running under CPython 3.8.0
+
+
+==========
+TEST DEMO 
+==========
+
+TE... | PASS |
+----------
+
+TE... | PASS |
+----------
+
+TE... | PASS |
+2 tests, 2 passed, 0 failed
+==========
+Debug:   D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\TEST DEMO-Message-20230420-141039.log
+Output:  D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\TEST DEMO-Output-20230420-141039.xml
+
+Log:     D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\TEST DEMO-Log-20230420-141039.html
+Report:  D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\TEST DEMO-Report-20230420-141039.html
+
+
+
+Test finished 20230420 14:10:47
