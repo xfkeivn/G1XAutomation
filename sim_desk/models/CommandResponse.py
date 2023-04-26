@@ -23,23 +23,33 @@ class CommandResponseModel(TreeModel):
     def __init__(self, parent, label, response_cls, command_cls):
         TreeModel.__init__(self, parent, label)
         self.image = message_reply
+        self.command_node = False
+        if isinstance(response_cls(),Command):
+            self.command_node = True
         self.response_obj = response_cls()
         self.command_class = command_cls
 
-        number_value_property = StringProperty('Command Code', 'Command Code',
-                                               '%X' % (self.response_obj.u16_ResponseCode - 1), editable=False)
-        self.addProperties(number_value_property)
-        number_value_property = StringProperty('Response Code', 'Response Code',
-                                               '%X' % (self.response_obj.u16_ResponseCode), editable=False)
+        if self.command_node is False:
+            number_value_property = StringProperty('Command Code', 'Command Code',
+                                                   '%X' % (self.response_obj.u16_ResponseCode - 1), editable=False)
+            self.addProperties(number_value_property)
+            number_value_property = StringProperty('Response Code', 'Response Code',
+                                                   '%X' % (self.response_obj.u16_ResponseCode), editable=False)
 
-        self.addProperties(number_value_property)
-        logging = BoolProperty("CommandLogging", "CommandLogging")
-        self.addProperties(logging)
-        logging = BoolProperty("ResponseLogging", "ResponseLogging")
-        self.addProperties(logging)
+            self.addProperties(number_value_property)
+            logging = BoolProperty("CommandLogging", "CommandLogging")
+            self.addProperties(logging)
+            logging = BoolProperty("ResponseLogging", "ResponseLogging")
+            self.addProperties(logging)
+        else:
+            number_value_property = StringProperty('Command Code', 'Command Code',
+                                                   '%X' % (self.response_obj.u16_CommandCode), editable=False)
+            self.addProperties(number_value_property)
 
     def updateProperty(self, wxprop):
         TreeModel.updateProperty(self, wxprop)
+        if self.command_node is True:
+            return
         prop = self.getPropertyBywxprop(wxprop)
         if prop and prop.propertyname == "CommandLogging":
             stringvalue = wxprop.GetValueAsString()
@@ -63,6 +73,8 @@ class CommandResponseModel(TreeModel):
         return prop
 
     def set_model_status(self, status):
+        if self.command_node is True:
+            return
         if status == TREEMODEL_STATUS_RUNTIME:
             command_logging = self.getPropertyByName("CommandLogging").getStringValue() == "True"
             response_logging = self.getPropertyByName("ResponseLogging").getStringValue() == "True"
@@ -78,6 +90,8 @@ class CommandResponseModel(TreeModel):
                 CommandResponseFilter().exclude_command(command_code)
 
     def get_script_snippet(self):
+        if self.command_node is True:
+            return ""
         snippet = f'    def on_receive_{self.command_class.__name__}(self,commandObj):\n' \
                   f'        pass\n\n' \
                   f'    def on_response_{self.command_class.__name__}(self,responseObj):\n' \
@@ -184,6 +198,8 @@ class FieldNumberModel(TreeModel):
         return prop
 
 
+
+
 class ResponseModelGenerator():
     def __init__(self, container):
         self.container = container
@@ -251,6 +267,20 @@ class ResponseModelGenerator():
             self.container.addChild(model)
             self.create_field_models(response_cls, model)
 
+        # add the command nodes
+        command_classes = []
+        for name in dir(gx_commands):
+            obj = getattr(gx_commands, name)
+            if isinstance(obj, type) and issubclass(obj, Command) and 'Command' not in obj.__name__:
+                command_classes.append(obj)
+
+        for command_cls in command_classes:
+            #command_cls = response_command_mapping.get(command_cls.__name__)
+            model = CommandResponseModel(self.container, command_cls.__name__, command_cls, command_cls)
+            self.container.addChild(model)
+            self.create_field_models(command_cls, model)
+
+
     def get_record_type(self, record_type_name):
         for name in dir(gx_commands):
             type_obj = getattr(gx_commands, name)
@@ -258,3 +288,5 @@ class ResponseModelGenerator():
                 if type_obj.__name__ == record_type_name:
                     return type_obj
         return None
+
+

@@ -27,6 +27,7 @@ class CommandResponseContainer(TreeModel):
         return sim_desk.ui.images.folder_collapse
 
 
+
 class SquishContainer(TreeModel):
     def __init__(self, parent):
         TreeModel.__init__(self, parent, TAG_NAME_SQUISH_NAMES_CONTAINER)

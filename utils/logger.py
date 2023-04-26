@@ -12,6 +12,13 @@ from utils.sim_desk_logging import logger as sim_desk_logger
 from robot.api import logger as robot_logger
 from executor_context import ExecutorContext
 
+import os
+
+dir_name = os.path.dirname(__file__)
+dir_upper_name = os.path.join(dir_name,"../logs")
+if not os.path.exists(dir_upper_name):
+    os.mkdir(dir_upper_name)
+
 
 def write(msg, level='INFO', html=False):
     """Writes the message to the log file using the given level.
