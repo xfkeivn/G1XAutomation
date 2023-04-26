@@ -592,3 +592,33 @@ class LaunchApplication(Command):
 class LaunchApplicationResp(Response):
     def __init__(self):
         super().__init__(gx_command_codes.LAUNCH_APPLICATION)
+
+
+class GetDetailedError(Command):
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_DETAILED_ERROR)
+        self.response = GetDetailedErrorResp()
+
+
+class GetDetailedErrorResp(Response):
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_DETAILED_ERROR)
+        self.u8_ErrorType = 0
+        self.u8_ErrorClass = 0
+        self.u16_ErrorId = 0
+        self.u8_ElectrodeIsValid = 0
+        self.u8_ElectrodeNum = 0
+        self.u8_TempIsValid = 0
+        self.u8_Temp = 0
+        self.u8_SupplementalTempIsValid = 0
+        self.u8_SupplementalTemp = 0
+        self.u8_ImpedanceIsValid = 0
+        self.u16_Impedance = 0
+        self.u8_VoltageIsValid = 0
+        self.u16_Voltage = 0
+        self.u8_CurrentIsValid = 0
+        self.u16_Current = 0
+        self.u8_PowerIsValid = 0
+        self.u16_Power = 0
+        self.u16_ErrorDetail = 0
+        self.u32_SupplementalInfo = 0
