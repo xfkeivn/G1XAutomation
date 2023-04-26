@@ -221,28 +221,33 @@ class MainFrame(wx.Frame):
         com_port_val = self.active_project.getPropertyByName("COM").getStringValue()
         result = self.bps.start(com_port_val)
         enabled_squish = self.active_project.squish_container.getPropertyByName("Enabled")
-        # wait for the SW to start and send command
         if result and enabled_squish.getStringValue() == "True":
-            #
-            #self.progress_dialog = ProgressObserver(self,"Wait for Application Started","Start the SW application first")
-            ip_prop = self.active_project.squish_container.getPropertyByName("IP")
-            aut_prop = self.active_project.squish_container.getPropertyByName("AUT")
-            private_key = self.active_project.squish_container.getPropertyByName("PrivateKey")
-            if ip_prop and aut_prop:
-                ip_address = ip_prop.getStringValue()
-                aut_name = aut_prop.getStringValue()
-                private_key_file = private_key.getStringValue()
-                self.squish_runner = SquishProxy(ip_address, private_key_file, aut_name)
-                self.squish_runner.create_proxy()
-                #self.progress_dialog.update(30,"connecting squishing..")
-                #self.progress_dialog.notify()
-                self.squish_runner.connect()
-                self.active_project.squish_runner = self.squish_runner
-                self.screen_window.start()
-                #self.progress_dialog.finish()
-        self.active_project.scenario_py_container.start_all_scenarios()
+            dlg = wx.MessageDialog(self, 'Please Start the GX1 application and make sure the communication is Good to start Squish  ',
+                                   'Confirm to start',
+                                   # wx.OK | wx.ICON_INFORMATION
+                                   wx.YES_NO | wx.ICON_INFORMATION | wx.CANCEL
+                                   )
+            is_start_squish = dlg.ShowModal()
+            if is_start_squish == wx.ID_YES:
+                ip_prop = self.active_project.squish_container.getPropertyByName("IP")
+                aut_prop = self.active_project.squish_container.getPropertyByName("AUT")
+                private_key = self.active_project.squish_container.getPropertyByName("PrivateKey")
+                if ip_prop and aut_prop:
+                    ip_address = ip_prop.getStringValue()
+                    aut_name = aut_prop.getStringValue()
+                    private_key_file = private_key.getStringValue()
+                    self.squish_runner = SquishProxy(ip_address, private_key_file, aut_name)
+                    self.squish_runner.create_proxy()
+                    result = self.squish_runner.connect()
+                    if result:
+                        self.active_project.squish_runner = self.squish_runner
+                        self.screen_window.start()
+
         if result:
+            self.active_project.scenario_py_container.start_all_scenarios()
             self.__on_runtime_state()
+        else:
+            logger.error("Start the application failed, either serial port failed to start or squish failed to start ")
 
     def __on_runtime_state(self):
         if self.active_project:
