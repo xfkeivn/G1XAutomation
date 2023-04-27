@@ -201,11 +201,10 @@ class BackPlaneSimulator(metaclass=Singleton):
                     upper_layer_attr = layer_attr
                 layer += 1
             if layer_attr is not None:
-                val = getattr(upper_layer_attr, key_part)
-                if val != int(value):
-                    match = False
-                    break
-            return match
+                if isinstance(layer_attr, int):
+                    if layer_attr != int(value):
+                        return False
+        return True
 
     def find_logged_commands(self, command_code, after_seq_id=-1, **kwargs):
         logged_commands = self.command_logging.get_all_retain_specific(command_code)
@@ -305,3 +304,4 @@ class BackPlaneSimulator(metaclass=Singleton):
             response_cmd = self.__dispatch_command(command_obj)
             self.com_handle.send_response(response_cmd)
             self.__process_response(response_cmd.u16_ResponseCode, response_cmd)
+

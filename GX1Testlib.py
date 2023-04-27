@@ -537,20 +537,22 @@ class GX1Testlib(object):
 if __name__ == "__main__":
     gx1_testlib = GX1Testlib()
     gx1_testlib.init_test()
-    gx1_testlib.get_text("", "ElectrodeSetup", "Monopolar")
+    #gx1_testlib.get_text("", "ElectrodeSetup", "Monopolar")
 
 
 
     gx1_testlib.mouse_xy(722, 161)
     gx1_testlib.start_scenario("RampMeasure")
-    time.sleep(10)
+    time.sleep(1)
     gx1_testlib.start_scenario("RampMeasure")
     gx1_testlib.clean_command_logging_queue()
     KWG = dict()
-    time.sleep(5)
-    KWG["ar_measured_channels.MeasuredChannelParam[0].u8_TempRefAvailable"] = 1
-    command_lists = gx1_testlib.find_logged_commands(0xC049, 0, **KWG)
-
+    time.sleep(1)
+    KWG["ar_measured_channels[0].u8_TempRefAvailable"] = 1
+    command_lists = gx1_testlib.find_logged_commands('0xC049', 0, **KWG)
+    KWG.clear()
+    KWG["au8_channels[0]"] = 1
+    command_lists = gx1_testlib.find_logged_commands('0xC048', 0, **KWG)
     gx1_testlib.mouse_xy(109,702)
 
     gx1_testlib.mouse_click("OneTouch")
