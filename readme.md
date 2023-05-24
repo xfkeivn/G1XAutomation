@@ -11,7 +11,7 @@
 version as Squish, you can use the python under squish installation folder python38.
 10. use pip install -r requirement.txt to install all the packages
 11. install virtual com port vsp to create a pair of com ports, let say com1 and com2
-12. start the SquishProxyServer.py, before starting update the IP and the private key file information in the file.
+12. start the SquishProxyServer.py, before startin update the IP and the private key file information in the file. (Line 88)
 13. startup the application of gx1 with startaut to start the GX1 application in the vm and change the com port from pipe to com2
 14. start the main.py in the sim_desk
 15. create a project in the sim_desk and click the project to set the com port 
