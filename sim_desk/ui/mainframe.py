@@ -21,8 +21,9 @@ from sim_desk.ui.screenframe import MyScrolledPanel
 from sim_desk.ui.ImagePanel import *
 from sim_desk.ui.console import Console
 from sim_desk.ui.progressdlg import ProgressObserver
+from gx_communication.comport import SERIAL_PORT,SERIAL_PIPE
 import executor_context
-
+import setting
 try:
     from agw import aui
 except ImportError:  # if it's not there locally, try the wxPython lib.
@@ -207,22 +208,37 @@ class MainFrame(wx.Frame):
 
     def on_start_robot(self, evt):
         # Activate the virtual environment
-        venv_path = os.path.join(os.path.dirname(__file__), "../../venv")
-        activate_script = os.path.join(venv_path, 'Scripts', 'activate.bat')
-        subprocess.call(activate_script, shell=True)
-        # Start the subprocess using the virtual environment's Python interpreter
-        python_path = os.path.join(venv_path, 'Scripts', 'python.exe')
-        subprocess.Popen([python_path, os.path.join(venv_path, 'Scripts', 'ride.py')])
+        if setting.prod is False:
+            venv_path = os.path.join(os.path.dirname(__file__), "../../venv")
+            activate_script = os.path.join(venv_path, 'Scripts', 'activate.bat')
+            subprocess.call(activate_script, shell=True)
+            # Start the subprocess using the virtual environment's Python interpreter
+            python_path = os.path.join(venv_path, 'Scripts', 'python.exe')
+            subprocess.Popen([python_path, os.path.join(venv_path, 'Scripts', 'ride.py')])
+        else:
+            venv_path = os.path.join(os.path.dirname(__file__), "../../../python3")
+            python_path = os.path.join(venv_path, 'python.exe')
+            subprocess.Popen([python_path, os.path.join(venv_path, 'Scripts', 'ride.py')])
 
     def on_start(self, evt):
         # silently save the project
         self.on_save_project(None)
         self.SetWindowStyle(wx.CAPTION | wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.RESIZE_BORDER)
         com_port_val = self.active_project.getPropertyByName("COM").getStringValue()
-        result = self.bps.start(com_port_val)
+        communication_type = self.active_project.getPropertyByName("CommunicationType").getStringValue()
+        pipe_name = self.active_project.getPropertyByName("PipeName").getStringValue()
+
+        if communication_type == "PIPE":
+            ctype = SERIAL_PIPE
+            com_port_val = pipe_name
+        else:
+            ctype = SERIAL_PORT
+        result = self.bps.start(com_port_val,ctype)
         enabled_squish = self.active_project.squish_container.getPropertyByName("Enabled")
         if result and enabled_squish.getStringValue() == "True":
-            dlg = wx.MessageDialog(self, 'Please Start the GX1 application and make sure the communication is Good to start Squish  ',
+            dlg = wx.MessageDialog(self, 'Start Squish, click yes, Otherwise click no. \n '
+                                         'If you want to start squish, make sure Squish is properly installed set and \n'
+                                         'GX1 application is started properly before clicking yes ',
                                    'Confirm to start',
                                    # wx.OK | wx.ICON_INFORMATION
                                    wx.YES_NO | wx.ICON_INFORMATION | wx.CANCEL
@@ -478,7 +494,7 @@ class MainFrame(wx.Frame):
                     self.tb.EnableTool(ID_StartTest, True)
                     self.tb.EnableTool(ID_StopTest, False)
                     self._mgr.LoadPerspective(self.original_perspective)
-                    self.SetTitle("GX1 Simulator Desktop --" + self.active_project.getLabel())
+                    self.SetTitle("DVTFront for GX1 --" + self.active_project.getLabel())
                 else:
                     wx.MessageBox("The project already exist, please check!")
 

@@ -1,3 +1,5 @@
+import threading
+
 from gx_communication.cobs import cobs
 import logging
 import serial
@@ -6,14 +8,26 @@ from gx_communication import constants
 from gx_communication import gx_commands
 from gx_communication import RD1055_format as rd
 from utils import logger
+import win32pipe
+import win32file
+import pywintypes
+
+SERIAL_PORT = 0
+SERIAL_PIPE = 1
 
 class SerialCmd:
 
-    def __init__(self, comport):
+    def __init__(self, comport, serialType = SERIAL_PORT):
         self.baud_rate = 115200
         self.com_port = comport
         self.serialPort = None
-        self.create_serial()
+        self.serial_type = serialType
+        if self.serial_type == SERIAL_PORT:
+            self.create_serial()
+        else:
+            self.serialPort = PipeSerial(comport)
+            self.connect()
+
 
 
     def create_serial(self):
@@ -135,9 +149,14 @@ class SerialCmd:
                     received_data = bytes()
 
             except serial.SerialException as err:
-                logger.warning(f'terminated the serial port read- {err}')
+                logger.warn(f'terminated the serial port read- {err}')
                 self.serialPort.flushInput()
                 break
+            except pywintypes.error as e:
+                if e.args[0] == 109:  # ERROR_BROKEN_PIPE
+                    logger.warn("Pipe connection broken.")
+                else:
+                    logger.warn("Error reading from pipe:", e)
 
         return response
 
@@ -148,3 +167,65 @@ class SerialCmd:
         logging.info("disconnecting from device")
         self.serialPort.close()
         return True
+
+
+class PipeSerial():
+    def __init__(self,name):
+        self.pipe_name = name
+        self.pipe = None
+        self.is_open = False
+        self.thread_open = None
+        self.event = threading.Event()
+
+    def open(self):
+        # Create the named pipe
+        self.pipe = win32pipe.CreateNamedPipe(
+            self.pipe_name,
+            win32pipe.PIPE_ACCESS_DUPLEX,
+            win32pipe.PIPE_TYPE_BYTE | win32pipe.PIPE_WAIT,
+            1, 65536, 65536,
+            0,
+            None
+        )
+        # Connect to the named pipe
+        self.thread_open = threading.Thread(target=self.connect_pipe)
+        self.thread_open.start()
+
+    def connect_pipe(self):
+        self.event.clear()
+        win32pipe.ConnectNamedPipe(self.pipe, None)
+        print("Pipe connection established.")
+        self.is_open = True
+        self.event.set()
+
+    def close(self):
+        win32pipe.DisconnectNamedPipe(self.pipe)
+        win32file.CloseHandle(self.pipe)
+        self.is_open = False
+        self.event.set()
+
+
+    def isOpen(self):
+        return self.is_open
+
+    def read(self,byte_len):
+        if self.is_open is False:
+            self.event.wait()
+        if self.is_open is False:
+            return b''
+        received_data = b''
+        while True:
+            result, data = win32file.ReadFile(self.pipe, 4096, None)
+            if result == 0:
+                received_data += data[:]
+                break
+            else:
+                logger.error("The ReadFile result is not 0")
+                break
+        return received_data
+
+    def write(self,bytes):
+        win32file.WriteFile(self.pipe, bytes)
+
+    def flushOutput(self):
+        win32file.FlushFileBuffers(self.pipe)

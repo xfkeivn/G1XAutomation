@@ -18,6 +18,7 @@ from gx_communication.gx_commands import Response as GX1Response
 import logging
 from gx_communication.gx_command_codes import *
 from gx_communication import RD1055_format
+from gx_communication.comport import SERIAL_PIPE,SERIAL_PORT
 from gx_communication.bsnUtil import generateCrcBytes
 from threading import Thread
 import time
@@ -124,14 +125,14 @@ class BackPlaneSimulator(metaclass=Singleton):
         self.command_listeners = list()
         self.command_response_filter = CommandResponseFilter()
 
-    def start(self, com_port="COM3"):
+    def start(self, com_port="COM3", serial_type= SERIAL_PORT):
         # self.command_listeners.clear()
         self.command_logging.clear()
         self.command_response_pending.clear()
         if self.receive_thread is not None and self.receive_thread.is_alive():
             return False
         self.com_port = com_port
-        self.com_handle = comp.SerialCmd(self.com_port)
+        self.com_handle = comp.SerialCmd(self.com_port,serial_type)
         self.receive_thread = Thread(target=self.__receive_response)
         self.receive_thread_stop = False
         self.receive_thread.start()

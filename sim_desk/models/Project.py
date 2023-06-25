@@ -32,7 +32,11 @@ class Project(TreeModel):
         prop_location.setSavable(False)
         self.addProperties(prop_location)
         self._com_port_list = self.__enum_com_ports()
+        prop_type = EnumProperty("CommunicationType", "CommunicationType", 0, None, ['PIPE','COM'], [0,1])
+        prop_pipename = StringProperty("PipeName", "PipeName", r"\\.\pipe\gx1", editable=True)
         prop_comport = EnumProperty("COM", "COM", 0,None,self._com_port_list,list(range(len(self._com_port_list))))
+        self.addProperties(prop_type)
+        self.addProperties(prop_pipename)
         self.addProperties(prop_comport)
         self.project_config_backup = {}
         self.loading_error = None

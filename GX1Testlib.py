@@ -139,9 +139,7 @@ class GX1Testlib(object):
     def __init__(self, project_dir=None):
         """
         Initialize the Library.
-        **This interface will not initialize the device and the test system  **
-        Used Operate_Devices_All_Init to Initialize all devices and test system.
-
+        **This interface will  initialize the device and the test system  **
         The Library will load the current project file which contains all the information used for test scripts to run.
         This file can be created by GUI tool.
 

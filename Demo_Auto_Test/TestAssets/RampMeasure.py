@@ -27,7 +27,8 @@ class Rampmeasure(Scenario):
 
          logger.info(str(response.data))
 
-
+    def on_response_CtrlStartCmd(self,responseObj):
+        pass
     def on_receive_GetMeasuredChannelsCmd(self,commandobj):
         command_code = commandobj.code
         kw = dict()
@@ -78,3 +79,9 @@ class Rampmeasure(Scenario):
 
     def on_response_GetMeasuredChannelsCmd(self,responseObj):
         logger.info(f'u16_TempRef = {responseObj.data.ar_measured_channels[0].u16_TempRef}')
+
+
+
+    def on_receive_CtrlStopCmd(self,commandObj):
+        pass
+
