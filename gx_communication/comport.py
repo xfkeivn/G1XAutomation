@@ -10,6 +10,7 @@ from gx_communication import RD1055_format as rd
 from utils import logger
 import win32pipe
 import win32file
+import win32event
 import pywintypes
 
 SERIAL_PORT = 0
@@ -176,34 +177,42 @@ class PipeSerial():
         self.is_open = False
         self.thread_open = None
         self.event = threading.Event()
+        self.overlapped_event = None
+        self.buffer = win32file.AllocateReadBuffer(4096)
 
     def open(self):
         # Create the named pipe
+        self.event.clear()
+        self.overlapped_event = pywintypes.OVERLAPPED()
+        self.overlapped_event.hEvent = win32event.CreateEvent(None, 0, 0, None)
         self.pipe = win32pipe.CreateNamedPipe(
             self.pipe_name,
-            win32pipe.PIPE_ACCESS_DUPLEX,
+            win32pipe.PIPE_ACCESS_DUPLEX|win32file.FILE_FLAG_OVERLAPPED,
             win32pipe.PIPE_TYPE_BYTE | win32pipe.PIPE_WAIT,
             1, 65536, 65536,
             0,
             None
         )
         # Connect to the named pipe
-        self.thread_open = threading.Thread(target=self.connect_pipe)
-        self.thread_open.start()
+        self.connect_pipe()
+
+    def wait_for_connect(self):
+        wait_result = win32event.WaitForSingleObject(self.overlapped_event.hEvent, win32event.INFINITE)
+        if wait_result == win32event.WAIT_OBJECT_0:
+            self.is_open = True
+            self.event.set()
 
     def connect_pipe(self):
         self.event.clear()
-        win32pipe.ConnectNamedPipe(self.pipe, None)
-        print("Pipe connection established.")
-        self.is_open = True
-        self.event.set()
+        win32pipe.ConnectNamedPipe(self.pipe, self.overlapped_event)
+        self.thread_open = threading.Thread(target=self.wait_for_connect)
+        self.thread_open.start()
 
     def close(self):
         win32pipe.DisconnectNamedPipe(self.pipe)
         win32file.CloseHandle(self.pipe)
         self.is_open = False
         self.event.set()
-
 
     def isOpen(self):
         return self.is_open
