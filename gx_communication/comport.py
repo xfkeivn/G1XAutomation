@@ -178,7 +178,7 @@ class PipeSerial():
         self.thread_open = None
         self.event = threading.Event()
         self.overlapped_event = None
-        self.buffer = win32file.AllocateReadBuffer(4096)
+        #self.buffer = win32file.AllocateReadBuffer(4096)
 
     def open(self):
         # Create the named pipe
@@ -211,6 +211,7 @@ class PipeSerial():
     def close(self):
         win32pipe.DisconnectNamedPipe(self.pipe)
         win32file.CloseHandle(self.pipe)
+        win32file.CloseHandle(self.overlapped_event.hEvent)
         self.is_open = False
         self.event.set()
 
