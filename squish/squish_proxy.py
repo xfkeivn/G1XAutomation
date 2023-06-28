@@ -8,7 +8,10 @@
 @desc:
 """
 from Pyro5.api import Proxy, locate_ns
-
+from utils import logger
+import subprocess
+import setting
+import os
 
 class SquishProxy:
 
@@ -17,6 +20,33 @@ class SquishProxy:
         self.ssh_private_key = ssh_private_key
         self.attachable_app_name = attachable_app_name
         self.proxy = None
+        self.squisher_proxy_server_proces = None
+
+    def start_squish_server(self):
+        logger.info("start the squish pyro server %s,%s，%s"%(self.target_ip,self.ssh_private_key,self.attachable_app_name))
+        if setting.prod is False:
+            venv_path = os.path.join(os.path.dirname(__file__), "../venv")
+            activate_script = os.path.join(venv_path, 'Scripts', 'activate.bat')
+            subprocess.call(activate_script, shell=True)
+            # Start the subprocess using the virtual environment's Python interpreter
+            python_path = os.path.join(venv_path, 'Scripts', 'python.exe')
+            self.squisher_proxy_server_proces = subprocess.Popen([python_path, "squishPyServer.py",self.target_ip,self.ssh_private_key,self.attachable_app_name],cwd=os.path.dirname(__file__))
+
+        else:
+            venv_path = os.path.join(os.path.dirname(__file__), "../../python3")
+            python_path = os.path.join(venv_path, 'python.exe')
+            self.squisher_proxy_server_proces = subprocess.Popen([python_path,"squishPyServer.py", self.target_ip,self.ssh_private_key,self.attachable_app_name],cwd=os.path.dirname(__file__))
+
+        if self.squisher_proxy_server_proces.poll() is None:
+            return True
+        else:
+            return False
+
+    def stop_squish_server(self):
+        if self.squisher_proxy_server_proces is not None:
+            self.squisher_proxy_server_proces.kill()
+            self.squisher_proxy_server_proces = None
+
 
     def create_proxy(self):
         with locate_ns(host='127.0.0.1') as ns:

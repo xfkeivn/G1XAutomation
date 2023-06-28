@@ -30,6 +30,9 @@ sys.path.append(os.path.dirname(curfiledir))
 from robot import utils
 from robot.libraries.BuiltIn import BuiltIn
 from utils import logger
+from gx_communication.comport import *
+from robot.libraries.Dialogs import *
+
 
 
 class CommandListener(object):
@@ -276,24 +279,36 @@ class GX1Testlib(object):
             self.__init_project()
             self.squish_name_mapping = self.project_model.squish_container.get_all_name_mapping()
             self.project_inited = True
-            com_port_val = self.project_model.getPropertyByName("COM").getStringValue()
+            communication_type = self.project_model.getPropertyByName("CommunicationType").getStringValue()
+            if communication_type == "PIPE":
+                ctype = SERIAL_PIPE
+                pipe_name = self.project_model.getPropertyByName("PipeName").getStringValue()
+                com_port_val = pipe_name
+            else:
+                com_port_val = self.project_model.getPropertyByName("COM").getStringValue()
+                ctype = SERIAL_PORT
+
             result = True
-            result = self.gx1_simulator.start(com_port_val)
+            result = self.gx1_simulator.start(com_port_val,ctype)
             if result:
                 logger.info("GX1 Simulator is started")
             else:
                 logger.error("GX1 Simulator failed to start")
-                return
+                raise Exception("GX1 Simulator failed to start")
 
             # result = self.squish_proxy.connect()
-            self.squish_proxy.create_proxy()
-            result = self.squish_proxy.connect()
-            if result:
+            enabled_squish = self.project_model.squish_container.getPropertyByName("Enabled")
+            if enabled_squish.getStringValue() == "True":
+                pause_execution("Waiting to start Squish hooker in GX1 GUI,\n Start GX1 GUI application first")
+                self.squish_proxy.start_squish_server()
+                self.squish_proxy.create_proxy()
+                result = self.squish_proxy.connect()
+                if result:
 
-                logger.info("Squish tester is started")
-            else:
-                logger.error("Squish tester failed to start")
-                return
+                    logger.info("Squish tester is started")
+                else:
+                    logger.error("Squish tester failed to start")
+                    raise Exception("GX1 Simulator failed to start")
 
 
         else:
@@ -315,8 +330,11 @@ class GX1Testlib(object):
         if self.project_inited is True:
             self.gx1_simulator.stop()
             logger.info("GX1 Simulator is stopped")
-            self.squish_proxy.disconnect()
-            logger.info("Squish tester is stopped")
+            enabled_squish = self.project_model.squish_container.getPropertyByName("Enabled")
+            if enabled_squish.getStringValue() == "True":
+                self.squish_proxy.disconnect()
+                self.squish_proxy.stop_squish_server()
+                logger.info("Squish tester is stopped")
         else:
             logger.warn("The project is not initialized for testing ")
         self.project_inited = False

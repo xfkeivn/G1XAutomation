@@ -11,11 +11,11 @@ import logging
 from utils.sim_desk_logging import logger as sim_desk_logger
 from robot.api import logger as robot_logger
 from executor_context import ExecutorContext
-
+from utils.utilities import get_home_log_folder
 import os
 
 dir_name = os.path.dirname(__file__)
-dir_upper_name = os.path.join(dir_name,"../logs")
+dir_upper_name = get_home_log_folder()
 if not os.path.exists(dir_upper_name):
     os.mkdir(dir_upper_name)
 

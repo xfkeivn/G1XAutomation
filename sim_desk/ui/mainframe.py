@@ -31,7 +31,8 @@ except ImportError:  # if it's not there locally, try the wxPython lib.
 from sim_desk.ui import statusbar, images
 from squish.squish_lib import *
 from squish.squish_proxy import *
-
+from utils.utilities import get_screen_shot_home_folder
+from utils.utilities import get_python_exe_path
 ID_NewProject = wx.ID_HIGHEST + 1
 ID_ImportProject = wx.ID_HIGHEST + 2
 ID_ExportProject = wx.ID_HIGHEST + 3
@@ -223,25 +224,24 @@ class MainFrame(wx.Frame):
     def on_start(self, evt):
         # silently save the project
         self.on_save_project(None)
-        self.SetWindowStyle(wx.CAPTION | wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.RESIZE_BORDER)
-        com_port_val = self.active_project.getPropertyByName("COM").getStringValue()
-        communication_type = self.active_project.getPropertyByName("CommunicationType").getStringValue()
-        pipe_name = self.active_project.getPropertyByName("PipeName").getStringValue()
 
+        communication_type = self.active_project.getPropertyByName("CommunicationType").getStringValue()
         if communication_type == "PIPE":
             ctype = SERIAL_PIPE
+            pipe_name = self.active_project.getPropertyByName("PipeName").getStringValue()
             com_port_val = pipe_name
         else:
+            com_port_val = self.active_project.getPropertyByName("COM").getStringValue()
             ctype = SERIAL_PORT
         result = self.bps.start(com_port_val,ctype)
         enabled_squish = self.active_project.squish_container.getPropertyByName("Enabled")
         if result and enabled_squish.getStringValue() == "True":
-            dlg = wx.MessageDialog(self, 'Start Squish, click yes, Otherwise click no. \n '
-                                         'If you want to start squish, make sure Squish is properly installed set and \n'
-                                         'GX1 application is started properly before clicking yes ',
+            dlg = wx.MessageDialog(self, 'Start Squish, click YES, Otherwise click NO.\n'
+                                         'To use squish, make sure Squish is properly installed and set\n'
+                                         'GX1 GUI application should be started before you click YES!',
                                    'Confirm to start',
                                    # wx.OK | wx.ICON_INFORMATION
-                                   wx.YES_NO | wx.ICON_INFORMATION | wx.CANCEL
+                                   wx.YES_NO | wx.ICON_INFORMATION
                                    )
             is_start_squish = dlg.ShowModal()
             if is_start_squish == wx.ID_YES:
@@ -253,13 +253,19 @@ class MainFrame(wx.Frame):
                     aut_name = aut_prop.getStringValue()
                     private_key_file = private_key.getStringValue()
                     self.squish_runner = SquishProxy(ip_address, private_key_file, aut_name)
-                    self.squish_runner.create_proxy()
-                    result = self.squish_runner.connect()
-                    if result:
-                        self.active_project.squish_runner = self.squish_runner
-                        self.screen_window.start()
+                    server_status = self.squish_runner.start_squish_server()
+                    if server_status is True:
+                        self.squish_runner.create_proxy()
+                        result = self.squish_runner.connect()
+                        if result:
+                            self.active_project.squish_runner = self.squish_runner
+                            self.screen_window.start()
+                    else:
+                        logger.error("start squish pyro server failed")
+                        result = False
 
         if result:
+            self.SetWindowStyle(wx.CAPTION | wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.RESIZE_BORDER)
             self.active_project.scenario_py_container.start_all_scenarios()
             self.__on_runtime_state()
         else:
@@ -310,11 +316,13 @@ class MainFrame(wx.Frame):
             self.SetWindowStyle(wx.DEFAULT_FRAME_STYLE | wx.SUNKEN_BORDER)
         if self.squish_runner:
             self.squish_runner.disconnect()
+            self.squish_runner.stop_squish_server()
         self.squish_started = False
+        self.tb.Realize()
 
     def on_screen_shot(self, evt):
         dirname = os.path.dirname(__file__)
-        screenshot_folder = os.path.join(dirname, "../screenshot")
+        screenshot_folder = get_screen_shot_home_folder()
         if not os.path.exists(screenshot_folder):
             os.mkdir(screenshot_folder)
         if self.squish_runner:

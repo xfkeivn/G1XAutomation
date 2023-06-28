@@ -23,13 +23,12 @@ class SerialCmd:
         self.com_port = comport
         self.serialPort = None
         self.serial_type = serialType
+        self.connected = False
         if self.serial_type == SERIAL_PORT:
             self.create_serial()
         else:
             self.serialPort = PipeSerial(comport)
-            self.connect()
-
-
+            self.connected = self.connect()
 
     def create_serial(self):
         try:
@@ -38,7 +37,7 @@ class SerialCmd:
                 baudrate=self.baud_rate,
                 bytesize=8,
                 stopbits=serial.STOPBITS_ONE)
-            self.connect()
+            self.connected = self.connect()
         except Exception as err:
             logger.error(f'COM Port {self.com_port} failed to created')
         else:
@@ -76,10 +75,9 @@ class SerialCmd:
         logging.info("connecting to device")
         if self.serialPort.isOpen():
             self.serialPort.close()
-            self.serialPort.open()
+            return self.serialPort.open()
         else:
-            self.serialPort.open()
-        return
+            return self.serialPort.open()
 
     def send_command(self, cmd_in):
         logging.debug("Sending command...")
@@ -158,6 +156,7 @@ class SerialCmd:
                     logger.warn("Pipe connection broken.")
                 else:
                     logger.warn("Error reading from pipe:", e)
+                break
 
         return response
 
@@ -181,20 +180,25 @@ class PipeSerial():
         #self.buffer = win32file.AllocateReadBuffer(4096)
 
     def open(self):
-        # Create the named pipe
-        self.event.clear()
-        self.overlapped_event = pywintypes.OVERLAPPED()
-        self.overlapped_event.hEvent = win32event.CreateEvent(None, 0, 0, None)
-        self.pipe = win32pipe.CreateNamedPipe(
-            self.pipe_name,
-            win32pipe.PIPE_ACCESS_DUPLEX|win32file.FILE_FLAG_OVERLAPPED,
-            win32pipe.PIPE_TYPE_BYTE | win32pipe.PIPE_WAIT,
-            1, 65536, 65536,
-            0,
-            None
-        )
-        # Connect to the named pipe
-        self.connect_pipe()
+        try:
+            # Create the named pipe
+            self.event.clear()
+            self.overlapped_event = pywintypes.OVERLAPPED()
+            self.overlapped_event.hEvent = win32event.CreateEvent(None, 0, 0, None)
+            self.pipe = win32pipe.CreateNamedPipe(
+                self.pipe_name,
+                win32pipe.PIPE_ACCESS_DUPLEX|win32file.FILE_FLAG_OVERLAPPED,
+                win32pipe.PIPE_TYPE_BYTE | win32pipe.PIPE_WAIT,
+                1, 65536, 65536,
+                0,
+                None
+            )
+            # Connect to the named pipe
+            self.connect_pipe()
+            return True
+        except Exception as err:
+            logger.error(err)
+            return False
 
     def wait_for_connect(self):
         wait_result = win32event.WaitForSingleObject(self.overlapped_event.hEvent, win32event.INFINITE)
@@ -209,11 +213,18 @@ class PipeSerial():
         self.thread_open.start()
 
     def close(self):
-        win32pipe.DisconnectNamedPipe(self.pipe)
-        win32file.CloseHandle(self.pipe)
-        win32file.CloseHandle(self.overlapped_event.hEvent)
-        self.is_open = False
-        self.event.set()
+        if self.pipe is not None:
+            try:
+                win32pipe.DisconnectNamedPipe(self.pipe)
+                win32file.CloseHandle(self.pipe)
+                win32file.CloseHandle(self.overlapped_event.hEvent)
+                self.is_open = False
+                self.pipe = None
+                self.event.set()
+                return True
+            except Exception as err:
+                logger.error(err)
+                return False
 
     def isOpen(self):
         return self.is_open

@@ -17,7 +17,7 @@ import Pyro5.server
 import Pyro5.socketutil
 from Pyro5.api import expose, oneway, Daemon, locate_ns
 from squish.squish_lib import *
-
+import sys
 Pyro5.config.SERVERTYPE = "multiplex"
 Pyro5.config.POLLTIMEOUT = 3
 
@@ -85,7 +85,19 @@ if __name__ == "__main__":
     servePyro = True
     _hostName = socket.gethostname()
     _hostIP = "127.0.0.1"
-    target_ip,ssh_private_key_file,attached_app_name = ("192.168.80.130",r"C:\Users\xuf\.ssh\bsci","gx1")
+
+    print (sys.argv)
+
+    if len(sys.argv) == 1:
+        ipaddr = r"192.168.80.130"
+        auth = r"C:\Users\xuf\.ssh\bsci"
+        aut = "gx1"
+    else:
+        ipaddr = sys.argv[1]
+        auth = sys.argv[2]
+        aut = sys.argv[3]
+
+    target_ip,ssh_private_key_file,attached_app_name = (ipaddr,auth,aut)
     if os.path.exists(ssh_private_key_file) is False:
         print(" The private key file does not exists")
     else:

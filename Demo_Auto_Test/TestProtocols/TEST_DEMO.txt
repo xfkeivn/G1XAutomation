@@ -29,7 +29,6 @@ TEST_CASE_1_COMMAND_SIMULATION
     Log    this is the test demo, started
     Screen Shot
 
-
 TEST_CASE_2_CLICK_AND_SCREEN_SHOT
     [Documentation]    This is the second case
     [Tags]    VOLTAGE    POWER

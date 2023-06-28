@@ -12,8 +12,23 @@
 import subprocess
 import logging
 import string
+from pathlib import Path
+import os
+import setting
 logger = logging.getLogger("GX1")
 
+
+def get_home_log_folder():
+    logfolder =  os.path.join(Path.home(),"DVTFront","logs")
+    if not os.path.exists(logfolder):
+        os.mkdir(logfolder)
+    return logfolder
+
+def get_screen_shot_home_folder():
+    screenfolder =  os.path.join(Path.home(), "DVTFront", "Screens")
+    if not os.path.exists(screenfolder):
+        os.mkdir(screenfolder)
+    return screenfolder
 
 def printable(text):
     return "".join([ch for ch in text if ch in string.printable])
@@ -34,3 +49,19 @@ def os_system_cmd(cmd_str):
     logger.info(msg_out_lst)
 
     return msg_out_lst
+
+
+def get_python_exe_path():
+    if setting.prod is False:
+        venv_path = os.path.join(os.path.dirname(__file__), "../venv2")
+        activate_script = os.path.join(venv_path, 'Scripts', 'activate.bat')
+        subprocess.call(activate_script, shell=True)
+        # Start the subprocess using the virtual environment's Python interpreter
+        python_path = os.path.join(venv_path, 'Scripts', 'python.exe')
+        return python_path
+        #subprocess.Popen([python_path, os.path.join(venv_path, 'Scripts', 'ride.py')])
+    else:
+        venv_path = os.path.join(os.path.dirname(__file__), "../../python3")
+        python_path = os.path.join(venv_path, 'python.exe')
+        #subprocess.Popen([python_path, os.path.join(venv_path, 'Scripts', 'ride.py')])
+        return python_path

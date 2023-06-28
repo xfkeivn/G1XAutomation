@@ -63,11 +63,12 @@ class SquishContainer(TreeModel):
         return name_mapping
 
     def from_json(self,element):
-        for name, module in element['sub_models'].items():
-            abs_path = module['properties']['Path']['value']
-            squish_name_file = SquishNameFile(self, abs_path)
-            self.addChild(squish_name_file)
-            squish_name_file.populate()
+        if element.get('sub_models') is not None:
+            for name, module in element['sub_models'].items():
+                abs_path = module['properties']['Path']['value']
+                squish_name_file = SquishNameFile(self, abs_path)
+                self.addChild(squish_name_file)
+                squish_name_file.populate()
 
         TreeModel.from_json(self,element)
 
@@ -166,7 +167,7 @@ class ImageProcessingContainer(TreeModel):
                 if self.isAllready(path):
                     wx.MessageDialog(None, "Name file Already exists", "Name file not added", wx.OK).ShowModal()
                     return
-                self.import_it(path);
+                self.import_it(path)
 
     def import_to_asset(self,path):
         abs_path = self.copy_to_project_local_folder(path)

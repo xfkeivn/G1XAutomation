@@ -10,6 +10,9 @@
 @desc:
 """
 import threading
+
+import wx
+
 from utils.singleton import Singleton
 from gx_communication import comport as comp
 from gx_communication import gx_commands as commands
@@ -133,11 +136,14 @@ class BackPlaneSimulator(metaclass=Singleton):
             return False
         self.com_port = com_port
         self.com_handle = comp.SerialCmd(self.com_port,serial_type)
-        self.receive_thread = Thread(target=self.__receive_response)
-        self.receive_thread_stop = False
-        self.receive_thread.start()
-        time.sleep(0.1)
-        return self.receive_thread.is_alive()
+        if self.com_handle.connected:
+            self.receive_thread = Thread(target=self.__receive_response)
+            self.receive_thread_stop = False
+            self.receive_thread.start()
+            time.sleep(0.1)
+            return self.receive_thread.is_alive()
+        else:
+            return False
 
     def stop(self):
         self.command_response_filter.clear()
@@ -146,8 +152,9 @@ class BackPlaneSimulator(metaclass=Singleton):
         self.command_response_pending.clear()
         if self.receive_thread is not None and self.receive_thread.is_alive():
             self.receive_thread_stop = True
-            self.receive_thread.join(1)
             self.com_handle.disconnect()
+            self.receive_thread.join(1)
+
         return not self.receive_thread.is_alive()
 
     def remove_command_listener(self,listener):
@@ -287,7 +294,7 @@ class BackPlaneSimulator(metaclass=Singleton):
         while not self.receive_thread_stop:
             response = self.com_handle.get_command()
             if self.receive_thread_stop:
-                logger.debug("the thread is stopped")
+                #logger.debug("the thread is stopped")
                 break
             if response is None:
                 continue
