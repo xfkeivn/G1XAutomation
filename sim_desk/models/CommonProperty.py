@@ -10,7 +10,6 @@
 from sim_desk.models.TreeModel import TreeModel
 import wx.propgrid as wxpg
 import wx
-
 class CommonProperty(TreeModel):
     def __init__(self,name,label=None, defaultvalue=wx.EmptyString,category=None,editable=True):
         TreeModel.__init__(self,None,name)
@@ -23,6 +22,10 @@ class CommonProperty(TreeModel):
         else:self.propertylabel = label
         self.category = category
         self.savable = True
+
+    def add_listener(self, prop_listener):
+        self.prop_listener = prop_listener
+
     def setSavable(self,savable):
         self.savable = savable
         
@@ -59,7 +62,7 @@ class CommonProperty(TreeModel):
     
     def from_json(self,element):
         self.stringvalue = element.get("value")
-        
+
         
     def createwxproperty(self):
         raise Exception("not implementation")
@@ -169,6 +172,7 @@ class EnumProperty(CommonProperty):
     def from_json(self,element):
         self.strin = element.get("value")
         self.stringvalue = self.strin
+
 
         #try:
         #    self.stringvalue = self.enumstrs[int(self.strin)]

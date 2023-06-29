@@ -24,8 +24,8 @@ Pyro5.config.POLLTIMEOUT = 3
 
 @Pyro5.server.behavior(instance_mode="single")
 class SquishPyServer():
-    def __init__(self,target_ip_address,private_keyfile, attach_app_name='gx1'):
-        self.squish_tester = SquishTest(target_ip_address,private_keyfile, attach_app_name)
+    def __init__(self,squish_install_dir,target_ip_address,private_keyfile, attach_app_name='gx1'):
+        self.squish_tester = SquishTest(squish_install_dir,target_ip_address,private_keyfile, attach_app_name)
 
     # ================================================================================
     # Squish library communication
@@ -92,16 +92,18 @@ if __name__ == "__main__":
         ipaddr = r"192.168.80.130"
         auth = r"C:\Users\xuf\.ssh\bsci"
         aut = "gx1"
+        install_dir = r"D:\Squish for Qt 7.0.1"
     else:
-        ipaddr = sys.argv[1]
-        auth = sys.argv[2]
-        aut = sys.argv[3]
+        install_dir = sys.argv[1]
+        ipaddr = sys.argv[2]
+        auth = sys.argv[3]
+        aut = sys.argv[4]
 
     target_ip,ssh_private_key_file,attached_app_name = (ipaddr,auth,aut)
     if os.path.exists(ssh_private_key_file) is False:
         print(" The private key file does not exists")
     else:
-        squish_tester = SquishPyServer(target_ip,ssh_private_key_file,attached_app_name)
+        squish_tester = SquishPyServer(install_dir,target_ip,ssh_private_key_file,attached_app_name)
         if servePyro:
             nameserverUri, nameserverDaemon, broadcastServer = Pyro5.nameserver.start_ns(host='0.0.0.0')
             assert broadcastServer is not None, "expect a broadcast server to be created"

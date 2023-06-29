@@ -246,12 +246,12 @@ class GX1Testlib(object):
         ip_prop = self.project_model.squish_container.getPropertyByName("IP")
         aut_prop = self.project_model.squish_container.getPropertyByName("AUT")
         private_key = self.project_model.squish_container.getPropertyByName("PrivateKey")
-
+        squishHomeDirProp = self.project_model.squish_container.getPropertyByName("SquishHome")
         if ip_prop and aut_prop and private_key:
             ip_address = ip_prop.getStringValue()
             aut_name = aut_prop.getStringValue()
             private_key_file = private_key.getStringValue()
-            self.squish_proxy = SquishProxy(ip_address, private_key_file, aut_name)
+            self.squish_proxy = SquishProxy(squishHomeDirProp.getStringValue(), ip_address, private_key_file, aut_name)
             logger.info(f'Squish Hook {ip_address}, {aut_name}, {private_key_file}')
             logger.info('%s has been loaded successfully' % self.project_model.getLabel())
         else:

@@ -248,11 +248,13 @@ class MainFrame(wx.Frame):
                 ip_prop = self.active_project.squish_container.getPropertyByName("IP")
                 aut_prop = self.active_project.squish_container.getPropertyByName("AUT")
                 private_key = self.active_project.squish_container.getPropertyByName("PrivateKey")
+                squishHomeDirProp = self.active_project.squish_container.getPropertyByName("SquishHome")
                 if ip_prop and aut_prop:
                     ip_address = ip_prop.getStringValue()
                     aut_name = aut_prop.getStringValue()
                     private_key_file = private_key.getStringValue()
-                    self.squish_runner = SquishProxy(ip_address, private_key_file, aut_name)
+                    squishHomeDir = squishHomeDirProp.getStringValue()
+                    self.squish_runner = SquishProxy(squishHomeDir, ip_address, private_key_file, aut_name)
                     server_status = self.squish_runner.start_squish_server()
                     if server_status is True:
                         self.squish_runner.create_proxy()
@@ -265,10 +267,12 @@ class MainFrame(wx.Frame):
                         result = False
 
         if result:
-            self.SetWindowStyle(wx.CAPTION | wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.RESIZE_BORDER)
+            self.SetWindowStyle(wx.CAPTION |
+                                wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.RESIZE_BORDER)
             self.active_project.scenario_py_container.start_all_scenarios()
             self.__on_runtime_state()
         else:
+
             logger.error("Start the application failed, either serial port failed to start or squish failed to start ")
 
     def __on_runtime_state(self):

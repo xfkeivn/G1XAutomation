@@ -161,17 +161,17 @@ class TreeModel():
     def from_json(self, element):
         sub_models = element.get('sub_models', {})
         properties = element.get('properties', {})
-
-        for modelname, childelement in sub_models.items():
-            childmodel = self.getChildrenByLabel(modelname)
-            if len(childmodel) == 1:
-                childmodel[0].from_json(childelement)
         for properyname, propmodel in properties.items():
             prop = self.getPropertyByName(properyname)
             if prop is not None:
                 prop.from_json(propmodel)
             else:
                 pass
+        for modelname, childelement in sub_models.items():
+            childmodel = self.getChildrenByLabel(modelname)
+            if len(childmodel) == 1:
+                childmodel[0].from_json(childelement)
+
 
     def save(self):
         for child in self.children_models:
@@ -246,6 +246,7 @@ class TreeModel():
     def on_activate(self):
         if self.getProject_Tree() is not None:
             self.getProperties_Tree().set_model(self)
+
 
     def set_model_status(self, modelstatus):
         self.status = modelstatus

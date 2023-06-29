@@ -7,16 +7,13 @@
 @time: 2023/3/25 20:34
 @desc:
 """
+import os.path
 import sys
 import threading
-
-sys.path.append(r'D:\Squish for Qt 7.0.1\bin')
-sys.path.append(r'D:\Squish for Qt 7.0.1\lib\python')
-
 import psutil
 import subprocess
 import time
-from project_specific import names
+
 from utils import logger
 import queue
 
@@ -38,8 +35,13 @@ def find_process(pname):
 
 
 class SquishTest(object):
-    def __init__(self, target_ip_address,private_keyfile, attach_app_name='gx1'):
-
+    def __init__(self, squish_install_dir,target_ip_address,private_keyfile, attach_app_name='gx1'):
+        bin_path = os.path.join(squish_install_dir,r'bin')
+        python_path = os.path.join(squish_install_dir,'lib','python')
+        sys.path.append(bin_path)
+        sys.path.append(python_path)
+        from project_specific import names
+        self.names = names
         self._process_to_attach = attach_app_name
         self._squish_started = False
         self._open_ssh_folder = r"C:\\Windows\\System32\\OpenSSH"
@@ -51,11 +53,14 @@ class SquishTest(object):
         self._is_check_obj_exists = True
         self._parent = None
         self.sqt_module = None
+        self._squish_install_dir = squish_install_dir
         self._root = None
 
     # ================================================================================
     # Squish library communication
     # ================================================================================
+
+
     def start_squish_server(self):
         """Starts the Squish server as a subprocess.
         """
@@ -351,8 +356,8 @@ class SquishTest(object):
 
         """
         if self.get_action_obj(
-                names.greenHouse_Application_QQuickWindowQmlImpl) is not None:  # in case we need to re-connect
-            self.sqt_module.tapObject(names.greenHouse_Application_QQuickWindowQmlImpl, x, y)
+                self.names.greenHouse_Application_QQuickWindowQmlImpl) is not None:  # in case we need to re-connect
+            self.sqt_module.tapObject(self.names.greenHouse_Application_QQuickWindowQmlImpl, x, y)
 
     def long_mouse_click(self, gobj, x, y):
         """Perform a long mouse click on the active window.
@@ -371,7 +376,7 @@ class SquishTest(object):
 
         """
         if self.get_action_obj(
-                names.greenHouse_Application_QQuickWindowQmlImpl) is not None:  # in case we need to re-connect
+                self.names.greenHouse_Application_QQuickWindowQmlImpl) is not None:  # in case we need to re-connect
             self.sqt_module.saveDesktopScreenshot(path_to_save)
         else:
             return None

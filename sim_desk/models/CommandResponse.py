@@ -17,7 +17,7 @@ from sim_desk.ui.images import message_reply, signal, slot, did, message
 from BackPlaneSimulator import BackPlaneSimulator as BPS
 from BackPlaneSimulator import CommandResponseFilter
 from sim_desk.models.TreeModel import TREEMODEL_STATUS_NORMAL, TREEMODEL_STATUS_RUNTIME, TreeAction
-
+from utils import logger
 
 class CommandResponseModel(TreeModel):
     def __init__(self, parent, label, response_cls, command_cls):
@@ -45,6 +45,28 @@ class CommandResponseModel(TreeModel):
             number_value_property = StringProperty('Command Code', 'Command Code',
                                                    '%X' % (self.response_obj.u16_CommandCode), editable=False)
             self.addProperties(number_value_property)
+
+    def from_json(self, element):
+        TreeModel.from_json(self, element)
+
+        try:
+            if self.command_node is False:
+                command_logging = self.getPropertyByName("CommandLogging").getStringValue() == "True"
+                response_logging = self.getPropertyByName("ResponseLogging").getStringValue() == "True"
+                response_code = int(self.getPropertyByName("Response Code").getStringValue(), 16)
+                command_code = int(self.getPropertyByName("Command Code").getStringValue(), 16)
+                if response_logging:
+                    CommandResponseFilter().include_response(response_code)
+                else:
+                    CommandResponseFilter().exclude_response(response_code)
+                if command_logging:
+                    CommandResponseFilter().include_command(command_code)
+                else:
+                    CommandResponseFilter().exclude_command(command_code)
+        except Exception as err:
+            logger.error(err)
+
+
 
     def updateProperty(self, wxprop):
         TreeModel.updateProperty(self, wxprop)

@@ -15,12 +15,13 @@ import os
 
 class SquishProxy:
 
-    def __init__(self,target_ip, ssh_private_key,attachable_app_name):
+    def __init__(self,install_dir,target_ip, ssh_private_key,attachable_app_name):
         self.target_ip = target_ip
         self.ssh_private_key = ssh_private_key
         self.attachable_app_name = attachable_app_name
         self.proxy = None
         self.squisher_proxy_server_proces = None
+        self.install_dir = install_dir
 
     def start_squish_server(self):
         logger.info("start the squish pyro server %s,%s，%s"%(self.target_ip,self.ssh_private_key,self.attachable_app_name))
@@ -30,12 +31,12 @@ class SquishProxy:
             subprocess.call(activate_script, shell=True)
             # Start the subprocess using the virtual environment's Python interpreter
             python_path = os.path.join(venv_path, 'Scripts', 'python.exe')
-            self.squisher_proxy_server_proces = subprocess.Popen([python_path, "squishPyServer.py",self.target_ip,self.ssh_private_key,self.attachable_app_name],cwd=os.path.dirname(__file__))
+            self.squisher_proxy_server_proces = subprocess.Popen([python_path, "squishPyServer.py",self.install_dir,self.target_ip,self.ssh_private_key,self.attachable_app_name],cwd=os.path.dirname(__file__))
 
         else:
             venv_path = os.path.join(os.path.dirname(__file__), "../../python3")
             python_path = os.path.join(venv_path, 'python.exe')
-            self.squisher_proxy_server_proces = subprocess.Popen([python_path,"-m","squish.squishPyServer", self.target_ip,self.ssh_private_key,self.attachable_app_name],cwd=os.path.dirname(os.path.dirname(__file__)))
+            self.squisher_proxy_server_proces = subprocess.Popen([python_path,"-m","squish.squishPyServer", self.install_dir, self.target_ip,self.ssh_private_key,self.attachable_app_name],cwd=os.path.dirname(os.path.dirname(__file__)))
 
         if self.squisher_proxy_server_proces.poll() is None:
             return True

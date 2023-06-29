@@ -27,11 +27,15 @@ class CommandResponseContainer(TreeModel):
         return sim_desk.ui.images.folder_collapse
 
 
-
 class SquishContainer(TreeModel):
     def __init__(self, parent):
         TreeModel.__init__(self, parent, TAG_NAME_SQUISH_NAMES_CONTAINER)
         self.label = TAG_NAME_SQUISH_NAMES_CONTAINER
+
+        pathprop = StringProperty("SquishHome", "SquishHome", editable=True)
+        pathprop.setStringValue(r"D:\Squish for Qt 7.0.1")
+        pathprop.setSavable(True)
+        self.addProperties(pathprop)
         pathprop = StringProperty("IP", "IP", editable=True)
         pathprop.setStringValue("192.168.80.130")
         pathprop.setSavable(True)
@@ -63,6 +67,20 @@ class SquishContainer(TreeModel):
         return name_mapping
 
     def from_json(self,element):
+        sub_models = element.get('sub_models', {})
+        properties = element.get('properties', {})
+        for properyname, propmodel in properties.items():
+            prop = self.getPropertyByName(properyname)
+            if prop is not None:
+                prop.from_json(propmodel)
+            else:
+                pass
+        squish_install_dir = self.getPropertyByName("SquishHome").getStringValue()
+        bin_path = os.path.join(squish_install_dir,r'bin')
+        python_path = os.path.join(squish_install_dir,'lib','python')
+        sys.path.append(bin_path)
+        sys.path.append(python_path)
+
         if element.get('sub_models') is not None:
             for name, module in element['sub_models'].items():
                 abs_path = module['properties']['Path']['value']
@@ -70,7 +88,11 @@ class SquishContainer(TreeModel):
                 self.addChild(squish_name_file)
                 squish_name_file.populate()
 
-        TreeModel.from_json(self,element)
+        for modelname, childelement in sub_models.items():
+            childmodel = self.getChildrenByLabel(modelname)
+            if len(childmodel) == 1:
+                childmodel[0].from_json(childelement)
+
 
     def import_squish_names(self, event):
         dlg = wx.FileDialog(
@@ -167,7 +189,7 @@ class ImageProcessingContainer(TreeModel):
                 if self.isAllready(path):
                     wx.MessageDialog(None, "Name file Already exists", "Name file not added", wx.OK).ShowModal()
                     return
-                self.import_it(path)
+                self.import_to_asset(path)
 
     def import_to_asset(self,path):
         abs_path = self.copy_to_project_local_folder(path)
@@ -217,6 +239,8 @@ class ScenarioPyContainer(TreeModel):
         dlg = wx.TextEntryDialog(self.getProject_Tree(),"Please input a script name","Script Name(.py)")
         if dlg.ShowModal() == wx.ID_OK:
             txt:str = dlg.GetValue()
+            if txt.strip() == "":
+                return
             assets_folder = os.path.join(self.getRoot().getProjectDir(), TAG_NAME_FOLDER_TESTASSET)
             script_file_name = os.path.join(assets_folder,txt)
             scriptmodel = ScriptModel(self,script_file_name)

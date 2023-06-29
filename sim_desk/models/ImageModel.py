@@ -184,6 +184,16 @@ class FeatureRectModel(TreeModel):
         TreeModel.on_activate(self)
         if not ExecutorContext().is_robot_context():
             self.region_prop.setStringValue((f'({self.x},{self.y},{self.width},{self.height})'))
+        #show the rect on the image
+        self.parent.deselect_all()
+        SimDeskContext().get_image_feature_panel().select_region(self)
+        self.select()
+        self.refresh()
+
+
+
+
+
 
 
 class ImageModel(TreeModel):
