@@ -32,10 +32,10 @@ from robot.libraries.BuiltIn import BuiltIn
 from utils import logger
 from gx_communication.comport import *
 from robot.libraries.Dialogs import *
+from utils.singleton import Singleton
 
 
-
-class CommandListener(object):
+class CommandListener(metaclass=Singleton):
     def __init__(self):
         self.ml_stringio = None
         self.ml_file = None

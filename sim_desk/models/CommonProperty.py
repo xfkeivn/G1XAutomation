@@ -172,6 +172,9 @@ class EnumProperty(CommonProperty):
     def from_json(self,element):
         self.strin = element.get("value")
         self.stringvalue = self.strin
+        if len(self.enumstrs) > 0:
+            if self.stringvalue not in self.enumstrs:
+                self.stringvalue = self.enumstrs[0]
 
 
         #try:

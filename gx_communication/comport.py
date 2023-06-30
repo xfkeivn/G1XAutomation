@@ -26,6 +26,8 @@ class SerialCmd:
         self.connected = False
         if self.serial_type == SERIAL_PORT:
             self.create_serial()
+            self.connected = True
+
         else:
             self.serialPort = PipeSerial(comport)
             self.connected = self.connect()
@@ -37,7 +39,7 @@ class SerialCmd:
                 baudrate=self.baud_rate,
                 bytesize=8,
                 stopbits=serial.STOPBITS_ONE)
-            self.connected = self.connect()
+            self.connect()
         except Exception as err:
             logger.error(f'COM Port {self.com_port} failed to created')
         else:
@@ -156,6 +158,11 @@ class SerialCmd:
                     logger.warn("Pipe connection broken.")
                 else:
                     logger.warn("Error reading from pipe:", e)
+                break
+            except Exception as err:
+                #logger.warn(err)
+                recdata= ' '.join(["0x%x"%b for b in list(received_data)])
+                logger.warn(str(err)+recdata)
                 break
 
         return response
