@@ -233,47 +233,74 @@ class MainFrame(wx.Frame):
         else:
             com_port_val = self.active_project.getPropertyByName("COM").getStringValue()
             ctype = SERIAL_PORT
-        result = self.bps.start(com_port_val,ctype)
+        logger.info("Start communication ..")
+        squish_result = True
+        communication_result = self.bps.start(com_port_val,ctype)
+        if communication_result is True:
+            logger.info("Start communication successfully")
+        else:
+            logger.info("Start communication failed")
         enabled_squish = self.active_project.squish_container.getPropertyByName("Enabled")
-        if result and enabled_squish.getStringValue() == "True":
+        if communication_result and enabled_squish.getStringValue() == "True":
+
             dlg = wx.MessageDialog(self, 'Start Squish, click YES, Otherwise click NO.\n'
                                          'To use squish, make sure Squish is properly installed and set\n'
-                                         'GX1 GUI application should be started before you click YES!',
+                                         'GX1 GUI application should be started before you click YES!\n'
+                                         'To use it with VM, stop the stest and then the vm will show Pipe error, you need to \n'
+                                         'Close and start the VM again, restart VM will not work ',
                                    'Confirm to start',
                                    # wx.OK | wx.ICON_INFORMATION
                                    wx.YES_NO | wx.ICON_INFORMATION
                                    )
             is_start_squish = dlg.ShowModal()
             if is_start_squish == wx.ID_YES:
-                ip_prop = self.active_project.squish_container.getPropertyByName("IP")
-                aut_prop = self.active_project.squish_container.getPropertyByName("AUT")
-                private_key = self.active_project.squish_container.getPropertyByName("PrivateKey")
-                squishHomeDirProp = self.active_project.squish_container.getPropertyByName("SquishHome")
-                if ip_prop and aut_prop:
-                    ip_address = ip_prop.getStringValue()
-                    aut_name = aut_prop.getStringValue()
-                    private_key_file = private_key.getStringValue()
-                    squishHomeDir = squishHomeDirProp.getStringValue()
-                    self.squish_runner = SquishProxy(squishHomeDir, ip_address, private_key_file, aut_name)
-                    server_status = self.squish_runner.start_squish_server()
-                    if server_status is True:
-                        self.squish_runner.create_proxy()
-                        result = self.squish_runner.connect()
-                        if result:
-                            self.active_project.squish_runner = self.squish_runner
-                            self.screen_window.start()
-                    else:
-                        logger.error("start squish pyro server failed")
-                        result = False
+                while True:
+                    logger.info("Start Squish connection ..")
+                    ip_prop = self.active_project.squish_container.getPropertyByName("IP")
+                    aut_prop = self.active_project.squish_container.getPropertyByName("AUT")
+                    private_key = self.active_project.squish_container.getPropertyByName("PrivateKey")
+                    squishHomeDirProp = self.active_project.squish_container.getPropertyByName("SquishHome")
+                    if ip_prop and aut_prop and squishHomeDirProp and private_key:
+                        ip_address = ip_prop.getStringValue()
+                        aut_name = aut_prop.getStringValue()
+                        private_key_file = private_key.getStringValue()
+                        squishHomeDir = squishHomeDirProp.getStringValue()
+                        if not os.path.exists(private_key_file):
+                            logger.error("The ssh private not exists")
+                            squish_result = False
+                            break
+                        if not os.path.exists(squishHomeDir):
+                            logger.error("The squish install directory not exist")
+                            squish_result = False
+                            break
 
-        if result:
+                        self.squish_runner = SquishProxy(squishHomeDir, ip_address, private_key_file, aut_name)
+                        squish_result = self.squish_runner.start_squish_server()
+                        if squish_result is True:
+                            self.squish_runner.create_proxy()
+                            squish_result = self.squish_runner.connect()
+                            if squish_result:
+                                self.active_project.squish_runner = self.squish_runner
+                                self.screen_window.start()
+                            else:
+                                logger.error("Connect to Squish hooker failed")
+                                squish_result = False
+                                break
+                        else:
+                            logger.error("Start squish pyro server start failed")
+                            squish_result = False
+                            break
+                    else:
+                        squish_result = False
+                        logger.error("The property of squish setting failed")
+                        break
+                    break
+        if communication_result is True and squish_result is True:
             self.SetWindowStyle(wx.CAPTION |
                                 wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.RESIZE_BORDER)
             self.active_project.scenario_py_container.start_all_scenarios()
             self.__on_runtime_state()
-        else:
 
-            logger.error("Start the application failed, either serial port failed to start or squish failed to start ")
 
     def __on_runtime_state(self):
         if self.active_project:
@@ -313,15 +340,20 @@ class MainFrame(wx.Frame):
         self.tb.Realize()
 
     def on_stop(self, evt):
+
         self.active_project.scenario_py_container.stop_all_scenarios()
         self.screen_window.stop()
         if self.bps.stop():
             self.__on_normal_state()
             self.SetWindowStyle(wx.DEFAULT_FRAME_STYLE | wx.SUNKEN_BORDER)
-        if self.squish_runner:
-            self.squish_runner.disconnect()
-            self.squish_runner.stop_squish_server()
-        self.squish_started = False
+        try:
+            if self.squish_runner:
+                self.squish_runner.disconnect()
+                self.squish_runner.stop_squish_server()
+        except Exception as err:
+            logger.warn("There is an error during stopping squisher")
+        finally:
+            self.squish_started = False
         self.tb.Realize()
 
     def on_screen_shot(self, evt):
