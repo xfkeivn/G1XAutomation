@@ -57,6 +57,9 @@ Command_Code_Class_Mapping = {
     SET_IMPEDANCE_SETTING: commands.SetImpedanceSettingCmd,
     GET_IMPEDANCE_SETTING: commands.GetImpedanceSettingCmd,
     LAUNCH_APPLICATION:commands.LaunchApplication,
+    LAUNCH_APPLICATION2:commands.LaunchApplication2,
+    SET_SYSTEM_VOLUME:commands.SetSystemVolumn,
+    GET_SYSTEM_VOLUME:commands.GetSystemVolumn,
 }
 
 

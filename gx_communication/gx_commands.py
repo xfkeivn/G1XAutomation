@@ -75,6 +75,42 @@ class WhoAmIResp(Response):
         self.au8_address = []
 
 
+class SetSystemVolumn(Command):
+    """
+    Defines command for configuring electrode settings.
+    Attributes
+    ---------
+    """
+
+    def __init__(self):
+        super().__init__(gx_command_codes.SET_SYSTEM_VOLUME)
+        self.response = SetSystemVolumnResp()
+        self.u8_volumn = 0x00
+
+
+class SetSystemVolumnResp(Response):
+    def __init__(self):
+        super().__init__(gx_command_codes.SET_SYSTEM_VOLUME)
+
+
+class GetSystemVolumn(Command):
+    """
+    Defines command for configuring electrode settings.
+    Attributes
+    ---------
+    """
+
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_SYSTEM_VOLUME)
+        self.response = GetSystemVolumnResp()
+
+
+class GetSystemVolumnResp(Response):
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_SYSTEM_VOLUME)
+        self.u8_volumn = 0x00
+
+
 class SetElectrodeSettingCmd(Command):
     """
     Defines command for configuring electrode settings.
@@ -588,10 +624,24 @@ class LaunchApplication(Command):
         self.au8_cpld_hash_data = [0] * 32
         self._arrayLengths = {'au8_fw_hash_data': 32,'au8_cpld_hash_data':32}
 
+class LaunchApplication2(Command):
+    def __init__(self):
+        super().__init__(gx_command_codes.LAUNCH_APPLICATION2)
+        self.response = LaunchApplicationResp2()
+        self.au8_fw_hash_data = [0]*32
+        self.au8_cpld_hash_data = [0] * 32
+        self.au8_config_hash_data = [0] * 32
+        self._arrayLengths = {'au8_fw_hash_data': 32,'au8_cpld_hash_data':32,'au8_config_hash_data':32}
+
 
 class LaunchApplicationResp(Response):
     def __init__(self):
         super().__init__(gx_command_codes.LAUNCH_APPLICATION)
+
+
+class LaunchApplicationResp2(Response):
+    def __init__(self):
+        super().__init__(gx_command_codes.LAUNCH_APPLICATION2)
 
 
 class GetDetailedError(Command):
