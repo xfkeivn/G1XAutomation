@@ -21,13 +21,13 @@ logger = logging.getLogger("GX1")
 def get_home_log_folder():
     logfolder =  os.path.join(Path.home(),"DVTFront","logs")
     if not os.path.exists(logfolder):
-        os.mkdir(logfolder)
+        os.makedirs(logfolder)
     return logfolder
 
 def get_screen_shot_home_folder():
     screenfolder =  os.path.join(Path.home(), "DVTFront", "Screens")
     if not os.path.exists(screenfolder):
-        os.mkdir(screenfolder)
+        os.makedirs(screenfolder)
     return screenfolder
 
 def printable(text):

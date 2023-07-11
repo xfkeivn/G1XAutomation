@@ -73,7 +73,7 @@ class CommandListener(metaclass=Singleton):
             out_put_dir = variables['${OUTPUT_DIR}']
             logfile_dir = os.path.join(out_put_dir, self.command_log_folder)
             if not os.path.exists(logfile_dir):
-                os.mkdir(logfile_dir)
+                os.makedirs(logfile_dir)
             self.current_log_filename = os.path.join(logfile_dir, logfile_basename)
             with open(self.current_log_filename, "a") as self.ml_file:
                 self.ml_file.close()

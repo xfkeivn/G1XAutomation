@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "DVTFront"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.1"
 #define MyAppPublisher "Boston Scientifc"
 #define MyAppURL "http://www.bostonscientific.com/"
 #define MyAppExeName "start_gx1_simulator.bat"

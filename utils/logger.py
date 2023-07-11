@@ -17,7 +17,7 @@ import os
 dir_name = os.path.dirname(__file__)
 dir_upper_name = get_home_log_folder()
 if not os.path.exists(dir_upper_name):
-    os.mkdir(dir_upper_name)
+    os.makedirs(dir_upper_name)
 
 
 def write(msg, level='INFO', html=False):

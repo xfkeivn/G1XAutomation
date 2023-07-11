@@ -7,6 +7,7 @@
 @time: 2023/3/26 10:58
 @desc:
 """
+import os
 
 from sim_desk import constant
 from sim_desk.mgr.appconfig import AppConfig
@@ -360,7 +361,7 @@ class MainFrame(wx.Frame):
         dirname = os.path.dirname(__file__)
         screenshot_folder = get_screen_shot_home_folder()
         if not os.path.exists(screenshot_folder):
-            os.mkdir(screenshot_folder)
+            os.makedirs(screenshot_folder)
         if self.squish_runner:
             name = time.strftime('%Y%b%d_%H_%M_%S.png', time.localtime())
             full_path_name = os.path.join(screenshot_folder, name)
