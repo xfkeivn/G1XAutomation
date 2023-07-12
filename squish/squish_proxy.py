@@ -24,7 +24,7 @@ class SquishProxy:
         self.install_dir = install_dir
 
     def start_squish_server(self):
-        logger.info("start the squish pyro server %s,%s，%s"%(self.target_ip,self.ssh_private_key,self.attachable_app_name))
+        logger.info("start the squish pyro server %s,%s,%s"%(self.target_ip,self.ssh_private_key,self.attachable_app_name))
         if setting.prod is False:
             venv_path = os.path.join(os.path.dirname(__file__), "../venv")
             activate_script = os.path.join(venv_path, 'Scripts', 'activate.bat')
