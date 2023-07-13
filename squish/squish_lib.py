@@ -65,8 +65,8 @@ class SquishTest(object):
         """Starts the Squish server as a subprocess.
         """
         try:
-            subprocess.run(["squishserver.exe", "--stop"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            subprocess.Popen(['squishserver.exe'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            subprocess.run(["squishserver.exe", "--stop"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,cwd=self._squish_install_dir)
+            subprocess.Popen(['squishserver.exe'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT,cwd=self._squish_install_dir)
             self._squish_started = True
             time.sleep(1)
         except WindowsError as err:
@@ -78,7 +78,7 @@ class SquishTest(object):
         """Starts the Squish server as a subprocess.
         """
         try:
-            subprocess.run(["squishserver.exe", "--stop"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            subprocess.run(["squishserver.exe", "--stop"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,cwd=self._squish_install_dir)
             time.sleep(1)
             self._squish_started = False
         except WindowsError as err:
