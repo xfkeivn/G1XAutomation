@@ -8,11 +8,9 @@
 @desc:
 """
 
-import os
 import wx
-from sim_desk.ui import mainframe, images
-cur_file_dir = os.path.dirname(__file__)
-folder = os.path.dirname(cur_file_dir)
+
+from sim_desk.ui import mainframe
 
 
 class App(wx.App):
@@ -25,10 +23,5 @@ class App(wx.App):
         return True
 
 
-app = App(0)
+app = App(False)
 app.MainLoop()
-
-
-
-
-

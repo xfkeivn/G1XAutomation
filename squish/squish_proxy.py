@@ -31,7 +31,7 @@ class SquishProxy:
             subprocess.call(activate_script, shell=True)
             # Start the subprocess using the virtual environment's Python interpreter
             python_path = os.path.join(venv_path, 'Scripts', 'python.exe')
-            self.squisher_proxy_server_proces = subprocess.Popen([python_path, "squishPyServer.py",self.install_dir,self.target_ip,self.ssh_private_key,self.attachable_app_name],cwd=os.path.dirname(__file__))
+            self.squisher_proxy_server_proces = subprocess.Popen([python_path,"-m","squish.squishPyServer", self.install_dir, self.target_ip,self.ssh_private_key,self.attachable_app_name],cwd=os.path.dirname(os.path.dirname(__file__)))
 
         else:
             venv_path = os.path.join(os.path.dirname(__file__), "../../python3")

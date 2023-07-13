@@ -4,5 +4,5 @@ set relative_path=%script_path%../python3/
 set PYTHONHOME=%relative_path%
 set PATH=%relative_path%;%PATH%
 cd %~dp0
-python -m sim_desk.main
+python -m main
 pause
