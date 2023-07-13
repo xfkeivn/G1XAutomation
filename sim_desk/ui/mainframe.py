@@ -7,11 +7,14 @@
 @time: 2023/3/26 10:58
 @desc:
 """
+
+import contextlib
 import os
+
+import wx
 
 import executor_context
 import setting
-import wx
 from BackPlaneSimulator import BackPlaneSimulator as Bps
 from gx_communication.comport import SERIAL_PIPE, SERIAL_PORT
 from sim_desk import constant
@@ -582,6 +585,9 @@ class MainFrame(wx.Frame):
             self.tb.Realize()
 
     def on_close(self, event):
+        with contextlib.suppress(Exception):
+            self.squish_runner.disconnect()
+
         if self.__close_active_project() is False:
             event.Veto()
             return
