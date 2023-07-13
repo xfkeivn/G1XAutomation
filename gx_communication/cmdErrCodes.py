@@ -49,7 +49,7 @@ class CmdErrCodes:
     NotLogFileId = 0x39
     TooManyParms = 0x53
     UnitTestFailed = 0x54
-    #New for GX1
+    # New for GX1
     InvalidAppHash = 0x80
     InvalidCpldHash = 0x81
     FailedLock = 0x82
@@ -79,7 +79,6 @@ class CmdErrCodes:
     TempSettingOutOfRange = 0x9F
     NoConfigurationData = 0xA0
     Failed = 0xEE
-
 
     @staticmethod
     def getErrCodeName(ErrCode):

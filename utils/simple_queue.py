@@ -9,11 +9,11 @@
 @time: 2023/3/26 22:00
 @desc:
 """
-import threading
 import copy
+import threading
 
 
-class LightQueue():
+class LightQueue:
     def __init__(self, max_size=None):
         self.buffer = []
         self.lock = threading.Lock()
@@ -32,7 +32,7 @@ class LightQueue():
 
     def empty(self):
         self.lock.acquire()
-        isempty = (len(self.buffer) == 0)
+        isempty = len(self.buffer) == 0
         self.lock.release()
         return isempty
 
@@ -76,7 +76,7 @@ class LightQueue():
 
 
 class MessageDictQueue:
-    def __init__(self, buffersize = 100000):
+    def __init__(self, buffersize=100000):
         self._msgqueue_dict = {}
         self.lock = threading.Lock()
         self.buffersize = buffersize

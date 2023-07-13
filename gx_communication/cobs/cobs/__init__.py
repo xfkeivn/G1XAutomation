@@ -18,12 +18,13 @@ References:
 
 try:
     from ._cobs_ext import *
+
     _using_extension = True
 except ImportError:
     from ._cobs_py import *
+
     _using_extension = False
 
-DecodeError.__module__ = 'cobs.cobs'
+DecodeError.__module__ = "cobs.cobs"
 
 from .._version import *
-

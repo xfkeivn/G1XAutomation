@@ -8,10 +8,12 @@ The following sub-modules are provided:
     * ``cobs.cobsr`` which implements COBS/Reduced.
 """
 
-__all__ = [ 'cobs', 'cobsr', ]
+__all__ = [
+    "cobs",
+    "cobsr",
+]
 
-#from . import cobs
-#from . import cobsr
+# from . import cobs
+# from . import cobsr
 
 from ._version import *
-

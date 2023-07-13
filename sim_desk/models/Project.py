@@ -7,18 +7,26 @@
 @time: 2023/3/26 11:35
 @desc:
 """
-import executor_context
-from sim_desk.models.FolderModel import CommandResponseContainer,SquishContainer,MTICommandContainer,DAQIOContainer,ImageProcessingContainer, ScenarioPyContainer
-import os
-from sim_desk.mgr.appconfig import AppConfig
-from utils import logger
-import json
 import copy
-from sim_desk.models.CommandResponse import *
-from sim_desk.mgr.tag_names import *
-from serial.tools.list_ports import comports
-from sim_desk.mgr.context import SimDeskContext
+import json
+import os
+
 import executor_context
+from serial.tools.list_ports import comports
+from sim_desk.mgr.appconfig import AppConfig
+from sim_desk.mgr.context import SimDeskContext
+from sim_desk.mgr.tag_names import *
+from sim_desk.models.CommandResponse import *
+from sim_desk.models.FolderModel import (
+    CommandResponseContainer,
+    DAQIOContainer,
+    ImageProcessingContainer,
+    MTICommandContainer,
+    ScenarioPyContainer,
+    SquishContainer,
+)
+from utils import logger
+
 
 class Project(TreeModel):
     def __init__(self, projectname):
@@ -28,28 +36,52 @@ class Project(TreeModel):
         self.label = projectname
         self.default_perspective = None
         self.perspectives = {}
-        prop_location = StringProperty("Location", "Location", "", editable=False)
+        prop_location = StringProperty(
+            "Location", "Location", "", editable=False
+        )
         prop_location.setSavable(False)
         self.addProperties(prop_location)
         self._com_port_list = self.__enum_com_ports()
         if len(self._com_port_list) > 0:
-            prop_type = EnumProperty("CommunicationType", "CommunicationType", 0, None, ['PIPE', 'COM'], [0, 1])
+            prop_type = EnumProperty(
+                "CommunicationType",
+                "CommunicationType",
+                0,
+                None,
+                ["PIPE", "COM"],
+                [0, 1],
+            )
             self.addProperties(prop_type)
-            prop_comport = EnumProperty("COM", "COM", 0, None, self._com_port_list,
-                                        list(range(len(self._com_port_list))))
+            prop_comport = EnumProperty(
+                "COM",
+                "COM",
+                0,
+                None,
+                self._com_port_list,
+                list(range(len(self._com_port_list))),
+            )
             self.addProperties(prop_comport)
         else:
-            prop_type = EnumProperty("CommunicationType", "CommunicationType", 0, None, ['PIPE'], [0])
+            prop_type = EnumProperty(
+                "CommunicationType",
+                "CommunicationType",
+                0,
+                None,
+                ["PIPE"],
+                [0],
+            )
             self.addProperties(prop_type)
 
-        prop_pipename = StringProperty("PipeName", "PipeName", r"\\.\pipe\gx1", editable=True)
+        prop_pipename = StringProperty(
+            "PipeName", "PipeName", r"\\.\pipe\gx1", editable=True
+        )
         self.addProperties(prop_pipename)
         self.project_config_backup = {}
         self.loading_error = None
-        self.project_config ={}
-        self.project_config.setdefault('Project', {})
-        self.project_config['Project']['name'] = self.label
-        self.project_config['Project']['last_perspective'] = None
+        self.project_config = {}
+        self.project_config.setdefault("Project", {})
+        self.project_config["Project"]["name"] = self.label
+        self.project_config["Project"]["last_perspective"] = None
         self.squish_container: SquishContainer = None
         self.image_processing_container: ImageProcessingContainer = None
         self.scenario_py_container: ScenarioPyContainer = None
@@ -72,7 +104,7 @@ class Project(TreeModel):
         self.project_dir = "\\\\".join(parts)
         self.project_file = os.path.join(self.project_dir, "project.json")
         self.label = os.path.basename(self.project_dir)
-        self.getPropertyByName('Location').setStringValue(self.project_file)
+        self.getPropertyByName("Location").setStringValue(self.project_file)
         model = CommandResponseContainer(self)
         self.addChild(model)
         generator = ResponseModelGenerator(model)
@@ -95,20 +127,21 @@ class Project(TreeModel):
             raise Exception("The project does not exists")
         self.init(project_dir)
 
-        with open(self.project_file, 'rb') as pfile:
+        with open(self.project_file, "rb") as pfile:
             self.project_config = json.load(pfile)
         self.project_config_backup = copy.deepcopy(self.project_config)
 
-        self.project_config.setdefault('Project',{})
-        self.project_config['Project']['name'] = self.label
+        self.project_config.setdefault("Project", {})
+        self.project_config["Project"]["name"] = self.label
         return self.project_config
 
     def open(self, project_dir):
-
         self.__load_json(project_dir)
-        self.default_perspective = self.project_config['Project']['last_perspective']
+        self.default_perspective = self.project_config["Project"][
+            "last_perspective"
+        ]
         try:
-            self.from_json(self.project_config['Project'])
+            self.from_json(self.project_config["Project"])
             self.on_activate()
         except Exception as err:
             logger.error(err)
@@ -121,12 +154,14 @@ class Project(TreeModel):
         os.makedirs(os.path.join(self.project_dir, TAG_NAME_FOLDER_TESTLIBS))
         os.makedirs(os.path.join(self.project_dir, TAG_NAME_FOLDER_DOCUMENT))
         os.makedirs(os.path.join(self.project_dir, TAG_NAME_FOLDER_TESTCASES))
-        os.makedirs(os.path.join(self.project_dir, TAG_NAME_FOLDER_TEST_REPORT))
+        os.makedirs(
+            os.path.join(self.project_dir, TAG_NAME_FOLDER_TEST_REPORT)
+        )
         os.makedirs(os.path.join(self.project_dir, TAG_NAME_FOLDER_TESTASSET))
         self.project_config = {}
-        self.project_config.setdefault('Project',{})
-        self.project_config['Project']['name'] = self.label
-        self.project_config['Project']['last_perspective'] = None
+        self.project_config.setdefault("Project", {})
+        self.project_config["Project"]["name"] = self.label
+        self.project_config["Project"]["last_perspective"] = None
 
         with open(self.project_file, "w") as configfile:
             json.dump(self.project_config, configfile)
@@ -142,7 +177,7 @@ class Project(TreeModel):
 
     def to_json(self):
         json_result = TreeModel.to_json(self)
-        self.project_config['Project'].update(json_result)
+        self.project_config["Project"].update(json_result)
 
     def save(self):
         TreeModel.save(self)
@@ -153,17 +188,15 @@ class Project(TreeModel):
                 configfile.close()
         self.setDirty(False)
 
-    def from_json(self,element):
-        TreeModel.from_json(self,element)
+    def from_json(self, element):
+        TreeModel.from_json(self, element)
 
     def saveDefaultPerspective(self, perspective):
-        self.project_config['Project']['last_perspective'] = perspective
+        self.project_config["Project"]["last_perspective"] = perspective
         self.default_perspective = perspective
-
 
     def getDefaultPerspective(self):
         return self.default_perspective
-
 
     def set_model_status(self, modelstatus):
         # if modelstatus == TREEMODEL_STATUS_RUNTIME:
@@ -173,4 +206,3 @@ class Project(TreeModel):
         #     self.getProject_Tree().Enable(True)
         #     self.getProperties_Tree().Enable(True)
         TreeModel.set_model_status(self, modelstatus)
-

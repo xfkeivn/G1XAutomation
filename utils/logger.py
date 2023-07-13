@@ -8,11 +8,13 @@
 @desc:
 """
 import logging
-from utils.sim_desk_logging import logger as sim_desk_logger
-from robot.api import logger as robot_logger
-from executor_context import ExecutorContext
-from utils.utilities import get_home_log_folder
 import os
+
+from robot.api import logger as robot_logger
+
+from executor_context import ExecutorContext
+from utils.sim_desk_logging import logger as sim_desk_logger
+from utils.utilities import get_home_log_folder
 
 dir_name = os.path.dirname(__file__)
 dir_upper_name = get_home_log_folder()
@@ -20,7 +22,7 @@ if not os.path.exists(dir_upper_name):
     os.makedirs(dir_upper_name)
 
 
-def write(msg, level='INFO', html=False):
+def write(msg, level="INFO", html=False):
     """Writes the message to the log file using the given level.
 
     Valid log levels are ``TRACE``, ``DEBUG``, ``INFO`` (default), ``WARN``, and
@@ -34,23 +36,26 @@ def write(msg, level='INFO', html=False):
     if ExecutorContext().is_robot_context():
         robot_logger.write(msg, level, html)
     else:
-        level = {'TRACE': logging.DEBUG // 2,
-                 'DEBUG': logging.DEBUG,
-                 'INFO': logging.INFO,
-                 'HTML': logging.INFO,
-                 'WARN': logging.WARN,
-                 'ERROR': logging.ERROR}[level]
+        level = {
+            "TRACE": logging.DEBUG // 2,
+            "DEBUG": logging.DEBUG,
+            "INFO": logging.INFO,
+            "HTML": logging.INFO,
+            "WARN": logging.WARN,
+            "WARNING": logging.WARNING,
+            "ERROR": logging.ERROR,
+        }[level]
         sim_desk_logger.log(level, msg)
 
 
 def trace(msg, html=False):
     """Writes the message to the log file using the ``TRACE`` level."""
-    write(msg, 'TRACE', html)
+    write(msg, "TRACE", html)
 
 
 def debug(msg, html=False):
     """Writes the message to the log file using the ``DEBUG`` level."""
-    write(msg, 'DEBUG', html)
+    write(msg, "DEBUG", html)
 
 
 def info(msg, html=False, also_console=False):
@@ -59,23 +64,27 @@ def info(msg, html=False, also_console=False):
     If ``also_console`` argument is set to ``True``, the message is
     written both to the log file and to the console.
     """
-    write(msg, 'INFO', html)
+    write(msg, "INFO", html)
     if also_console:
         console(msg)
 
 
 def warn(msg, html=False):
     """Writes the message to the log file using the ``WARN`` level."""
-    write(msg, 'WARN', html)
+    write(msg, "WARN", html)
+
+
+def warning(msg, html=False):
+    """Writes the message to the log file using the ``WARNING`` level."""
+    write(msg, "WARNING", html)
 
 
 def error(msg, html=False):
-    """Writes the message to the log file using the ``ERROR`` level.
-    """
-    write(msg, 'ERROR', html)
+    """Writes the message to the log file using the ``ERROR`` level."""
+    write(msg, "ERROR", html)
 
 
-def console(msg, newline=True, stream='stdout'):
+def console(msg, newline=True, stream="stdout"):
     """Writes the message to the console.
 
     If the ``newline`` argument is ``True``, a newline character is

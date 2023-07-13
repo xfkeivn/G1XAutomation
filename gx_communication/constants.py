@@ -28,7 +28,6 @@ Description: Contains constants related to commands for Sardeen.
 
 from enum import IntEnum
 
-
 MARLIN_DEV_NAME = "Marlin Device"
 STIMULATOR_DEV_NAME = "Marlin Hybrid"
 DONGLE_DEV_NAME = "R2F Dongle"
@@ -86,8 +85,10 @@ CMD_ERR_NONE = 0x0000
 MIN_RAW_RESP_LEN = 4
 SCS3_CMD_LENGTH_OFFSET = 1
 
-UINT8_FORMAT = '02x'
-UINT16_FORMAT = '04x'
-UINT32_FORMAT = '08x'
+UINT8_FORMAT = "02x"
+UINT16_FORMAT = "04x"
+UINT32_FORMAT = "08x"
 
-WHO_AM_I_RESP = b'\x80\x00\x13\x00\xFF\xB0\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\xF6'
+WHO_AM_I_RESP = (
+    b"\x80\x00\x13\x00\xFF\xB0\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\xF6"
+)

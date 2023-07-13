@@ -7,12 +7,15 @@
 @time: 2023/3/26 11:35
 @desc:
 """
-import sim_desk.ui.images
-from wx.lib.newevent import NewEvent
-import wx
 import os
 import shutil
+
+import wx
+from wx.lib.newevent import NewEvent
+
+import sim_desk.ui.images
 from sim_desk.mgr.tag_names import *
+
 IMAGE_STATE_EXPAND = 0
 IMAGE_STATE_COLLAPSE = 1
 IMAGE_STATE_NORMAL = 2
@@ -29,7 +32,7 @@ TREEMODEL_STATUS_NORMAL = 1
 (AUIManagerUpdate, EVT_AUI_MANAGER_UPDATE) = NewEvent()
 
 
-class TreeAction():
+class TreeAction:
     def __init__(self, name, eventid, callablefunc, image=None):
         self.name = name
         self.image = image
@@ -37,7 +40,7 @@ class TreeAction():
         self.callable = callablefunc
 
 
-class TreeModel():
+class TreeModel:
     def __init__(self, parent, tag_name=None):
         self.children_models = []
         self.parent = parent
@@ -146,21 +149,21 @@ class TreeModel():
     def to_json(self):
         json_result = {}
 
-        json_result.setdefault('properties', {})
+        json_result.setdefault("properties", {})
         if len(self.children_models) >= 1:
-            json_result.setdefault('sub_models', {})
+            json_result.setdefault("sub_models", {})
 
         if self.children_models is not None and len(self.children_models) >= 1:
             for model in self.children_models:
-                json_result['sub_models'][model.label] = model.to_json()
+                json_result["sub_models"][model.label] = model.to_json()
         if self.properties is not None and len(self.properties) >= 1:
             for prop in self.properties:
-                json_result['properties'][prop.label] = prop.to_json()
+                json_result["properties"][prop.label] = prop.to_json()
         return json_result
 
     def from_json(self, element):
-        sub_models = element.get('sub_models', {})
-        properties = element.get('properties', {})
+        sub_models = element.get("sub_models", {})
+        properties = element.get("properties", {})
         for properyname, propmodel in properties.items():
             prop = self.getPropertyByName(properyname)
             if prop is not None:
@@ -171,7 +174,6 @@ class TreeModel():
             childmodel = self.getChildrenByLabel(modelname)
             if len(childmodel) == 1:
                 childmodel[0].from_json(childelement)
-
 
     def save(self):
         for child in self.children_models:
@@ -208,7 +210,9 @@ class TreeModel():
     def addChild(self, childmodel, addtotree=True):
         self.children_models.append(childmodel)
         if addtotree and self.getProject_Tree() is not None:
-            add_evt = AddToTreeEvent(model_to_add=childmodel, parent_model=self)
+            add_evt = AddToTreeEvent(
+                model_to_add=childmodel, parent_model=self
+            )
             wx.PostEvent(self.getProject_Tree(), add_evt)
         self.setDirty()
 
@@ -247,14 +251,15 @@ class TreeModel():
         if self.getProject_Tree() is not None:
             self.getProperties_Tree().set_model(self)
 
-
     def set_model_status(self, modelstatus):
         self.status = modelstatus
         for child in self.getModelChildren():
             child.set_model_status(modelstatus)
 
     def copy_to_project_local_folder(self, src):
-        dirtocopy = os.path.join(self.getRoot().getProjectDir(), TAG_NAME_FOLDER_TESTASSET)
+        dirtocopy = os.path.join(
+            self.getRoot().getProjectDir(), TAG_NAME_FOLDER_TESTASSET
+        )
         abs_path = os.path.join(dirtocopy, os.path.basename(src))
         shutil.copy(src, abs_path)
         return abs_path

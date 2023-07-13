@@ -7,18 +7,21 @@
 @time: 2023/3/26 11:35
 @desc:
 """
-from sim_desk.models.CommonProperty import StringProperty
-from sim_desk.models.CommonProperty import EnumProperty
-from sim_desk.models.CommonProperty import BoolProperty
-from sim_desk.models.CommonProperty import IntProperty
-from sim_desk.models.TreeModel import TreeModel
-from sim_desk.mgr.tag_names import *
-from sim_desk.models.TreeModel import TreeAction
-import os
-import wx
-from sim_desk.ui.images import flex
 import importlib
+import os
 import sys
+
+import wx
+
+from sim_desk.mgr.tag_names import *
+from sim_desk.models.CommonProperty import (
+    BoolProperty,
+    EnumProperty,
+    IntProperty,
+    StringProperty,
+)
+from sim_desk.models.TreeModel import TreeAction, TreeModel
+from sim_desk.ui.images import flex
 from squish.squishPyServer import *
 
 
@@ -54,12 +57,13 @@ class SquishName(TreeModel):
         alias_prop.setSavable(True)
         self.addProperties(alias_prop)
         self.tree_action_list.append(
-            TreeAction("Mouse Click", wx.ID_HIGHEST + 1011, self.mouse_click))
+            TreeAction("Mouse Click", wx.ID_HIGHEST + 1011, self.mouse_click)
+        )
 
     def getImage(self):
         return flex
 
-    def mouse_click(self,evt):
+    def mouse_click(self, evt):
         str_value = self.getPropertyByName("Object").getStringValue()
         obj = eval(str_value)
         self.getRoot().squish_runner.mouse_click(obj)
@@ -71,7 +75,9 @@ class SquishNameFile(TreeModel):
         self.filepath = squish_file_path
         if self.filepath is not None:
             self.label = os.path.basename(self.filepath)
-        self.tree_action_list.append(TreeAction("Remove", wx.ID_HIGHEST + 1001, self.remove_self))
+        self.tree_action_list.append(
+            TreeAction("Remove", wx.ID_HIGHEST + 1001, self.remove_self)
+        )
         path_prop = StringProperty("Path", "Path", editable=False)
         path_prop.setStringValue(self.filepath)
         path_prop.setSavable(False)
@@ -79,22 +85,24 @@ class SquishNameFile(TreeModel):
 
     def populate(self):
         names = parse_squish_name_file(self.filepath)
-        for keyname,valueobj in names.items():
-            sq_name = SquishName(self,keyname,valueobj)
-            self.addChild(sq_name,addtotree=True)
+        for keyname, valueobj in names.items():
+            sq_name = SquishName(self, keyname, valueobj)
+            self.addChild(sq_name, addtotree=True)
 
-    def from_json(self,element):
-        TreeModel.from_json(self,element)
+    def from_json(self, element):
+        TreeModel.from_json(self, element)
 
     def getImage(self):
         return flex
 
     def remove_self(self, event):
-        dlg = wx.MessageDialog(self.getProject_Tree(), 'Please Confirm to delete',
-                               'Confirm to delete',
-                               # wx.OK | wx.ICON_INFORMATION
-                               wx.YES_NO | wx.ICON_INFORMATION
-                               )
+        dlg = wx.MessageDialog(
+            self.getProject_Tree(),
+            "Please Confirm to delete",
+            "Confirm to delete",
+            # wx.OK | wx.ICON_INFORMATION
+            wx.YES_NO | wx.ICON_INFORMATION,
+        )
         result = dlg.ShowModal()
         if result == wx.ID_YES:
             path = self.getPropertyByName("Path").getStringValue()

@@ -1,12 +1,9 @@
-
 """
 This is a way to save the startup time when running img2py on lots of
 files...
 """
 
-import sys
 from wx.tools import img2py
-
 
 command_lines = [
     "   -F -i -n AppImage icons/alt_window_16.gif images.py",
@@ -50,35 +47,33 @@ command_lines = [
     "-a -F -n viewprop icons/property.gif images.py",
     "-a -F -n viewcontrols icons/panel.png images.py",
     "-a -F -n widget icons/jar_obj.gif images.py",
-    "-a -F -n run icons/run.png images.py",    
-    "-a -F -n stop icons/stop.png images.py",    
-    "-a -F -n robot icons/robot.png images.py", 
-    "-a -F -n script icons/python2.png images.py",           
-    "-a -F -n callback icons/callback.gif images.py", 
-    "-a -F -n func icons/func.gif images.py", 
-    "-a -F -n edit icons/edit.png images.py", 
-    "-a -F -n testrun icons/testrun.png images.py", 
-    "-a -F -n timer icons/XSDDateAndTimeTypes.gif images.py", 
-    "-a -F -n signal icons/msg_signal.png images.py", 
-    "-a -F -n list icons/list.png images.py",   
-    "-a -F -n splashscreen icons/splashscreen.jpg images.py",     
-    "-a -F -n message_go icons/message_go.png images.py",     
-    "-a -F -n message_reply icons/message_reply.png images.py",     
-    "-a -F -n msg_signal icons/msg_signal.png images.py",     
-    "-a -F -n node icons/node.gif images.py",     
-    "-a -F -n main icons/MAIN.png images.py",     
-    "-a -F -n ldf icons/ldf.bmp images.py",   
-    "-a -F -n table icons/table.png images.py",   
-    "-a -F -n slot icons/slot.png images.py",     
+    "-a -F -n run icons/run.png images.py",
+    "-a -F -n stop icons/stop.png images.py",
+    "-a -F -n robot icons/robot.png images.py",
+    "-a -F -n script icons/python2.png images.py",
+    "-a -F -n callback icons/callback.gif images.py",
+    "-a -F -n func icons/func.gif images.py",
+    "-a -F -n edit icons/edit.png images.py",
+    "-a -F -n testrun icons/testrun.png images.py",
+    "-a -F -n timer icons/XSDDateAndTimeTypes.gif images.py",
+    "-a -F -n signal icons/msg_signal.png images.py",
+    "-a -F -n list icons/list.png images.py",
+    "-a -F -n splashscreen icons/splashscreen.jpg images.py",
+    "-a -F -n message_go icons/message_go.png images.py",
+    "-a -F -n message_reply icons/message_reply.png images.py",
+    "-a -F -n msg_signal icons/msg_signal.png images.py",
+    "-a -F -n node icons/node.gif images.py",
+    "-a -F -n main icons/MAIN.png images.py",
+    "-a -F -n ldf icons/ldf.bmp images.py",
+    "-a -F -n table icons/table.png images.py",
+    "-a -F -n slot icons/slot.png images.py",
     "-a -F -n flex icons/flex.ico images.py",
     "-a -F -n array icons/array.png images.py",
     "-a -F -n camera icons/icons8-camera-24.png images.py",
-
-    ]
+]
 
 
 if __name__ == "__main__":
     for line in command_lines:
         args = line.split()
         img2py.main(args)
-

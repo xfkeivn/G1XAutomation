@@ -65,6 +65,7 @@ import socket
 import struct
 import threading
 import time
+
 try:
     import urlparse
 except ImportError:
@@ -75,8 +76,14 @@ except ImportError:
     import queue as Queue
 
 import serial
-from serial.serialutil import SerialBase, SerialException, to_bytes, \
-    iterbytes, PortNotOpenError, Timeout
+from serial.serialutil import (
+    PortNotOpenError,
+    SerialBase,
+    SerialException,
+    Timeout,
+    iterbytes,
+    to_bytes,
+)
 
 # port string is expected to be something like this:
 # rfc2217://host:port

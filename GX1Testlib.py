@@ -7,31 +7,35 @@
 @time: 2023/3/25 20:34
 @desc:
 """
+import sys
 import threading
-from executor_context import ExecutorContext
-from sim_desk.models.Project import Project
-from BackPlaneSimulator import BackPlaneSimulator as BPS
+import uuid
 from importlib import reload
+
+from PIL import Image
+
+from BackPlaneSimulator import BackPlaneSimulator as BPS
+from executor_context import ExecutorContext
 from sim_desk.mgr.appconfig import AppConfig
+from sim_desk.models.Project import Project
 from squish.squish_proxy import SquishProxy
 from verifier.ocr import TessertOCR
 from verifier.p2p_image_compare import P2PImageCompare
-from PIL import Image
-import sys
-import uuid
+
 reload(sys)
 import datetime
-import time
-import os
 import io
+import os
+import time
 
 curfiledir = os.path.dirname(__file__)
 sys.path.append(os.path.dirname(curfiledir))
 from robot import utils
 from robot.libraries.BuiltIn import BuiltIn
-from utils import logger
-from gx_communication.comport import *
 from robot.libraries.Dialogs import *
+
+from gx_communication.comport import *
+from utils import logger
 from utils.singleton import Singleton
 
 
@@ -47,7 +51,7 @@ class CommandListener(metaclass=Singleton):
 
     def _correctfilename(self, filename):
         special_chrs = r'\/:*?"<>|'
-        modified_filename = ''
+        modified_filename = ""
         for c in filename:
             if c not in special_chrs:
                 modified_filename += c
@@ -68,16 +72,23 @@ class CommandListener(metaclass=Singleton):
         if not self.is_log_inited:
             self.ml_stringio = io.StringIO()
             variables = BuiltIn().get_variables()
-            suite_name = variables['${SUITE_NAME}']
-            logfile_basename = self._correctfilename("%s.log" % (suite_name + "_" + variables['${TEST NAME}']))
-            out_put_dir = variables['${OUTPUT_DIR}']
+            suite_name = variables["${SUITE_NAME}"]
+            logfile_basename = self._correctfilename(
+                "%s.log" % (suite_name + "_" + variables["${TEST NAME}"])
+            )
+            out_put_dir = variables["${OUTPUT_DIR}"]
             logfile_dir = os.path.join(out_put_dir, self.command_log_folder)
             if not os.path.exists(logfile_dir):
                 os.makedirs(logfile_dir)
-            self.current_log_filename = os.path.join(logfile_dir, logfile_basename)
+            self.current_log_filename = os.path.join(
+                logfile_dir, logfile_basename
+            )
             with open(self.current_log_filename, "a") as self.ml_file:
                 self.ml_file.close()
-            logger.info('Command Message Log setup, log output directory is %s' % self.current_log_filename)
+            logger.info(
+                "Command Message Log setup, log output directory is %s"
+                % self.current_log_filename
+            )
             self.is_log_inited = True
         self.message_log_lock.release()
 
@@ -116,21 +127,26 @@ class CommandListener(metaclass=Singleton):
     def on_command_received(self, command):
         if command.data.u16_CommandCode in self.command_filters:
             return
-        self.__message_logging(f'{command.time_ns // 100000}:{command.sequence}:{command.data}')
+        self.__message_logging(
+            f"{command.time_ns // 100000}:{command.sequence}:{command.data}"
+        )
 
     def on_command_responsed(self, response):
         if response.data.u16_ResponseCode - 1 in self.command_filters:
             return
-        self.__message_logging(f'{response.time_ns // 100000}:{response.sequence}:{response.data}')
+        self.__message_logging(
+            f"{response.time_ns // 100000}:{response.sequence}:{response.data}"
+        )
 
 
 class GX1Testlib(object):
     """
-      Libaray for Test Automation Framework For GX1 system
+    Libaray for Test Automation Framework For GX1 system
 
-      """
-    ROBOT_LIBRARY_SCOPE = 'GLOBAL'
-    ROBOT_LIBRARY_VERSION = '1.0'
+    """
+
+    ROBOT_LIBRARY_SCOPE = "GLOBAL"
+    ROBOT_LIBRARY_VERSION = "1.0"
     ROBOT_LISTENER_API_VERSION = 2
 
     # ====================================================================================================#
@@ -173,20 +189,20 @@ class GX1Testlib(object):
     ################################listeners #####################################################################
 
     def _end_test(self, name, attrs):
-        logger.info(f'Test {name} end.')
+        logger.info(f"Test {name} end.")
         self.command_listener.close_message_log()
 
     def _start_test(self, name, attrs):
         # BuiltIn().set_variable("${OUTPUT DIR}",self.projectmodel.getTestOutputDir())
-        logger.info('Test %s started' % (name))
+        logger.info("Test %s started" % (name))
         self.command_listener.open_message_log()
 
     def _end_suite(self, name, attrs):
-        logger.info('Suite %s end.' % (name))
+        logger.info("Suite %s end." % (name))
 
     def _start_suite(self, name, attrs):
         # BuiltIn().set_variable("${OUTPUT DIR}",self.projectmodel.getTestOutputDir())
-        logger.info('Suite %s started' % (name))
+        logger.info("Suite %s started" % (name))
 
     def _close(self):
         """
@@ -197,35 +213,39 @@ class GX1Testlib(object):
 
     def _get_unique_image_name(self):
         my_uuid = uuid.uuid4()
-        return f'Img_{my_uuid}.png'
+        return f"Img_{my_uuid}.png"
 
     def _embed_screenshot(self, path, width):
         link = utils.get_link_path(path, self._log_dir)
-        logger.info('<a href="%s"><img src="%s" width="%s"></a>'
-                    % (link, link, width), html=True)
+        logger.info(
+            '<a href="%s"><img src="%s" width="%s"></a>' % (link, link, width),
+            html=True,
+        )
 
     def _link_screenshot(self, path):
         link = utils.get_link_path(path, self._log_dir)
-        logger.info("Screenshot saved to '<a href=\"%s\">%s</a>'."
-                    % (link, path), html=True)
+        logger.info(
+            "Screenshot saved to '<a href=\"%s\">%s</a>'." % (link, path),
+            html=True,
+        )
 
     def _get_obj_from_alias(self, alias):
         obj = self.squish_name_mapping.get(alias, None)
         if obj is None:
-            raise Exception(f'There is no squish name {alias} in the name.py')
+            raise Exception(f"There is no squish name {alias} in the name.py")
         return obj
 
     @property
     def _log_dir(self):
         variables = BuiltIn().get_variables()
-        outdir = variables['${OUTPUTDIR}']
-        log = variables['${LOGFILE}']
-        log = os.path.dirname(log) if log != 'NONE' else '.'
+        outdir = variables["${OUTPUTDIR}"]
+        log = variables["${LOGFILE}"]
+        log = os.path.dirname(log) if log != "NONE" else "."
         return os.path.normpath(os.path.join(outdir, log))
 
     def _get_screenshot_path(self, basename):
         directory = self._log_dir
-        if basename.lower().endswith(('.png', '.png')):
+        if basename.lower().endswith((".png", ".png")):
             return os.path.join(directory, basename)
         index = 0
         while True:
@@ -241,21 +261,37 @@ class GX1Testlib(object):
         if self.project_dir is None:
             self.project_dir = last_open_project
 
-        logger.info(f'Loading the project at {self.project_dir}')
+        logger.info(f"Loading the project at {self.project_dir}")
         self.project_model.open(self.project_dir)
         ip_prop = self.project_model.squish_container.getPropertyByName("IP")
         aut_prop = self.project_model.squish_container.getPropertyByName("AUT")
-        private_key = self.project_model.squish_container.getPropertyByName("PrivateKey")
-        squishHomeDirProp = self.project_model.squish_container.getPropertyByName("SquishHome")
+        private_key = self.project_model.squish_container.getPropertyByName(
+            "PrivateKey"
+        )
+        squishHomeDirProp = (
+            self.project_model.squish_container.getPropertyByName("SquishHome")
+        )
         if ip_prop and aut_prop and private_key:
             ip_address = ip_prop.getStringValue()
             aut_name = aut_prop.getStringValue()
             private_key_file = private_key.getStringValue()
-            self.squish_proxy = SquishProxy(squishHomeDirProp.getStringValue(), ip_address, private_key_file, aut_name)
-            logger.info(f'Squish Hook {ip_address}, {aut_name}, {private_key_file}')
-            logger.info('%s has been loaded successfully' % self.project_model.getLabel())
+            self.squish_proxy = SquishProxy(
+                squishHomeDirProp.getStringValue(),
+                ip_address,
+                private_key_file,
+                aut_name,
+            )
+            logger.info(
+                f"Squish Hook {ip_address}, {aut_name}, {private_key_file}"
+            )
+            logger.info(
+                "%s has been loaded successfully"
+                % self.project_model.getLabel()
+            )
         else:
-            logger.error("Failed to init the project the project setting error")
+            logger.error(
+                "Failed to init the project the project setting error"
+            )
 
     def init_test(self):
         """
@@ -277,19 +313,27 @@ class GX1Testlib(object):
 
         if not self.project_inited:
             self.__init_project()
-            self.squish_name_mapping = self.project_model.squish_container.get_all_name_mapping()
+            self.squish_name_mapping = (
+                self.project_model.squish_container.get_all_name_mapping()
+            )
             self.project_inited = True
-            communication_type = self.project_model.getPropertyByName("CommunicationType").getStringValue()
+            communication_type = self.project_model.getPropertyByName(
+                "CommunicationType"
+            ).getStringValue()
             if communication_type == "PIPE":
                 ctype = SERIAL_PIPE
-                pipe_name = self.project_model.getPropertyByName("PipeName").getStringValue()
+                pipe_name = self.project_model.getPropertyByName(
+                    "PipeName"
+                ).getStringValue()
                 com_port_val = pipe_name
             else:
-                com_port_val = self.project_model.getPropertyByName("COM").getStringValue()
+                com_port_val = self.project_model.getPropertyByName(
+                    "COM"
+                ).getStringValue()
                 ctype = SERIAL_PORT
 
             result = True
-            result = self.gx1_simulator.start(com_port_val,ctype)
+            result = self.gx1_simulator.start(com_port_val, ctype)
             if result:
                 logger.info("GX1 Simulator is started")
             else:
@@ -297,19 +341,23 @@ class GX1Testlib(object):
                 raise Exception("GX1 Simulator failed to start")
 
             # result = self.squish_proxy.connect()
-            enabled_squish = self.project_model.squish_container.getPropertyByName("Enabled")
+            enabled_squish = (
+                self.project_model.squish_container.getPropertyByName(
+                    "Enabled"
+                )
+            )
             if enabled_squish.getStringValue() == "True":
-                pause_execution("Waiting to start Squish hooker in GX1 GUI,\n Start GX1 GUI application first")
+                pause_execution(
+                    "Waiting to start Squish hooker in GX1 GUI,\n Start GX1 GUI application first"
+                )
                 self.squish_proxy.start_squish_server()
                 self.squish_proxy.create_proxy()
                 result = self.squish_proxy.connect()
                 if result:
-
                     logger.info("Squish tester is started")
                 else:
                     logger.error("Squish tester failed to start")
                     raise Exception("GX1 Simulator failed to start")
-
 
         else:
             logger.warn("Project is already initialized")
@@ -330,7 +378,11 @@ class GX1Testlib(object):
         if self.project_inited is True:
             self.gx1_simulator.stop()
             logger.info("GX1 Simulator is stopped")
-            enabled_squish = self.project_model.squish_container.getPropertyByName("Enabled")
+            enabled_squish = (
+                self.project_model.squish_container.getPropertyByName(
+                    "Enabled"
+                )
+            )
             if enabled_squish.getStringValue() == "True":
                 self.squish_proxy.disconnect()
                 self.squish_proxy.stop_squish_server()
@@ -350,7 +402,9 @@ class GX1Testlib(object):
         key_int_value_map = dict()
         for key, str_value in response_data.items():
             key_int_value_map[key] = int(str_value)
-        return self.gx1_simulator.set_command_pending_response_by_parameters(command_code, **key_int_value_map)
+        return self.gx1_simulator.set_command_pending_response_by_parameters(
+            command_code, **key_int_value_map
+        )
 
     def clean_command_logging_queue(self):
         """
@@ -369,7 +423,9 @@ class GX1Testlib(object):
         """
         start_seq = int(start_seq)
         command_code = int(command_code, 16)
-        return self.gx1_simulator.find_logged_commands(command_code, start_seq, **kwargs)
+        return self.gx1_simulator.find_logged_commands(
+            command_code, start_seq, **kwargs
+        )
 
     def start_scenario(self, scenario_name):
         """
@@ -388,13 +444,12 @@ class GX1Testlib(object):
         self.project_model.scenario_py_container.stop_scenario(scenario_name)
 
     def screen_shot(self, embedded_image_to_report=True):
-
         """
         Capture the image from Screen and embedded  the image captured to the report
         :param embedded_image_to_report: whether the image should be embedded into report
         :return: the image file location
         """
-        #basename = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S.png')
+        # basename = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S.png')
         basename = self._get_unique_image_name()
         screenshot_name = self._get_screenshot_path(basename)
         self.squish_proxy.screen_save(screenshot_name)
@@ -504,7 +559,7 @@ class GX1Testlib(object):
         gobj = self._get_obj_from_alias(gobj)
         return self.squish_proxy.long_mouse_click(gobj, x, y)
 
-    def get_text(self, screenshot_path, image_alias, rect_alias, lang='en'):
+    def get_text(self, screenshot_path, image_alias, rect_alias, lang="en"):
         """
         Get the text from the image and the feature rect
         :param screenshot_path: the image path that need to be verified.
@@ -514,17 +569,29 @@ class GX1Testlib(object):
         :return: the text
         """
 
-        feature_rect = self.project_model.image_processing_container.get_feature_rect(image_alias,rect_alias)
-        result = self.tessert_ocr.get_string(screenshot_path, (
-        feature_rect[0], feature_rect[1]),( feature_rect[0] + feature_rect[2], feature_rect[1] + feature_rect[3]))
+        feature_rect = (
+            self.project_model.image_processing_container.get_feature_rect(
+                image_alias, rect_alias
+            )
+        )
+        result = self.tessert_ocr.get_string(
+            screenshot_path,
+            (feature_rect[0], feature_rect[1]),
+            (
+                feature_rect[0] + feature_rect[2],
+                feature_rect[1] + feature_rect[3],
+            ),
+        )
         cropped_image = result[1]
         basename = self._get_unique_image_name()
         screenshot_name = self._get_screenshot_path(basename)
         cropped_image.save(screenshot_name)
-        self._embed_screenshot(screenshot_name,feature_rect[2])
+        self._embed_screenshot(screenshot_name, feature_rect[2])
         return result[0]
 
-    def compare_feature_rect(self, screenshot_path, sample_image_alias, sample_rect_alias):
+    def compare_feature_rect(
+        self, screenshot_path, sample_image_alias, sample_rect_alias
+    ):
         """
         To compare the consistency of image  feature rect
         :param screenshot_path: the image path that need to be verified.
@@ -532,30 +599,56 @@ class GX1Testlib(object):
         :param sample_rect_alias: the alias of the sample feature rect
         :return: the consistency
         """
-        sample_image_path = self.project_model.image_processing_container.get_image_object(sample_image_alias).getPropertyByName("Path").getStringValue()
-        feature_rect = self.project_model.image_processing_container.get_feature_rect(sample_image_alias,sample_rect_alias)
+        sample_image_path = (
+            self.project_model.image_processing_container.get_image_object(
+                sample_image_alias
+            )
+            .getPropertyByName("Path")
+            .getStringValue()
+        )
+        feature_rect = (
+            self.project_model.image_processing_container.get_feature_rect(
+                sample_image_alias, sample_rect_alias
+            )
+        )
         img1 = Image.open(screenshot_path)
         img2 = Image.open(sample_image_path)
-        img1 = img1.crop((feature_rect[0], feature_rect[1], feature_rect[0]+feature_rect[2], feature_rect[1]+feature_rect[3]))
-        img2 = img2.crop((feature_rect[0], feature_rect[1], feature_rect[0]+feature_rect[2], feature_rect[1]+feature_rect[3]))
-        screenshot_name_1 = self._get_screenshot_path(self._get_unique_image_name())
+        img1 = img1.crop(
+            (
+                feature_rect[0],
+                feature_rect[1],
+                feature_rect[0] + feature_rect[2],
+                feature_rect[1] + feature_rect[3],
+            )
+        )
+        img2 = img2.crop(
+            (
+                feature_rect[0],
+                feature_rect[1],
+                feature_rect[0] + feature_rect[2],
+                feature_rect[1] + feature_rect[3],
+            )
+        )
+        screenshot_name_1 = self._get_screenshot_path(
+            self._get_unique_image_name()
+        )
         img1.save(screenshot_name_1)
-        screenshot_name_2 = self._get_screenshot_path(self._get_unique_image_name())
+        screenshot_name_2 = self._get_screenshot_path(
+            self._get_unique_image_name()
+        )
         img2.save(screenshot_name_2)
         self._embed_screenshot(screenshot_name_1, feature_rect[2])
         self._embed_screenshot(screenshot_name_2, feature_rect[2])
-        ident = self.p2p_comparer.compare(screenshot_path, sample_image_path,feature_rect)
+        ident = self.p2p_comparer.compare(
+            screenshot_path, sample_image_path, feature_rect
+        )
         return ident
-
-
 
 
 if __name__ == "__main__":
     gx1_testlib = GX1Testlib()
     gx1_testlib.init_test()
-    #gx1_testlib.get_text("", "ElectrodeSetup", "Monopolar")
-
-
+    # gx1_testlib.get_text("", "ElectrodeSetup", "Monopolar")
 
     gx1_testlib.mouse_xy(722, 161)
     gx1_testlib.start_scenario("RampMeasure")
@@ -565,11 +658,11 @@ if __name__ == "__main__":
     KWG = dict()
     time.sleep(1)
     KWG["ar_measured_channels[0].u8_TempRefAvailable"] = 1
-    command_lists = gx1_testlib.find_logged_commands('0xC049', 0, **KWG)
+    command_lists = gx1_testlib.find_logged_commands("0xC049", 0, **KWG)
     KWG.clear()
     KWG["au8_channels[0]"] = 1
-    command_lists = gx1_testlib.find_logged_commands('0xC048', 0, **KWG)
-    gx1_testlib.mouse_xy(109,702)
+    command_lists = gx1_testlib.find_logged_commands("0xC048", 0, **KWG)
+    gx1_testlib.mouse_xy(109, 702)
 
     gx1_testlib.mouse_click("OneTouch")
     time.sleep(1)

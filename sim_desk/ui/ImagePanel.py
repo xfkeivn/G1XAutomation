@@ -9,6 +9,7 @@
 """
 
 import wx
+
 from sim_desk.mgr.context import SimDeskContext
 
 
@@ -25,16 +26,22 @@ class DrawPanel(wx.Panel):
         self.imageobj = None
         self.current_region = None
 
-
     def on_mouse_event(self, event):
-        from sim_desk.models.ImageModel import EDIT_MODE_MOVING, EDIT_MODE_RESIZING_XY, EDIT_MODE_RESIZING_X, \
-            EDIT_MODE_RESIZING_Y
+        from sim_desk.models.ImageModel import (
+            EDIT_MODE_MOVING,
+            EDIT_MODE_RESIZING_X,
+            EDIT_MODE_RESIZING_XY,
+            EDIT_MODE_RESIZING_Y,
+        )
+
         if self.imageobj is None:
             event.Skip()
         else:
             if event.Moving():
                 pos = event.GetPosition()
-                self.mainframe.sb.SetStatusText(f"Mouse position: ({pos.x}, {pos.y})")
+                self.mainframe.sb.SetStatusText(
+                    f"Mouse position: ({pos.x}, {pos.y})"
+                )
                 pos = event.GetPosition()
                 if self.imageobj.get_region(pos.x, pos.y) is None:
                     self.SetCursor(wx.Cursor(wx.CURSOR_DEFAULT))
@@ -42,7 +49,7 @@ class DrawPanel(wx.Panel):
                     if self.current_region.inRange(pos.x, pos.y):
                         self.current_region.editmode = EDIT_MODE_MOVING
                         self.SetCursor(wx.Cursor(wx.CURSOR_HAND))
-                    elif self.current_region.inAnchor1(pos.x,pos.y):
+                    elif self.current_region.inAnchor1(pos.x, pos.y):
                         self.current_region.editmode = EDIT_MODE_RESIZING_XY
                         self.SetCursor(wx.Cursor(wx.CURSOR_SIZENWSE))
                     elif self.current_region.inAnchor2(pos.x, pos.y):
@@ -63,9 +70,10 @@ class DrawPanel(wx.Panel):
                 else:
                     self.imageobj.deselect_all()
                     from sim_desk.models.ImageModel import FeatureRectModel
+
                     self.current_region = FeatureRectModel(self.imageobj)
 
-                    self.current_region.set_region(pos.x,pos.y,0,0)
+                    self.current_region.set_region(pos.x, pos.y, 0, 0)
 
                     self.current_region.editmode = EDIT_MODE_RESIZING_XY
 
@@ -76,17 +84,29 @@ class DrawPanel(wx.Panel):
                 if self.current_region is not None:
                     pos = event.GetPosition()
                     if self.current_region.isValid():
-                        if self.current_region not in self.imageobj.getModelChildren():
+                        if (
+                            self.current_region
+                            not in self.imageobj.getModelChildren()
+                        ):
                             self.imageobj.addChild(self.current_region)
 
                     if self.current_region.editmode == EDIT_MODE_RESIZING_XY:
-                        self.current_region.resize(pos.x - self.current_region.x, pos.y - self.current_region.y)
+                        self.current_region.resize(
+                            pos.x - self.current_region.x,
+                            pos.y - self.current_region.y,
+                        )
 
                     elif self.current_region.editmode == EDIT_MODE_RESIZING_X:
-                        self.current_region.resize(pos.x - self.current_region.x, self.current_region.height)
+                        self.current_region.resize(
+                            pos.x - self.current_region.x,
+                            self.current_region.height,
+                        )
 
                     elif self.current_region.editmode == EDIT_MODE_RESIZING_Y:
-                        self.current_region.resize(self.current_region.width, pos.y - self.current_region.y)
+                        self.current_region.resize(
+                            self.current_region.width,
+                            pos.y - self.current_region.y,
+                        )
 
                     elif self.current_region.editmode == EDIT_MODE_MOVING:
                         self.current_region.move(pos.x, pos.y)
@@ -108,7 +128,7 @@ class ImagePanel(wx.ScrolledWindow):
         self.canvas_panel = DrawPanel(self)
 
         self.frameSizer = wx.BoxSizer(wx.VERTICAL)
-        self.frameSizer.Add(self.canvas_panel, 0, wx.EXPAND,10)
+        self.frameSizer.Add(self.canvas_panel, 0, wx.EXPAND, 10)
         self.SetSizer(self.frameSizer)
         self.canvas_panel.SetMinSize(wx.Size(1024, 768))
 
@@ -123,8 +143,10 @@ class ImagePanel(wx.ScrolledWindow):
             self.current_region = region
 
     def load_image(self, imageobj):
-
-        if self.canvas_panel.imageobj is None or self.canvas_panel.imageobj is not imageobj:
+        if (
+            self.canvas_panel.imageobj is None
+            or self.canvas_panel.imageobj is not imageobj
+        ):
             self.canvas_panel.imageobj = imageobj
             self.canvas_panel.current_region = None
             self.Layout()

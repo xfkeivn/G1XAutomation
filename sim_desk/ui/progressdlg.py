@@ -12,17 +12,17 @@ import wx
 
 
 class ProgressObserver(object):
-
     def __init__(self, frame, title, message):
-        self._progressbar = wx.ProgressDialog(title, message,
-                                              maximum=100, parent=frame,
-                                              style=0
-                                | wx.PD_APP_MODAL
-                                | wx.PD_CAN_ABORT
-                                )
+        self._progressbar = wx.ProgressDialog(
+            title,
+            message,
+            maximum=100,
+            parent=frame,
+            style=0 | wx.PD_APP_MODAL | wx.PD_CAN_ABORT,
+        )
 
-    def update(self,value,new_message):
-        self._progressbar.Update(value,new_message)
+    def update(self, value, new_message):
+        self._progressbar.Update(value, new_message)
 
     def notify(self):
         self._progressbar.Pulse()
@@ -33,6 +33,4 @@ class ProgressObserver(object):
         self._progressbar.Destroy()
 
     def error(self, msg):
-
         self.finish()
-        

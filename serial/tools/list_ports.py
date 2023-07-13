@@ -18,20 +18,24 @@ based on their descriptions or hardware ID.
 
 from __future__ import absolute_import
 
-import sys
 import os
 import re
+import sys
 
 # chose an implementation, depending on os
-#~ if sys.platform == 'cli':
-#~ else:
-if os.name == 'nt':  # sys.platform == 'win32':
+# ~ if sys.platform == 'cli':
+# ~ else:
+if os.name == "nt":  # sys.platform == 'win32':
     from serial.tools.list_ports_windows import comports
-elif os.name == 'posix':
+elif os.name == "posix":
     from serial.tools.list_ports_posix import comports
-#~ elif os.name == 'java':
+# ~ elif os.name == 'java':
 else:
-    raise ImportError("Sorry: no implementation for your platform ('{}') available".format(os.name))
+    raise ImportError(
+        "Sorry: no implementation for your platform ('{}') available".format(
+            os.name
+        )
+    )
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -53,32 +57,28 @@ def grep(regexp, include_links=False):
 def main():
     import argparse
 
-    parser = argparse.ArgumentParser(description='Serial port enumeration')
+    parser = argparse.ArgumentParser(description="Serial port enumeration")
 
     parser.add_argument(
-        'regexp',
-        nargs='?',
-        help='only show ports that match this regex')
+        "regexp", nargs="?", help="only show ports that match this regex"
+    )
 
     parser.add_argument(
-        '-v', '--verbose',
-        action='store_true',
-        help='show more messages')
+        "-v", "--verbose", action="store_true", help="show more messages"
+    )
 
     parser.add_argument(
-        '-q', '--quiet',
-        action='store_true',
-        help='suppress all messages')
+        "-q", "--quiet", action="store_true", help="suppress all messages"
+    )
+
+    parser.add_argument("-n", type=int, help="only output the N-th entry")
 
     parser.add_argument(
-        '-n',
-        type=int,
-        help='only output the N-th entry')
-
-    parser.add_argument(
-        '-s', '--include-links',
-        action='store_true',
-        help='include entries that are symlinks to real devices')
+        "-s",
+        "--include-links",
+        action="store_true",
+        help="include entries that are symlinks to real devices",
+    )
 
     args = parser.parse_args()
 
@@ -86,7 +86,9 @@ def main():
     # get iteraror w/ or w/o filter
     if args.regexp:
         if not args.quiet:
-            sys.stderr.write("Filtered list with regexp: {!r}\n".format(args.regexp))
+            sys.stderr.write(
+                "Filtered list with regexp: {!r}\n".format(args.regexp)
+            )
         iterator = sorted(grep(args.regexp, include_links=args.include_links))
     else:
         iterator = sorted(comports(include_links=args.include_links))
@@ -104,7 +106,8 @@ def main():
         else:
             sys.stderr.write("no ports found\n")
 
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # test
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

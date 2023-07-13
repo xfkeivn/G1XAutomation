@@ -8,14 +8,21 @@
 @desc:
 """
 
-import wx
-from sim_desk.ui import images
 import string
-from sim_desk.models.TreeModel import EVT_ADD_TO_TREE_EVENT
-from sim_desk.models.TreeModel import EVT_REMOVE_FROM_TREE_EVENT
-from sim_desk.models.TreeModel import EVT_UPDATE_TREE_ITEM_IMAGE
-from sim_desk.models.TreeModel import EVT_UPDATE_TREE_ITEM_LABEL
-from sim_desk.models.CommandResponse import FieldNumberModel, CommandResponseModel
+
+import wx
+
+from sim_desk.models.CommandResponse import (
+    CommandResponseModel,
+    FieldNumberModel,
+)
+from sim_desk.models.TreeModel import (
+    EVT_ADD_TO_TREE_EVENT,
+    EVT_REMOVE_FROM_TREE_EVENT,
+    EVT_UPDATE_TREE_ITEM_IMAGE,
+    EVT_UPDATE_TREE_ITEM_LABEL,
+)
+from sim_desk.ui import images
 from utils import logger
 
 TREE_POP_MENU_ID = wx.ID_HIGHEST + 10100
@@ -66,12 +73,13 @@ class ProjectTreeCtrl(wx.TreeCtrl):
         self.SetItemText(item, label)
 
     def add_2_tree(self, event):
-
         parent_model = event.parent_model
         child_model = event.model_to_add
         parent_item = self.item_model.get(parent_model)
         if parent_item is None:
-            self.GetParent().console.error("The tree item does not exists, unlikely to happen")
+            self.GetParent().console.error(
+                "The tree item does not exists, unlikely to happen"
+            )
         new_item = self.AppendItem(parent_item, child_model.getLabel())
 
         if child_model.getImage() is not None:
@@ -114,20 +122,20 @@ class ProjectTreeCtrl(wx.TreeCtrl):
             item, cookie = self.GetNextChild(item, cookie)
 
     def on_right_down(self, event):
-        pt = event.GetPosition();
+        pt = event.GetPosition()
         item, flags = self.HitTest(pt)
         if item:
             self.SelectItem(item)
 
     def on_left_down(self, event):
-        pt = event.GetPosition();
+        pt = event.GetPosition()
         item, flags = self.HitTest(pt)
         if item:
             self.SelectItem(item)
         event.Skip()
 
     def on_right_up(self, event):
-        pt = event.GetPosition();
+        pt = event.GetPosition()
         item, flags = self.HitTest(pt)
         if item:
             model = self.GetItemData(item)
@@ -138,7 +146,11 @@ class ProjectTreeCtrl(wx.TreeCtrl):
             popup = wx.Menu()
             index = 0
             for action in model.getActions():
-                item = wx.MenuItem(popup, TREE_POP_MENU_ID + index, action.name, )
+                item = wx.MenuItem(
+                    popup,
+                    TREE_POP_MENU_ID + index,
+                    action.name,
+                )
                 popup.Append(item)
                 popup.Bind(wx.EVT_MENU, action.callable, id=item.GetId())
                 index += 1
@@ -165,7 +177,7 @@ class ProjectTreeCtrl(wx.TreeCtrl):
                 return
 
     def on_lef_dclick(self, event):
-        pt = event.GetPosition();
+        pt = event.GetPosition()
         item, flags = self.HitTest(pt)
         if item:
             self.Expand(item)
@@ -205,15 +217,19 @@ class ProjectTreeCtrl(wx.TreeCtrl):
     def OnCompareItems(self, item1, item2):
         t1 = self.GetItemText(item1)
         t2 = self.GetItemText(item2)
-        if t1 < t2: return -1
-        if t1 == t2: return 0
+        if t1 < t2:
+            return -1
+        if t1 == t2:
+            return 0
         return 1
 
     def on_drag(self, evt):
         item = self.GetSelection()
         if item is not None and item.IsOk():
             itemmodel = self.GetItemData(item)
-            if isinstance(itemmodel, CommandResponseModel) or isinstance(itemmodel, FieldNumberModel):
+            if isinstance(itemmodel, CommandResponseModel) or isinstance(
+                itemmodel, FieldNumberModel
+            ):
                 snippet = itemmodel.get_script_snippet()
                 if snippet != "":
                     data = wx.TextDataObject("model")

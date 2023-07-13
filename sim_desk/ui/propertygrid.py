@@ -8,15 +8,14 @@
 @desc:
 """
 
-import sys, time, math, os, os.path
 import wx
+
 _ = wx.GetTranslation
 import wx.propgrid as wxpg
 
 
-class PropertyGridPanel( wx.Panel ):
-
-    def __init__( self, parent, log ):
+class PropertyGridPanel(wx.Panel):
+    def __init__(self, parent, log):
         wx.Panel.__init__(self, parent, wx.ID_ANY)
         self.log = log
         self.active_model = None
@@ -25,10 +24,12 @@ class PropertyGridPanel( wx.Panel ):
 
         # Difference between using PropertyGridManager vs PropertyGrid is that
         # the manager supports multiple pages and a description box.
-        self.pg = pg = wxpg.PropertyGrid(panel,
-                        style=wxpg.PG_SPLITTER_AUTO_CENTER |
-                              #wxpg.PG_AUTO_SORT |
-                              wxpg.PG_TOOLBAR)
+        self.pg = pg = wxpg.PropertyGrid(
+            panel,
+            style=wxpg.PG_SPLITTER_AUTO_CENTER |
+            # wxpg.PG_AUTO_SORT |
+            wxpg.PG_TOOLBAR,
+        )
         pg.SetExtraStyle(wxpg.PG_EX_HELP_AS_TOOLTIPS)
         pg.Bind(wxpg.EVT_PG_CHANGED, self.on_prop_grid_change)
         pg.Bind(wxpg.EVT_PG_PAGE_CHANGED, self.on_prop_grid_page_change)
@@ -64,10 +65,10 @@ class PropertyGridPanel( wx.Panel ):
     def set_model(self, model):
         self.populate_properties(model)
         self.active_model = model
-        
+
     def assign_project(self, active_project):
         active_project.properties_tree = self
-    
+
     def populate_properties(self, model):
         self.pg.Clear()
         categories = model.getPropertyCategories()
@@ -79,16 +80,10 @@ class PropertyGridPanel( wx.Panel ):
             self.pg.Append(wxpg.PropertyCategory(category))
             for property in model.getProperties():
                 if property.getCategory() == category:
-                    self.pg.Append( property.createwxproperty() )
+                    self.pg.Append(property.createwxproperty())
 
     def on_prop_grid_right_click(self, event):
         p = event.GetProperty()
 
     def on_prop_grid_page_change(self, event):
         index = self.pg.GetSelectedPage()
-
-
-
-
-
-

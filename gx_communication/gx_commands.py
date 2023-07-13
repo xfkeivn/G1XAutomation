@@ -1,6 +1,6 @@
-from gx_communication import gx_command_codes
-from gx_communication import serializable
 from typing import List
+
+from gx_communication import gx_command_codes, serializable
 
 
 class Command(serializable.Serializable, serializable.Deserializable):
@@ -61,12 +61,12 @@ class WhoAmICmd(Command):
 
 class WhoAmIResp(Response):
     """
-    Defines Who Am I Command response fields as per Command Protocol.
+     Defines Who Am I Command response fields as per Command Protocol.
 
-   Attributes
-    ----------
-    u8_DeviceId: int
-        ID of device
+    Attributes
+     ----------
+     u8_DeviceId: int
+         ID of device
     """
 
     def __init__(self):
@@ -123,7 +123,7 @@ class SetElectrodeSettingCmd(Command):
         self.response = SetElectrodeSettingResp()
         self.u8_ElectrodePairCount = 0x00
         self.au8_Electrodes = []
-        self._arrayLengths = {'au8_Electrodes': 8}
+        self._arrayLengths = {"au8_Electrodes": 8}
 
 
 class SetElectrodeSettingResp(Response):
@@ -164,7 +164,7 @@ class BlockChannelCmd(Command):
         self.response = BlockChannelResp()
         self.u8_BlockCount = 0x00
         self.au8_BlockedChannels = []
-        self._arrayLengths = {'au8_BlockedChannels': 4}
+        self._arrayLengths = {"au8_BlockedChannels": 4}
 
 
 class BlockChannelResp(Response):
@@ -173,6 +173,7 @@ class BlockChannelResp(Response):
 
 
 # *** end BW ****
+
 
 class SetStimulationSettingCmd(Command):
     """
@@ -583,7 +584,7 @@ class GetMeasuredChannelsCmd(Command):
         super().__init__(gx_command_codes.GET_MEASURED_CHANNEL)
         self.response = GetMeasuredChannelsResp()
         self.au8_channels = []
-        self._arrayLengths = {'au8_channels': 4}
+        self._arrayLengths = {"au8_channels": 4}
 
 
 class MeasuredChannelParam(serializable.Serializable):
@@ -612,26 +613,33 @@ class MeasuredChannelParam(serializable.Serializable):
 class GetMeasuredChannelsResp(Response):
     def __init__(self):
         super().__init__(gx_command_codes.GET_MEASURED_CHANNEL)
-        self.ar_measured_channels: List[MeasuredChannelParam] = [MeasuredChannelParam() for i in range(4)]
-        self._arrayTypes['ar_measured_channels'] = 'MeasuredChannelParam'
+        self.ar_measured_channels: List[MeasuredChannelParam] = [
+            MeasuredChannelParam() for i in range(4)
+        ]
+        self._arrayTypes["ar_measured_channels"] = "MeasuredChannelParam"
 
 
 class LaunchApplication(Command):
     def __init__(self):
         super().__init__(gx_command_codes.LAUNCH_APPLICATION)
         self.response = LaunchApplicationResp()
-        self.au8_fw_hash_data = [0]*32
+        self.au8_fw_hash_data = [0] * 32
         self.au8_cpld_hash_data = [0] * 32
-        self._arrayLengths = {'au8_fw_hash_data': 32,'au8_cpld_hash_data':32}
+        self._arrayLengths = {"au8_fw_hash_data": 32, "au8_cpld_hash_data": 32}
+
 
 class LaunchApplication2(Command):
     def __init__(self):
         super().__init__(gx_command_codes.LAUNCH_APPLICATION2)
         self.response = LaunchApplicationResp2()
-        self.au8_fw_hash_data = [0]*32
+        self.au8_fw_hash_data = [0] * 32
         self.au8_cpld_hash_data = [0] * 32
         self.au8_config_hash_data = [0] * 32
-        self._arrayLengths = {'au8_fw_hash_data': 32,'au8_cpld_hash_data':32,'au8_config_hash_data':32}
+        self._arrayLengths = {
+            "au8_fw_hash_data": 32,
+            "au8_cpld_hash_data": 32,
+            "au8_config_hash_data": 32,
+        }
 
 
 class LaunchApplicationResp(Response):

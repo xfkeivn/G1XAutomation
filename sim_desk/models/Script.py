@@ -7,22 +7,27 @@
 @time: 2023/3/26 11:35
 @desc:
 """
+import importlib
 import os.path
 import sys
-import importlib
-import executor_context
-from sim_desk.models.TreeModel import TreeModel
-import sim_desk.ui.images
-from sim_desk.models.TreeModel import TREEMODEL_STATUS_NORMAL
-from sim_desk.mgr.tag_names import *
-from sim_desk.models.CommonProperty import StringProperty,BoolProperty
-from sim_desk.mgr.context import SimDeskContext
-from sim_desk.models.TreeModel import TreeAction
+
 import wx
-from utils import logger
-from scenario import Scenario
+
+import executor_context
+import sim_desk.ui.images
 from executor_context import ExecutorContext
-SCRIPT_DOC='''
+from scenario import Scenario
+from sim_desk.mgr.context import SimDeskContext
+from sim_desk.mgr.tag_names import *
+from sim_desk.models.CommonProperty import BoolProperty, StringProperty
+from sim_desk.models.TreeModel import (
+    TREEMODEL_STATUS_NORMAL,
+    TreeAction,
+    TreeModel,
+)
+from utils import logger
+
+SCRIPT_DOC = """
 #Callback Script File
 #This file is used to define the callback functions when simulation 
 #The predefined callbacks are like following
@@ -49,11 +54,11 @@ def onStart():
 def onStop():
     print "The test is stopped"
 
-'''
+"""
 
 
 class ScriptModel(TreeModel):
-    def __init__(self,parent,script_file_path=None):
+    def __init__(self, parent, script_file_path=None):
         TreeModel.__init__(self, parent, TAG_NAME_SCRIPT)
         self.label = os.path.basename(script_file_path)
         self.script_file_path = script_file_path
@@ -76,22 +81,26 @@ class ScriptModel(TreeModel):
         pathprop = BoolProperty("Enabled", "Enabled")
         pathprop.setSavable(True)
         self.addProperties(pathprop)
-        self.tree_action_list.append(TreeAction("Remove", wx.ID_HIGHEST + 1001, self.remove_self))
+        self.tree_action_list.append(
+            TreeAction("Remove", wx.ID_HIGHEST + 1001, self.remove_self)
+        )
         self.scenario_object = None
 
-    def set_script_file_path(self,file_path):
+    def set_script_file_path(self, file_path):
         self.script_file_path = file_path
 
     def on_activate(self):
         TreeModel.on_activate(self)
         if not executor_context.ExecutorContext().is_robot_context():
-            page_stc = SimDeskContext().get_main_frame().load_script_model(self)
+            page_stc = (
+                SimDeskContext().get_main_frame().load_script_model(self)
+            )
             if self.model_editor is None:
                 if not os.path.exists(self.script_file_path):
-                    with open(self.script_file_path,"w") as sf:
+                    with open(self.script_file_path, "w") as sf:
                         sf.close()
             self.model_editor = page_stc
-            with open(self.script_file_path,"r") as file:
+            with open(self.script_file_path, "r") as file:
                 all_txt = file.read()
                 page_stc.SetText(all_txt)
 
@@ -99,10 +108,9 @@ class ScriptModel(TreeModel):
         return self.model_editor
 
     def save(self):
-
         if self.model_editor is not None:
             text = self.model_editor.GetText()
-            with open(self.script_file_path,"w") as file:
+            with open(self.script_file_path, "w") as file:
                 file.write(text)
 
     def close(self):
@@ -122,16 +130,22 @@ class ScriptModel(TreeModel):
                 scenario_module = sys.modules[module_name]
             for name in dir(scenario_module):
                 class_obj = getattr(scenario_module, name)
-                if isinstance(class_obj, type) and issubclass(class_obj, Scenario) and class_obj is not Scenario:
+                if (
+                    isinstance(class_obj, type)
+                    and issubclass(class_obj, Scenario)
+                    and class_obj is not Scenario
+                ):
                     self.scenario_object = class_obj()
-                    ExecutorContext().simulator.add_command_listener(self.scenario_object)
+                    ExecutorContext().simulator.add_command_listener(
+                        self.scenario_object
+                    )
         except ImportError as err:
             logger.error("Import the scenario error " + str(err))
             return None
         else:
             return self.scenario_object
 
-    def set_model_status(self,modelstatus):
+    def set_model_status(self, modelstatus):
         if self.get_script_editor() is not None:
             if modelstatus == TREEMODEL_STATUS_NORMAL:
                 self.get_script_editor().SetEditable(True)
@@ -140,11 +154,13 @@ class ScriptModel(TreeModel):
         TreeModel.set_model_status(self, modelstatus)
 
     def remove_self(self, event):
-        dlg = wx.MessageDialog(self.getProject_Tree(), 'Please Confirm to delete',
-                               'Confirm to delete',
-                               # wx.OK | wx.ICON_INFORMATION
-                               wx.YES_NO | wx.ICON_INFORMATION
-                               )
+        dlg = wx.MessageDialog(
+            self.getProject_Tree(),
+            "Please Confirm to delete",
+            "Confirm to delete",
+            # wx.OK | wx.ICON_INFORMATION
+            wx.YES_NO | wx.ICON_INFORMATION,
+        )
         result = dlg.ShowModal()
         if result == wx.ID_YES:
             if self.model_editor is not None:

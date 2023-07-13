@@ -9,6 +9,7 @@
 """
 from utils.singleton import Singleton
 
+
 class ExecutorContext(metaclass=Singleton):
     SIMDESK_CONTEXT = "SimDesk"
     ROBOT_CONTEXT = "Robot"

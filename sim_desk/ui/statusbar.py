@@ -10,6 +10,7 @@
 
 
 import wx
+
 import sim_desk.ui.images
 from sim_desk.models.TreeModel import TREEMODEL_STATUS_NORMAL
 
@@ -24,16 +25,18 @@ class StatusBar(wx.StatusBar):
         self.Bind(wx.EVT_SIZE, self.on_size)
         self.Bind(wx.EVT_IDLE, self.on_idle)
 
-        self.cb = wx.StaticBitmap(self, bitmap=sim_desk.ui.images.edit.GetBitmap())
+        self.cb = wx.StaticBitmap(
+            self, bitmap=sim_desk.ui.images.edit.GetBitmap()
+        )
         # set the initial position of the checkbox
         self.reposition()
 
     def set_text1(self, text):
-        self.SetStatusText(text,0)
+        self.SetStatusText(text, 0)
 
     def set_text2(self, text):
-        self.SetStatusText(text,2)
-    
+        self.SetStatusText(text, 2)
+
     def set_status(self, status):
         if status == TREEMODEL_STATUS_NORMAL:
             self.cb.SetBitmap(sim_desk.ui.images.edit.GetBitmap())

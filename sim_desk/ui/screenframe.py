@@ -7,12 +7,13 @@
 @time: 2023/3/26 10:58
 @desc:
 """
+import os
 import threading
-from utils import logger
+
 import wx
 
 from sim_desk.mgr.context import SimDeskContext
-import os
+from utils import logger
 from utils.utilities import get_screen_shot_home_folder
 
 
@@ -30,6 +31,7 @@ class ScreenUpdateEvent(wx.PyCommandEvent):  # 1 定义事件
 
 myEVT_MY_SCREEN_UPDATE = wx.NewEventType()  # 2 创建一个事件类型
 EVT_SCREEN_UPDATE = wx.PyEventBinder(myEVT_MY_SCREEN_UPDATE, 1)  # 3 创建一个绑定器对象
+
 
 class MyScrolledPanel(wx.ScrolledWindow):
     def __init__(self, parent):
@@ -73,18 +75,22 @@ class ScreenFrame(wx.Panel):
         self.SetMinSize(wx.Size(1024, 768))
         self.SetDoubleBuffered(True)
         self._squish_started = False
-        self.update_frame_thread:threading.Thread = None
+        self.update_frame_thread: threading.Thread = None
 
-        #self.Bind(EVT_SCREEN_UPDATE, self.set_image)
+        # self.Bind(EVT_SCREEN_UPDATE, self.set_image)
 
     def __update_screen(self):
         while True:
             if self._squish_started is False:
                 break
             try:
-                screenshot = os.path.join(get_screen_shot_home_folder(), "screen.png")
+                screenshot = os.path.join(
+                    get_screen_shot_home_folder(), "screen.png"
+                )
                 self.mainframe.squish_runner.screen_save(screenshot)
-                evt = ScreenUpdateEvent(myEVT_MY_SCREEN_UPDATE, wx.NewId())  # 5 创建自定义事件对象
+                evt = ScreenUpdateEvent(
+                    myEVT_MY_SCREEN_UPDATE, wx.NewId()
+                )  # 5 创建自定义事件对象
                 evt.SetEventArgs(screenshot)  # 6添加数据到事件
                 self.GetEventHandler().ProcessEvent(evt)  # 7 处理事件
             except Exception as err:
@@ -97,31 +103,34 @@ class ScreenFrame(wx.Panel):
     def on_left_down(self, event):
         # This function will be called when the left mouse button is clicked on the panel
         x, y = event.GetPosition()
-        if self.mainframe.squish_runner is not None and self._squish_started is True:
-            self.mainframe.squish_runner.mouse_xy(x,y)
+        if (
+            self.mainframe.squish_runner is not None
+            and self._squish_started is True
+        ):
+            self.mainframe.squish_runner.mouse_xy(x, y)
 
     def start(self):
         self._squish_started = True
         self.timer.Start(40)  # 200 ms = 5 fps
-        #self.update_frame_thread = threading.Thread(target=self.__update_screen)
-        #self.update_frame_thread.setDaemon(True)
-        #self.update_frame_thread.start()
+        # self.update_frame_thread = threading.Thread(target=self.__update_screen)
+        # self.update_frame_thread.setDaemon(True)
+        # self.update_frame_thread.start()
 
     def stop(self):
         self._squish_started = False
-        #if self.update_frame_thread is not None:
+        # if self.update_frame_thread is not None:
         #    self.update_frame_thread.join(1)
 
         self.timer.Stop()
 
     def update_image(self, event):
-        #dirname = os.path.dirname(__file__)
+        # dirname = os.path.dirname(__file__)
         screenshot = os.path.join(get_screen_shot_home_folder(), "screen.png")
         self.mainframe.squish_runner.screen_save(screenshot)
         self.set_image(screenshot)
 
     def set_image(self, image_path):
-        #image_path = evt.GetEventArgs()
+        # image_path = evt.GetEventArgs()
         new_image = wx.Image(image_path)
         panel_size = self.GetClientSize()
 

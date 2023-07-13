@@ -7,9 +7,10 @@
 @time: 2023/4/20 15:02
 @desc:
 """
-from utils.singleton import Singleton
-from PIL import Image
 import pytesseract
+from PIL import Image
+
+from utils.singleton import Singleton
 
 
 class TessertOCR(metaclass=Singleton):
