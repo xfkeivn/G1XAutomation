@@ -128,14 +128,14 @@ class CommandListener(metaclass=Singleton):
         if command.data.u16_CommandCode in self.command_filters:
             return
         self.__message_logging(
-            f"{command.time_ns // 100000}:{command.sequence}:{command.data}"
+            f"{command.format_time}:{command.sequence}:{command.data}"
         )
 
     def on_command_responsed(self, response):
         if response.data.u16_ResponseCode - 1 in self.command_filters:
             return
         self.__message_logging(
-            f"{response.time_ns // 100000}:{response.sequence}:{response.data}"
+            f"{response.format_time}:{response.sequence}:{response.data}"
         )
 
 

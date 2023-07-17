@@ -13,6 +13,7 @@ import logging
 import threading
 import time
 from threading import Thread
+from datetime import datetime
 
 import wx
 
@@ -76,6 +77,7 @@ class MessageWrapper(object):
     def __init__(self, command_obj, time_ns):
         self.sequence = 0
         self.time_ns = time_ns
+        self.format_time = datetime.fromtimestamp(self.time_ns / 1e9).strftime('%Y-%m-%d %H:%M:%S.%f')
         self.data = command_obj
         if isinstance(command_obj, GX1Command):
             self.code = command_obj.u16_CommandCode
@@ -274,7 +276,7 @@ class BackPlaneSimulator(metaclass=Singleton):
         if self.command_response_filter.filter(logged_msg) is True:
             return
         self.command_logging.put(command_code, logged_msg)
-        logger.debug(f"{logged_msg.time_ns // 1000000}:{logged_msg.data}")
+        logger.debug(f"{logged_msg.format_time}:{logged_msg.data}")
 
     def __process_response(self, command_response_code, response_obj):
         logged_msg = MessageWrapper(response_obj, time.time_ns())
@@ -285,7 +287,7 @@ class BackPlaneSimulator(metaclass=Singleton):
         if self.command_response_filter.filter(logged_msg) is True:
             return
         self.command_logging.put(command_response_code, logged_msg)
-        logger.debug(f"{logged_msg.time_ns // 1000000}:{logged_msg.data}")
+        logger.debug(f"{logged_msg.format_time}:{logged_msg.data}")
 
     def __dispatch_command(self, command_obj):
         self.pending_resp_lock.acquire()

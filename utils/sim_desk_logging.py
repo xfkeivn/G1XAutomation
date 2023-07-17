@@ -14,11 +14,18 @@ from logging.handlers import RotatingFileHandler
 from utils.utilities import get_home_log_folder
 
 dir_upper_name = get_home_log_folder()
-if not os.path.exists(dir_upper_name):
-    os.mkdir(dir_upper_name)
+os.makedirs(dir_upper_name, exist_ok=True)
 
 current_path = os.path.dirname(__file__)
 log_file_full_name = os.path.join(dir_upper_name, "GX1.log")
+
 logger = logging.getLogger("GX1")
 logger.setLevel(level=logging.DEBUG)
-logger.addHandler(RotatingFileHandler(log_file_full_name))
+
+handler = RotatingFileHandler(log_file_full_name)
+handler.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+handler.setFormatter(formatter)
+
+logger.addHandler(handler)
