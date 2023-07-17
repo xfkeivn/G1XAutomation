@@ -839,6 +839,3 @@ class MainFrame(wx.Frame):
         # create the notebook off-window to avoid flicker
         self.notebook = ctrl
         return ctrl
-
-
-#

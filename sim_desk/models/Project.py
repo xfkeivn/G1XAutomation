@@ -52,13 +52,17 @@ class Project(TreeModel):
                 [0, 1],
             )
             self.addProperties(prop_type)
-            prop_comport = EnumProperty(
-                "COM",
-                "COM",
-                0,
-                None,
-                self._com_port_list,
-                list(range(len(self._com_port_list))),
+            # prop_comport = EnumProperty(
+            #     "COM",
+            #     "COM",
+            #     0,
+            #     None,
+            #     self._com_port_list,
+            #     list(range(len(self._com_port_list))),
+            # )
+            # self.addProperties(prop_comport)
+            prop_comport = StringProperty(
+                "COM", "COM", self._com_port_list[0], editable=True
             )
             self.addProperties(prop_comport)
         else:
