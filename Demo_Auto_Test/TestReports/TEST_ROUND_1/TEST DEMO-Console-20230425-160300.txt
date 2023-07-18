@@ -1,0 +1,47 @@
+command: robot -A C:\Users\xuf\AppData\Local\Temp\RIDE0cbzdrsj.d\argfile.txt --listener D:\Workspace\GX1\G1XAutomation\venv\lib\site-packages\robotide\contrib\testrunner\TestRunnerAgent.py:3381:False D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestProtocols\TEST_DEMO.txt
+
+TestRunnerAgent: Running under CPython 3.8.0
+
+
+==========
+TEST DEMO 
+==========
+TE... | FAIL |
+Parent suite setup failed:
+AttributeError: 'NoneType' object has no attribute '__name__'
+----------
+TE... | FAIL |
+Parent suite setup failed:
+AttributeError: 'NoneType' object has no attribute '__name__'
+----------
+TE... | FAIL |
+Parent suite setup failed:
+AttributeError: 'NoneType' object has no attribute '__name__'
+----------
+TE... | FAIL |
+Parent suite setup failed:
+AttributeError: 'NoneType' object has no attribute '__name__'
+----------
+TE... | FAIL |
+Parent suite setup failed:
+AttributeError: 'NoneType' object has no attribute '__name__'
+----------
+TE... | FAIL |
+Suite setup failed:
+AttributeError: 'NoneType' object has no attribute '__name__'
+
+5 tests, 0 passed, 5 failed
+==========
+Debug:   D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\TEST DEMO-Message-20230425-160301.log
+Output:  D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\TEST DEMO-Output-20230425-160301.xml
+
+
+
+[ WARN ] The project is not initialized for testing 
+
+Log:     D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\TEST DEMO-Log-20230425-160301.html
+Report:  D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\TEST DEMO-Report-20230425-160301.html
+
+
+
+Test finished 20230425 16:03:01

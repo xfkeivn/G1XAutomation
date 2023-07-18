@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 6.0.2 (Python 3.8.0 on win32)" generated="20230425 17:13:58.243" rpa="false" schemaversion="3">
+<suite id="s1" name="TEST DEMO" source="D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestProtocols\TEST_DEMO.txt">
+<kw name="Init Test" library="GX1Testlib" type="SETUP">
+<doc>Description:
+ This should be called before any test can started for GX1
+Arguments:</doc>
+<msg timestamp="20230425 17:13:58.497" level="INFO">Loading the project at D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test</msg>
+<msg timestamp="20230425 17:13:58.524" level="INFO">Squish Hook 192.168.80.130, gx1, C:\Users\xuf\.ssh\bsci</msg>
+<msg timestamp="20230425 17:13:58.524" level="INFO">Demo_Auto_Test has been loaded successfully</msg>
+<msg timestamp="20230425 17:13:58.541" level="INFO">connecting to device</msg>
+<msg timestamp="20230425 17:13:58.547" level="INFO">COM Port COM1 created successfully</msg>
+<msg timestamp="20230425 17:13:58.658" level="INFO">GX1 Simulator is started</msg>
+<msg timestamp="20230425 17:14:01.048" level="INFO">Squish tester is started</msg>
+<msg timestamp="20230425 17:14:01.049" level="INFO">found router: gx1.development.squish_server</msg>
+<status status="PASS" starttime="20230425 17:13:58.496" endtime="20230425 17:14:01.049"/>
+</kw>
+<test id="s1-t1" name="TEST_CASE_1_COMMAND_SIMULATION" line="8">
+<kw name="Log" library="BuiltIn">
+<arg>this is the test demo, started</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20230425 17:14:01.051" level="INFO">this is the test demo, started</msg>
+<status status="PASS" starttime="20230425 17:14:01.050" endtime="20230425 17:14:01.051"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20230425 17:14:02.052" level="INFO">Slept 1 second</msg>
+<status status="PASS" starttime="20230425 17:14:01.051" endtime="20230425 17:14:02.052"/>
+</kw>
+<kw name="Mouse Xy" library="GX1Testlib">
+<arg>722</arg>
+<arg>161</arg>
+<doc>Perform a mouse click on the active window.</doc>
+<status status="PASS" starttime="20230425 17:14:02.052" endtime="20230425 17:14:02.526"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>0.5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20230425 17:14:03.029" level="INFO">Slept 500 milliseconds</msg>
+<status status="PASS" starttime="20230425 17:14:02.527" endtime="20230425 17:14:03.029"/>
+</kw>
+<kw name="Screen Shot" library="GX1Testlib">
+<doc>Capture the image from Screen and embedded  the image captured to the report
+:param embedded_image_to_report: whether the image should be embedded into report
+:return: the image file location</doc>
+<msg timestamp="20230425 17:14:03.149" level="INFO" html="true">&lt;a href="Img_d482691c-4682-4a68-8f37-1b7d8f84ef06.png"&gt;&lt;img src="Img_d482691c-4682-4a68-8f37-1b7d8f84ef06.png" width="400"&gt;&lt;/a&gt;</msg>
+<status status="PASS" starttime="20230425 17:14:03.029" endtime="20230425 17:14:03.149"/>
+</kw>
+<kw name="Mouse Xy" library="GX1Testlib">
+<arg>426</arg>
+<arg>718</arg>
+<doc>Perform a mouse click on the active window.</doc>
+<status status="PASS" starttime="20230425 17:14:03.149" endtime="20230425 17:14:03.588"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>10s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20230425 17:14:13.595" level="INFO">Slept 10 seconds</msg>
+<status status="PASS" starttime="20230425 17:14:03.589" endtime="20230425 17:14:13.595"/>
+</kw>
+<kw name="Start Scenario" library="GX1Testlib">
+<arg>ImpedanceRamp</arg>
+<doc>Start the stimulation scenario by its alias
+:param scenario_name:
+:return:</doc>
+<msg timestamp="20230425 17:14:13.597" level="INFO">The scenario ImpedanceRamp is started</msg>
+<status status="PASS" starttime="20230425 17:14:13.596" endtime="20230425 17:14:13.597"/>
+</kw>
+<kw name="Start Scenario" library="GX1Testlib">
+<arg>RampMeasure</arg>
+<doc>Start the stimulation scenario by its alias
+:param scenario_name:
+:return:</doc>
+<msg timestamp="20230425 17:14:13.605" level="INFO">started</msg>
+<msg timestamp="20230425 17:14:13.606" level="INFO">The scenario RampMeasure is started</msg>
+<status status="PASS" starttime="20230425 17:14:13.597" endtime="20230425 17:14:13.606"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>10s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20230425 17:14:23.614" level="INFO">Slept 10 seconds</msg>
+<status status="PASS" starttime="20230425 17:14:13.606" endtime="20230425 17:14:23.614"/>
+</kw>
+<kw name="Stop Scenario" library="GX1Testlib">
+<arg>RampMeasure</arg>
+<doc>Stop the scenario by its alias
+:param scenario_name:
+:return:</doc>
+<msg timestamp="20230425 17:14:23.615" level="INFO">stop</msg>
+<msg timestamp="20230425 17:14:23.615" level="INFO">The scenario RampMeasure is stopped</msg>
+<status status="PASS" starttime="20230425 17:14:23.614" endtime="20230425 17:14:23.615"/>
+</kw>
+<kw name="Screen Shot" library="GX1Testlib">
+<doc>Capture the image from Screen and embedded  the image captured to the report
+:param embedded_image_to_report: whether the image should be embedded into report
+:return: the image file location</doc>
+<msg timestamp="20230425 17:14:23.738" level="INFO" html="true">&lt;a href="Img_cf6f795f-c20e-4af9-b960-4e0cf7985968.png"&gt;&lt;img src="Img_cf6f795f-c20e-4af9-b960-4e0cf7985968.png" width="400"&gt;&lt;/a&gt;</msg>
+<status status="PASS" starttime="20230425 17:14:23.615" endtime="20230425 17:14:23.738"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20230425 17:14:24.741" level="INFO">Slept 1 second</msg>
+<status status="PASS" starttime="20230425 17:14:23.739" endtime="20230425 17:14:24.741"/>
+</kw>
+<kw name="Start Scenario" library="GX1Testlib">
+<arg>RampMeasure</arg>
+<doc>Start the stimulation scenario by its alias
+:param scenario_name:
+:return:</doc>
+<msg timestamp="20230425 17:14:24.743" level="INFO">started</msg>
+<msg timestamp="20230425 17:14:24.743" level="INFO">The scenario RampMeasure is started</msg>
+<status status="PASS" starttime="20230425 17:14:24.741" endtime="20230425 17:14:24.743"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20230425 17:14:29.754" level="INFO">Slept 5 seconds</msg>
+<status status="PASS" starttime="20230425 17:14:24.745" endtime="20230425 17:14:29.754"/>
+</kw>
+<kw name="Stop Scenario" library="GX1Testlib">
+<arg>RampMeasure</arg>
+<doc>Stop the scenario by its alias
+:param scenario_name:
+:return:</doc>
+<msg timestamp="20230425 17:14:29.755" level="INFO">stop</msg>
+<msg timestamp="20230425 17:14:29.755" level="INFO">The scenario RampMeasure is stopped</msg>
+<status status="PASS" starttime="20230425 17:14:29.755" endtime="20230425 17:14:29.755"/>
+</kw>
+<kw name="Stop Scenario" library="GX1Testlib">
+<arg>ImpedanceRamp</arg>
+<doc>Stop the scenario by its alias
+:param scenario_name:
+:return:</doc>
+<msg timestamp="20230425 17:14:29.756" level="INFO">The scenario ImpedanceRamp is stopped</msg>
+<status status="PASS" starttime="20230425 17:14:29.756" endtime="20230425 17:14:29.756"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20230425 17:14:34.769" level="INFO">Slept 5 seconds</msg>
+<status status="PASS" starttime="20230425 17:14:29.756" endtime="20230425 17:14:34.769"/>
+</kw>
+<kw name="Log" library="BuiltIn">
+<arg>this is the test demo, started</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20230425 17:14:34.770" level="INFO">this is the test demo, started</msg>
+<status status="PASS" starttime="20230425 17:14:34.770" endtime="20230425 17:14:34.770"/>
+</kw>
+<kw name="Screen Shot" library="GX1Testlib">
+<doc>Capture the image from Screen and embedded  the image captured to the report
+:param embedded_image_to_report: whether the image should be embedded into report
+:return: the image file location</doc>
+<msg timestamp="20230425 17:14:34.863" level="INFO" html="true">&lt;a href="Img_3a0996ed-c310-4f09-8ccc-1493eaa20c51.png"&gt;&lt;img src="Img_3a0996ed-c310-4f09-8ccc-1493eaa20c51.png" width="400"&gt;&lt;/a&gt;</msg>
+<status status="PASS" starttime="20230425 17:14:34.770" endtime="20230425 17:14:34.864"/>
+</kw>
+<doc>This test case is for demo for the features of DVTFront of GX1.</doc>
+<tag>DEMO</tag>
+<tag>MAINPAGE</tag>
+<tag>SCREENSHOT</tag>
+<tag>stimulation</tag>
+<status status="PASS" starttime="20230425 17:14:01.049" endtime="20230425 17:14:34.864"/>
+</test>
+<test id="s1-t2" name="TEST_CASE_2_CLICK_AND_SCREEN_SHOT" line="32">
+<kw name="Log" library="BuiltIn">
+<arg>this is the test demo, started</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20230425 17:14:34.868" level="INFO">this is the test demo, started</msg>
+<status status="PASS" starttime="20230425 17:14:34.867" endtime="20230425 17:14:34.868"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20230425 17:14:35.873" level="INFO">Slept 1 second</msg>
+<status status="PASS" starttime="20230425 17:14:34.868" endtime="20230425 17:14:35.873"/>
+</kw>
+<kw name="Mouse Click" library="GX1Testlib">
+<arg>OneTouch</arg>
+<doc>If object is applicable, perform a mouse click by passing in the Squish object reference.</doc>
+<status status="PASS" starttime="20230425 17:14:35.875" endtime="20230425 17:14:35.894"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20230425 17:14:40.909" level="INFO">Slept 5 seconds</msg>
+<status status="PASS" starttime="20230425 17:14:35.895" endtime="20230425 17:14:40.909"/>
+</kw>
+<kw name="Screen Shot" library="GX1Testlib">
+<doc>Capture the image from Screen and embedded  the image captured to the report
+:param embedded_image_to_report: whether the image should be embedded into report
+:return: the image file location</doc>
+<msg timestamp="20230425 17:14:41.015" level="INFO" html="true">&lt;a href="Img_1bc7410c-0676-4769-ba5f-acad6cb9289e.png"&gt;&lt;img src="Img_1bc7410c-0676-4769-ba5f-acad6cb9289e.png" width="400"&gt;&lt;/a&gt;</msg>
+<status status="PASS" starttime="20230425 17:14:40.909" endtime="20230425 17:14:41.015"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20230425 17:14:42.021" level="INFO">Slept 1 second</msg>
+<status status="PASS" starttime="20230425 17:14:41.016" endtime="20230425 17:14:42.021"/>
+</kw>
+<kw name="Mouse Click" library="GX1Testlib">
+<arg>Stimulation</arg>
+<doc>If object is applicable, perform a mouse click by passing in the Squish object reference.</doc>
+<status status="PASS" starttime="20230425 17:14:42.021" endtime="20230425 17:14:42.446"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20230425 17:14:43.448" level="INFO">Slept 1 second</msg>
+<status status="PASS" starttime="20230425 17:14:42.447" endtime="20230425 17:14:43.448"/>
+</kw>
+<kw name="Set Command Response" library="GX1Testlib">
+<arg>C046</arg>
+<arg>u8_OutputStatus=1</arg>
+<arg>u8_ButtonStatus=1</arg>
+<doc>Set the response data
+:param command_code: the command code not the response code
+:param response_data: the leaf field of the response data
+:return:</doc>
+<status status="PASS" starttime="20230425 17:14:43.448" endtime="20230425 17:14:43.449"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20230425 17:14:44.461" level="INFO">Slept 1 second</msg>
+<status status="PASS" starttime="20230425 17:14:43.449" endtime="20230425 17:14:44.461"/>
+</kw>
+<kw name="Screen Shot" library="GX1Testlib">
+<doc>Capture the image from Screen and embedded  the image captured to the report
+:param embedded_image_to_report: whether the image should be embedded into report
+:return: the image file location</doc>
+<msg timestamp="20230425 17:14:44.586" level="INFO" html="true">&lt;a href="Img_9307a7f5-e4a8-47a3-9127-02dc6219cd3d.png"&gt;&lt;img src="Img_9307a7f5-e4a8-47a3-9127-02dc6219cd3d.png" width="400"&gt;&lt;/a&gt;</msg>
+<status status="PASS" starttime="20230425 17:14:44.461" endtime="20230425 17:14:44.586"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20230425 17:14:45.591" level="INFO">Slept 1 second</msg>
+<status status="PASS" starttime="20230425 17:14:44.587" endtime="20230425 17:14:45.591"/>
+</kw>
+<kw name="Set Command Response" library="GX1Testlib">
+<arg>C046</arg>
+<arg>u8_OutputStatus=0</arg>
+<arg>u8_ButtonStatus=1</arg>
+<doc>Set the response data
+:param command_code: the command code not the response code
+:param response_data: the leaf field of the response data
+:return:</doc>
+<status status="PASS" starttime="20230425 17:14:45.592" endtime="20230425 17:14:45.592"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20230425 17:14:46.599" level="INFO">Slept 1 second</msg>
+<status status="PASS" starttime="20230425 17:14:45.592" endtime="20230425 17:14:46.599"/>
+</kw>
+<kw name="Screen Shot" library="GX1Testlib">
+<doc>Capture the image from Screen and embedded  the image captured to the report
+:param embedded_image_to_report: whether the image should be embedded into report
+:return: the image file location</doc>
+<msg timestamp="20230425 17:14:46.702" level="INFO" html="true">&lt;a href="Img_e65865cb-1c01-4e13-9cbb-a4aa341468bc.png"&gt;&lt;img src="Img_e65865cb-1c01-4e13-9cbb-a4aa341468bc.png" width="400"&gt;&lt;/a&gt;</msg>
+<status status="PASS" starttime="20230425 17:14:46.599" endtime="20230425 17:14:46.702"/>
+</kw>
+<kw name="Mouse Click" library="GX1Testlib">
+<arg>PulseRF</arg>
+<doc>If object is applicable, perform a mouse click by passing in the Squish object reference.</doc>
+<status status="PASS" starttime="20230425 17:14:46.703" endtime="20230425 17:14:47.073"/>
+</kw>
+<kw name="Screen Shot" library="GX1Testlib">
+<doc>Capture the image from Screen and embedded  the image captured to the report
+:param embedded_image_to_report: whether the image should be embedded into report
+:return: the image file location</doc>
+<msg timestamp="20230425 17:14:47.210" level="INFO" html="true">&lt;a href="Img_da8c6ec4-b93f-4c63-803c-b894a041c778.png"&gt;&lt;img src="Img_da8c6ec4-b93f-4c63-803c-b894a041c778.png" width="400"&gt;&lt;/a&gt;</msg>
+<status status="PASS" starttime="20230425 17:14:47.074" endtime="20230425 17:14:47.210"/>
+</kw>
+<kw name="Log" library="BuiltIn">
+<arg>this is the test demo, started</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20230425 17:14:47.210" level="INFO">this is the test demo, started</msg>
+<status status="PASS" starttime="20230425 17:14:47.210" endtime="20230425 17:14:47.211"/>
+</kw>
+<doc>This is the second case</doc>
+<tag>POWER</tag>
+<tag>VOLTAGE</tag>
+<status status="PASS" starttime="20230425 17:14:34.866" endtime="20230425 17:14:47.211"/>
+</test>
+<test id="s1-t3" name="TEST_CASE_3_COMMAND_SEARCH" line="54">
+<kw name="Log" library="BuiltIn">
+<arg>this test is for testing the search command logged in the queue</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20230425 17:14:47.214" level="INFO">this test is for testing the search command logged in the queue</msg>
+<status status="PASS" starttime="20230425 17:14:47.214" endtime="20230425 17:14:47.214"/>
+</kw>
+<kw name="Clean Command Logging Queue" library="GX1Testlib">
+<doc>Clean the queue
+:return:</doc>
+<status status="PASS" starttime="20230425 17:14:47.214" endtime="20230425 17:14:47.215"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20230425 17:14:52.228" level="INFO">Slept 5 seconds</msg>
+<status status="PASS" starttime="20230425 17:14:47.215" endtime="20230425 17:14:52.228"/>
+</kw>
+<kw name="Find Logged Commands" library="GX1Testlib">
+<var>@{command_list}</var>
+<arg>0xC049</arg>
+<arg>0</arg>
+<arg>ar_measured_channels[0].u8_TempRefAvailable=1</arg>
+<doc>To find the command or response in the queue
+:param command_code: the command code or response code
+:param start_seq: from where to search forward
+:param kwargs: the matching condition of the field value, key pairs
+:return:</doc>
+<msg timestamp="20230425 17:14:52.229" level="INFO">@{command_list} = [ &lt;BackPlaneSimulator.MessageWrapper object at 0x000001E257DDB1C0&gt; | &lt;BackPlaneSimulator.MessageWrapper object at 0x000001E257DDB040&gt; | &lt;BackPlaneSimulator.MessageWrapper object at 0x000001E257DDB130&gt;...</msg>
+<status status="PASS" starttime="20230425 17:14:52.228" endtime="20230425 17:14:52.229"/>
+</kw>
+<kw name="Get Length" library="BuiltIn">
+<var>${message_count}</var>
+<arg>${command_list}</arg>
+<doc>Returns and logs the length of the given item as an integer.</doc>
+<msg timestamp="20230425 17:14:52.230" level="INFO">Length is 5</msg>
+<msg timestamp="20230425 17:14:52.230" level="INFO">${message_count} = 5</msg>
+<status status="PASS" starttime="20230425 17:14:52.229" endtime="20230425 17:14:52.230"/>
+</kw>
+<kw name="Log" library="BuiltIn">
+<arg>${command_list[0].data.ar_measured_channels[0].u16_TempRef}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20230425 17:14:52.231" level="INFO">11</msg>
+<status status="PASS" starttime="20230425 17:14:52.230" endtime="20230425 17:14:52.231"/>
+</kw>
+<kw name="Log" library="BuiltIn">
+<arg>${command_list[1].data.ar_measured_channels[0].u16_TempRef}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20230425 17:14:52.232" level="INFO">11</msg>
+<status status="PASS" starttime="20230425 17:14:52.231" endtime="20230425 17:14:52.232"/>
+</kw>
+<tag>STIMULATION</tag>
+<tag>VOLTAGE</tag>
+<status status="PASS" starttime="20230425 17:14:47.212" endtime="20230425 17:14:52.232"/>
+</test>
+<test id="s1-t4" name="TEST_CASE_4_TEST_OCR" line="64">
+<kw name="Mouse Xy" library="GX1Testlib">
+<arg>722</arg>
+<arg>161</arg>
+<doc>Perform a mouse click on the active window.</doc>
+<status status="PASS" starttime="20230425 17:14:52.234" endtime="20230425 17:14:52.564"/>
+</kw>
+<kw name="Mouse Xy" library="GX1Testlib">
+<arg>109</arg>
+<arg>722</arg>
+<doc>Perform a mouse click on the active window.</doc>
+<status status="PASS" starttime="20230425 17:14:52.564" endtime="20230425 17:14:52.898"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>1S</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20230425 17:14:53.899" level="INFO">Slept 1 second</msg>
+<status status="PASS" starttime="20230425 17:14:52.899" endtime="20230425 17:14:53.899"/>
+</kw>
+<kw name="Screen Shot" library="GX1Testlib">
+<var>${screen_shot_path}</var>
+<doc>Capture the image from Screen and embedded  the image captured to the report
+:param embedded_image_to_report: whether the image should be embedded into report
+:return: the image file location</doc>
+<msg timestamp="20230425 17:14:54.005" level="INFO" html="true">&lt;a href="Img_a4709333-49a2-4842-8bd8-5aa6e71beff3.png"&gt;&lt;img src="Img_a4709333-49a2-4842-8bd8-5aa6e71beff3.png" width="400"&gt;&lt;/a&gt;</msg>
+<msg timestamp="20230425 17:14:54.006" level="INFO">${screen_shot_path} = D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\Img_a4709333-49a2-4842-8bd8-5aa6e71beff3.png</msg>
+<status status="PASS" starttime="20230425 17:14:53.899" endtime="20230425 17:14:54.006"/>
+</kw>
+<kw name="Get Text" library="GX1Testlib">
+<var>${text1}</var>
+<arg>${screen_shot_path}</arg>
+<arg>ElectrodeSetup</arg>
+<arg>Monopolar</arg>
+<doc>Get the text from the image and the feature rect
+:param screenshot_path: the image path that need to be verified.
+:param image_alias: the alias of the sample image
+:param rect_alias: the alias of the sample feature rect
+:param lang: the language of the text
+:return: the text</doc>
+<msg timestamp="20230425 17:14:54.171" level="INFO" html="true">&lt;a href="Img_41e2ed19-df54-4486-ade3-41b414071ead.png"&gt;&lt;img src="Img_41e2ed19-df54-4486-ade3-41b414071ead.png" width="118"&gt;&lt;/a&gt;</msg>
+<msg timestamp="20230425 17:14:54.172" level="INFO">${text1} = Monopolar</msg>
+<status status="PASS" starttime="20230425 17:14:54.006" endtime="20230425 17:14:54.172"/>
+</kw>
+<kw name="Get Text" library="GX1Testlib">
+<var>${text2}</var>
+<arg>${screen_shot_path}</arg>
+<arg>ElectrodeSetup</arg>
+<arg>Bipolar</arg>
+<doc>Get the text from the image and the feature rect
+:param screenshot_path: the image path that need to be verified.
+:param image_alias: the alias of the sample image
+:param rect_alias: the alias of the sample feature rect
+:param lang: the language of the text
+:return: the text</doc>
+<msg timestamp="20230425 17:14:54.312" level="INFO" html="true">&lt;a href="Img_3a3e6734-542a-45cf-bf37-7ae4ac5cd95b.png"&gt;&lt;img src="Img_3a3e6734-542a-45cf-bf37-7ae4ac5cd95b.png" width="95"&gt;&lt;/a&gt;</msg>
+<msg timestamp="20230425 17:14:54.312" level="INFO">${text2} = Bipolar</msg>
+<status status="PASS" starttime="20230425 17:14:54.172" endtime="20230425 17:14:54.312"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${text1}</arg>
+<arg>Monopolar</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" starttime="20230425 17:14:54.312" endtime="20230425 17:14:54.313"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${text2}</arg>
+<arg>Bipolar</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" starttime="20230425 17:14:54.313" endtime="20230425 17:14:54.313"/>
+</kw>
+<status status="PASS" starttime="20230425 17:14:52.233" endtime="20230425 17:14:54.314"/>
+</test>
+<test id="s1-t5" name="TEST_CASE_5_TEST_COMPARE" line="74">
+<kw name="Mouse Click" library="GX1Testlib">
+<arg>PulseRF</arg>
+<doc>If object is applicable, perform a mouse click by passing in the Squish object reference.</doc>
+<status status="PASS" starttime="20230425 17:14:54.315" endtime="20230425 17:14:54.677"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<msg timestamp="20230425 17:14:55.689" level="INFO">Slept 1 second</msg>
+<status status="PASS" starttime="20230425 17:14:54.678" endtime="20230425 17:14:55.690"/>
+</kw>
+<kw name="Screen Shot" library="GX1Testlib">
+<var>${image_path}</var>
+<doc>Capture the image from Screen and embedded  the image captured to the report
+:param embedded_image_to_report: whether the image should be embedded into report
+:return: the image file location</doc>
+<msg timestamp="20230425 17:14:55.789" level="INFO" html="true">&lt;a href="Img_a0c75fa1-0e2f-4e2b-8605-2ac3fda33648.png"&gt;&lt;img src="Img_a0c75fa1-0e2f-4e2b-8605-2ac3fda33648.png" width="400"&gt;&lt;/a&gt;</msg>
+<msg timestamp="20230425 17:14:55.789" level="INFO">${image_path} = D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\Img_a0c75fa1-0e2f-4e2b-8605-2ac3fda33648.png</msg>
+<status status="PASS" starttime="20230425 17:14:55.691" endtime="20230425 17:14:55.789"/>
+</kw>
+<kw name="Compare Feature Rect" library="GX1Testlib">
+<var>${result}</var>
+<arg>${image_path}</arg>
+<arg>PulsedRF</arg>
+<arg>Camera</arg>
+<doc>To compare the consistency of image  feature rect
+:param screenshot_path: the image path that need to be verified.
+:param sample_image_alias: the alias of the sample image
+:param sample_rect_alias: the alias of the sample feature rect
+:return: the consistency</doc>
+<msg timestamp="20230425 17:14:55.819" level="INFO" html="true">&lt;a href="Img_4a14fbb8-31ec-4db4-b1f8-e04586520686.png"&gt;&lt;img src="Img_4a14fbb8-31ec-4db4-b1f8-e04586520686.png" width="64"&gt;&lt;/a&gt;</msg>
+<msg timestamp="20230425 17:14:55.820" level="INFO" html="true">&lt;a href="Img_9c99601f-ac4d-485f-8251-c83371338c0c.png"&gt;&lt;img src="Img_9c99601f-ac4d-485f-8251-c83371338c0c.png" width="64"&gt;&lt;/a&gt;</msg>
+<msg timestamp="20230425 17:14:55.838" level="INFO">${result} = True</msg>
+<status status="PASS" starttime="20230425 17:14:55.789" endtime="20230425 17:14:55.839"/>
+</kw>
+<kw name="Compare Feature Rect" library="GX1Testlib">
+<var>${result}</var>
+<arg>${image_path}</arg>
+<arg>PulsedRF</arg>
+<arg>Folder</arg>
+<doc>To compare the consistency of image  feature rect
+:param screenshot_path: the image path that need to be verified.
+:param sample_image_alias: the alias of the sample image
+:param sample_rect_alias: the alias of the sample feature rect
+:return: the consistency</doc>
+<msg timestamp="20230425 17:14:55.856" level="INFO" html="true">&lt;a href="Img_15c5da5b-7a88-4693-b0d2-509ee5c5f9d5.png"&gt;&lt;img src="Img_15c5da5b-7a88-4693-b0d2-509ee5c5f9d5.png" width="63"&gt;&lt;/a&gt;</msg>
+<msg timestamp="20230425 17:14:55.856" level="INFO" html="true">&lt;a href="Img_73b10a9c-3b78-4a40-ac97-e7b6281f092b.png"&gt;&lt;img src="Img_73b10a9c-3b78-4a40-ac97-e7b6281f092b.png" width="63"&gt;&lt;/a&gt;</msg>
+<msg timestamp="20230425 17:14:55.881" level="INFO">${result} = True</msg>
+<status status="PASS" starttime="20230425 17:14:55.839" endtime="20230425 17:14:55.881"/>
+</kw>
+<kw name="Compare Feature Rect" library="GX1Testlib">
+<var>${result}</var>
+<arg>${image_path}</arg>
+<arg>PulsedRF</arg>
+<arg>Setting</arg>
+<doc>To compare the consistency of image  feature rect
+:param screenshot_path: the image path that need to be verified.
+:param sample_image_alias: the alias of the sample image
+:param sample_rect_alias: the alias of the sample feature rect
+:return: the consistency</doc>
+<msg timestamp="20230425 17:14:55.899" level="INFO" html="true">&lt;a href="Img_792ce936-3364-45b8-9632-e15c4a537d54.png"&gt;&lt;img src="Img_792ce936-3364-45b8-9632-e15c4a537d54.png" width="61"&gt;&lt;/a&gt;</msg>
+<msg timestamp="20230425 17:14:55.900" level="INFO" html="true">&lt;a href="Img_781669f4-8a8b-4973-9821-312f17329d6f.png"&gt;&lt;img src="Img_781669f4-8a8b-4973-9821-312f17329d6f.png" width="61"&gt;&lt;/a&gt;</msg>
+<msg timestamp="20230425 17:14:55.925" level="INFO">${result} = True</msg>
+<status status="PASS" starttime="20230425 17:14:55.881" endtime="20230425 17:14:55.925"/>
+</kw>
+<status status="PASS" starttime="20230425 17:14:54.314" endtime="20230425 17:14:55.925"/>
+</test>
+<kw name="Close Test" library="GX1Testlib" type="TEARDOWN">
+<doc>Description:
+Close all and cleanup after the test is done
+exceptions.
+Arguments:
+    None
+Return Value:
+    None
+Examples:
+|close_test |</doc>
+<msg timestamp="20230425 17:14:55.944" level="INFO">disconnecting from device</msg>
+<msg timestamp="20230425 17:14:55.954" level="INFO">GX1 Simulator is stopped</msg>
+<msg timestamp="20230425 17:14:55.984" level="INFO">Squish tester is stopped</msg>
+<status status="PASS" starttime="20230425 17:14:55.926" endtime="20230425 17:14:55.985"/>
+</kw>
+<meta name="FW_VERSION">2.0</meta>
+<meta name="SW_VERSION">1.0</meta>
+<status status="PASS" starttime="20230425 17:13:58.261" endtime="20230425 17:14:55.985"/>
+</suite>
+<statistics>
+<total>
+<stat pass="5" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="1" fail="0" skip="0">DEMO</stat>
+<stat pass="1" fail="0" skip="0">MAINPAGE</stat>
+<stat pass="1" fail="0" skip="0">POWER</stat>
+<stat pass="1" fail="0" skip="0">SCREENSHOT</stat>
+<stat pass="2" fail="0" skip="0">stimulation</stat>
+<stat pass="2" fail="0" skip="0">VOLTAGE</stat>
+</tag>
+<suite>
+<stat pass="5" fail="0" skip="0" id="s1" name="TEST DEMO">TEST DEMO</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
