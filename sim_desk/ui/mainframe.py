@@ -585,12 +585,13 @@ class MainFrame(wx.Frame):
             self.tb.Realize()
 
     def on_close(self, event):
-        with contextlib.suppress(Exception):
-            self.squish_runner.disconnect()
-
         if self.__close_active_project() is False:
             event.Veto()
             return
+
+        with contextlib.suppress(Exception):
+            self.squish_runner.disconnect()
+
         self._mgr.UnInit()
         self.appconfig.save()
         event.Skip()
