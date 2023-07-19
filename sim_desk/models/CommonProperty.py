@@ -205,9 +205,13 @@ class EnumProperty(CommonProperty):
         category=None,
         enumstrs=[],
         enumvalues=[],
+        writable=False,
     ):
+        self.property = (
+            wxpg.EditEnumProperty if writable else wxpg.EnumProperty
+        )
         CommonProperty.__init__(self, name, label, defaultvalue, category)
-        self.stringvalue = wxpg.EnumProperty().ValueToString(defaultvalue)
+        self.stringvalue = self.property().ValueToString(defaultvalue)
         if len(enumstrs) != len(enumvalues):
             raise Exception("The enumstr and values are not equals")
         self.enumstrs = enumstrs
@@ -219,7 +223,7 @@ class EnumProperty(CommonProperty):
         return self.stringvalue
 
     def createwxproperty(self):
-        self.wxproperty = wxpg.EnumProperty(
+        self.wxproperty = self.property(
             self.propertylabel,
             self.propertyname,
             self.enumstrs,

@@ -52,17 +52,14 @@ class Project(TreeModel):
                 [0, 1],
             )
             self.addProperties(prop_type)
-            # prop_comport = EnumProperty(
-            #     "COM",
-            #     "COM",
-            #     0,
-            #     None,
-            #     self._com_port_list,
-            #     list(range(len(self._com_port_list))),
-            # )
-            # self.addProperties(prop_comport)
-            prop_comport = StringProperty(
-                "COM", "COM", self._com_port_list[0], editable=True
+            prop_comport = EnumProperty(
+                "COM",
+                "COM",
+                0,
+                None,
+                self._com_port_list,
+                list(range(len(self._com_port_list))),
+                writable=True,
             )
             self.addProperties(prop_comport)
         else:
@@ -141,6 +138,14 @@ class Project(TreeModel):
 
     def open(self, project_dir):
         self.__load_json(project_dir)
+
+        project_com = self.project_config["Project"]["properties"]['COM']['value']
+        if project_com in self._com_port_list:
+            self._com_port_list.remove(project_com)
+        self._com_port_list.insert(0, project_com)
+        self.getPropertyByName("COM").setEnum(self._com_port_list)
+        self.getPropertyByName("COM").setValues(list(range(len(self._com_port_list))))
+
         self.default_perspective = self.project_config["Project"][
             "last_perspective"
         ]
