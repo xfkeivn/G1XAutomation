@@ -168,7 +168,7 @@ class GX1Testlib(object):
         | Library | TAFLib  | projectdir
         """
         logger.info("Project directory is %s" % project_dir)
-        self.project_model = Project(None)
+        self.project_model = None
         self.project_dir = project_dir
         self.gx1_simulator = BPS()
         self.squish_proxy = None
@@ -312,6 +312,7 @@ class GX1Testlib(object):
         """
 
         if not self.project_inited:
+            self.project_model = Project(None)
             self.__init_project()
             self.squish_name_mapping = (
                 self.project_model.squish_container.get_all_name_mapping()
