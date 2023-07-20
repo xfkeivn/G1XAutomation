@@ -509,7 +509,7 @@ class GX1Testlib(object):
         steps = int(steps)
         return self.squish_proxy.mouse_wheel_screen(x, y, steps)
 
-    def long_mouse_drag(self, gobj, steps):
+    def long_mouse_drag(self, gobj, x, y, z, steps):
         """If object is applicable, this function will produce a mouse drag operation with a fixed delay of
         about one second between pressing the mouse button and starting to move the mouse cursor.
 
@@ -520,7 +520,7 @@ class GX1Testlib(object):
         """
         steps = int(steps)
         gobj = self._get_obj_from_alias(gobj)
-        return self.squish_proxy.long_mouse_drag(gobj, steps)
+        return self.squish_proxy.long_mouse_drag(gobj, int(x), int(y), int(z), steps)
 
     def mouse_click(self, gobj):
         """If object is applicable, perform a mouse click by passing in the Squish object reference.
@@ -644,6 +644,10 @@ class GX1Testlib(object):
             screenshot_path, sample_image_path, feature_rect
         )
         return ident
+
+    def get_Names(self, gobj):
+        gobj = self._get_obj_from_alias(gobj)
+        return self.squish_proxy.get_Names(gobj)
 
 
 if __name__ == "__main__":

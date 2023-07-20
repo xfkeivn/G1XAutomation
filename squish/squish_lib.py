@@ -369,7 +369,7 @@ class SquishTest(object):
         # as a last resort, try this?:
         # sqt.mouseWheel(names.o_QQuickApplicationWindow, x, y, 0, steps, sqt.Qt.NoModifier)
 
-    def long_mouse_drag(self, gobj, steps):
+    def long_mouse_drag(self, gobj, x, y, z, steps):
         """If object is applicable, this function will produce a mouse drag operation with a fixed delay of
         about one second between pressing the mouse button and starting to move the mouse cursor.
 
@@ -382,9 +382,9 @@ class SquishTest(object):
         if _obj is not None:
             self.sqt_module.longMouseDrag(
                 _obj,
-                300,
-                30,
-                0,
+                x,
+                y,
+                z,
                 steps,
                 self.sqt_module.Qt.NoModifier,
                 self.sqt_module.Qt.LeftButton,
@@ -466,6 +466,34 @@ class SquishTest(object):
         except:
             _txt = "NA"
         return _txt
+
+    def get_Names(self, gobj):
+        _obj = self.get_action_obj(gobj)
+        namelist = []
+        Num_Of_Name = 0
+        namestr = ""
+
+        if _obj is not None:
+            b = self.sqt_module.object.children(_obj)
+
+            for child in b:
+                if self.sqt_module.className(child) == "QQuickFocusScope":
+                    c = self.sqt_module.object.children(child)
+                    for chd in c:
+                        if self.sqt_module.className(chd) == "MyListItem_Button_QMLTYPE_74":
+                            a = self.sqt_module.object.children(chd)
+                            for d in a:
+                                if self.sqt_module.className(d) == "Label_QMLTYPE_20":
+                                    m = self.sqt_module.object.children(d)
+                                    for n in m:
+                                        if self.sqt_module.className(n) == "QQuickText":
+                                            namelist.append(n.text)
+                                            continue
+        for i in namelist:
+            if len(str(i)) > 0:
+                Num_Of_Name = Num_Of_Name + 1
+                namestr = f'{namestr}{str(i)} '
+        return int(Num_Of_Name), namestr.rstrip()
 
 
 if __name__ == "__main__":

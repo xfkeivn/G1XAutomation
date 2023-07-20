@@ -109,8 +109,8 @@ class SquishProxy:
     def mouse_wheel_screen(self, x, y, steps):
         return self.proxy.mouse_wheel_screen(x, y, steps)
 
-    def long_mouse_drag(self, gobj, steps):
-        return self.proxy.long_mouse_drag(gobj, steps)
+    def long_mouse_drag(self, gobj, x, y, z, steps):
+        return self.proxy.long_mouse_drag(gobj, x, y, z, steps)
 
     def mouse_click(self, gobj):
         return self.proxy.mouse_click(gobj)
@@ -126,6 +126,9 @@ class SquishProxy:
 
     def get_gobj_text(self, gobj):
         return self.proxy.get_gobj_text(gobj)
+
+    def get_Names(self, gobj):
+        return self.proxy.get_Names(gobj)
 
 
 if __name__ == "__main__":

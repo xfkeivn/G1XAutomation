@@ -69,8 +69,8 @@ class SquishPyServer:
         return self.squish_tester.mouse_wheel_screen(x, y, steps)
 
     @expose
-    def long_mouse_drag(self, gobj, steps):
-        return self.squish_tester.long_mouse_drag(gobj, steps)
+    def long_mouse_drag(self, gobj, x, y, z, steps):
+        return self.squish_tester.long_mouse_drag(gobj, x, y, z, steps)
 
     @expose
     def mouse_click(self, gobj):
@@ -91,6 +91,10 @@ class SquishPyServer:
     @expose
     def get_gobj_text(self, gobj):
         return self.squish_tester.get_gobj_text(gobj)
+
+    @expose
+    def get_Names(self, gobj):
+        return self.squish_tester.get_Names()
 
 
 if __name__ == "__main__":
