@@ -77,11 +77,13 @@ class SquishTest(object):
                 shell=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
+                cwd=self._squish_install_dir,
             )
             subprocess.Popen(
                 ["squishserver.exe"],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
+                cwd=self._squish_install_dir,
             )
             self._squish_started = True
             time.sleep(1)
@@ -98,6 +100,7 @@ class SquishTest(object):
                 shell=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
+                cwd=self._squish_install_dir,
             )
             time.sleep(1)
             self._squish_started = False

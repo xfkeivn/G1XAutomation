@@ -29,7 +29,7 @@ class SquishProxy:
 
     def start_squish_server(self):
         logger.info(
-            "start the squish pyro server %s,%s，%s"
+            "start the squish pyro server %s,%s,%s"
             % (self.target_ip, self.ssh_private_key, self.attachable_app_name)
         )
         if setting.prod is False:
