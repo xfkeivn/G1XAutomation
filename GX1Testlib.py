@@ -39,8 +39,13 @@ from utils import logger
 from utils.singleton import Singleton
 
 
+def correct_filename(filename):
+    special_chrs = r'\/:*?"<>|'
+    return "".join(c for c in filename if c not in special_chrs)
+
+
 class CommandListener(metaclass=Singleton):
-    def __init__(self):
+    def __init__(self, strftime_dir=None):
         self.ml_stringio = None
         self.ml_file = None
         self.message_log_lock = threading.Lock()
@@ -48,14 +53,9 @@ class CommandListener(metaclass=Singleton):
         self.command_log_folder = "Command_Logs"
         self.is_log_inited = False
         self.command_filters = []
-
-    def _correctfilename(self, filename):
-        special_chrs = r'\/:*?"<>|'
-        modified_filename = ""
-        for c in filename:
-            if c not in special_chrs:
-                modified_filename += c
-        return modified_filename
+        self.strftime_dir = strftime_dir or datetime.datetime.now().strftime(
+            "%Y_%m_%d_%H_%M_%S"
+        )
 
     def exclude_command_code(self, command_code):
         self.command_filters.append(command_code)
@@ -72,14 +72,18 @@ class CommandListener(metaclass=Singleton):
         if not self.is_log_inited:
             self.ml_stringio = io.StringIO()
             variables = BuiltIn().get_variables()
-            suite_name = variables["${SUITE_NAME}"]
-            logfile_basename = self._correctfilename(
-                "%s.log" % (suite_name + "_" + variables["${TEST NAME}"])
+            # suite_name = variables["${SUITE_NAME}"]
+            logfile_basename = correct_filename(
+                "%s.log" % variables["${TEST NAME}"]
             )
             out_put_dir = variables["${OUTPUT_DIR}"]
-            logfile_dir = os.path.join(out_put_dir, self.command_log_folder)
-            if not os.path.exists(logfile_dir):
-                os.makedirs(logfile_dir)
+            logfile_dir = os.path.join(
+                out_put_dir,
+                self.strftime_dir,
+                self.command_log_folder,
+                # correct_filename(suite_name),
+            )
+            os.makedirs(logfile_dir, exist_ok=True)
             self.current_log_filename = os.path.join(
                 logfile_dir, logfile_basename
             )
@@ -173,7 +177,10 @@ class GX1Testlib(object):
         self.gx1_simulator = BPS()
         self.squish_proxy = None
 
-        self.command_listener = CommandListener()
+        self.strftime_dir = datetime.datetime.now().strftime(
+            "%Y_%m_%d_%H_%M_%S"
+        )
+        self.command_listener = CommandListener(strftime_dir=self.strftime_dir)
         self.gx1_simulator.add_command_listener(self.command_listener)
         self.ROBOT_LIBRARY_LISTENER = self
         self.project_inited = False
@@ -239,18 +246,34 @@ class GX1Testlib(object):
     def _log_dir(self):
         variables = BuiltIn().get_variables()
         outdir = variables["${OUTPUTDIR}"]
-        log = variables["${LOGFILE}"]
-        log = os.path.dirname(log) if log != "NONE" else "."
-        return os.path.normpath(os.path.join(outdir, log))
+        # log = variables["${LOGFILE}"]
+        # log = os.path.dirname(log) if log != "NONE" else "."
+        dir_path = os.path.normpath(
+            os.path.join(
+                outdir,
+                self.strftime_dir,
+            )
+        )
+        os.makedirs(dir_path, exist_ok=True)
+        return dir_path
 
     def _get_screenshot_path(self, basename):
         directory = self._log_dir
+        variables = BuiltIn().get_variables()
+        test_dir = os.path.join(
+            directory,
+            "output_images",
+            # correct_filename(variables["${SUITE_NAME}"]),
+            correct_filename(variables["${TEST NAME}"]),
+        )
+        os.makedirs(test_dir, exist_ok=True)
+
         if basename.lower().endswith((".png", ".png")):
-            return os.path.join(directory, basename)
+            return os.path.join(test_dir, basename)
         index = 0
         while True:
             index += 1
-            path = os.path.join(directory, "%s_%d.png" % (basename, index))
+            path = os.path.join(test_dir, "%s_%d.png" % (basename, index))
             if not os.path.exists(path):
                 return path
 
@@ -520,7 +543,9 @@ class GX1Testlib(object):
         """
         steps = int(steps)
         gobj = self._get_obj_from_alias(gobj)
-        return self.squish_proxy.long_mouse_drag(gobj, int(x), int(y), int(z), steps)
+        return self.squish_proxy.long_mouse_drag(
+            gobj, int(x), int(y), int(z), steps
+        )
 
     def mouse_click(self, gobj):
         """If object is applicable, perform a mouse click by passing in the Squish object reference.
