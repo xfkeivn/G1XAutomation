@@ -96,6 +96,10 @@ class SquishPyServer:
     def get_Names(self, gobj):
         return self.squish_tester.get_Names()
 
+    @expose
+    def find_all_objects(self, gobj):
+        return self.squish_tester.find_all_objects(gobj)
+
 
 if __name__ == "__main__":
     servePyro = True

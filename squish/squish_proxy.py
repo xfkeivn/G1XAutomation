@@ -130,6 +130,9 @@ class SquishProxy:
     def get_Names(self, gobj):
         return self.proxy.get_Names(gobj)
 
+    def find_all_objects(self, gobj):
+        return self.proxy.find_all_objects(gobj)
+
 
 if __name__ == "__main__":
     proxy = SquishProxy("192.168.80.130", r"C:\Users\xuf\.ssh\bsci", "gx1")

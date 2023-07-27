@@ -277,6 +277,18 @@ class SquishTest(object):
             _obj = None
         return _obj
 
+    def find_all_objects(self, gobj):
+        """finds and returns a list of objects that match the given object description.
+
+        Args:
+            gobj (dict): A dictionary containing the Squish object details
+
+        Returns:
+            (list): objects
+
+        """
+        return self.sqt_module.findAllObjects(gobj)
+
     def get_action_obj(self, gobj):
         """Check if Squish object exist and the action of object can be applied.
 
@@ -460,9 +472,10 @@ class SquishTest(object):
             i.e. ``{"checkable": False, "container": o_Tab, "objectName": "t_btnPulseModeSmartDustLeft", "text": "SmartDust", "type": "VssButton", "visible": True}``
 
         """
-        _obj = self.get_gobj(gobj)
+        _obj = self.get_gobj(gobj) if isinstance(gobj, dict) else gobj
         try:
             _txt = str(_obj.text)
+            _txt = html2text.html2text(_txt).strip()
         except:
             _txt = "NA"
         return _txt
