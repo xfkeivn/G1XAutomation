@@ -15,6 +15,7 @@ import threading
 import time
 
 import psutil
+import html2text
 
 from utils import logger
 
