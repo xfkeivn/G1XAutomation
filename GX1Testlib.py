@@ -674,6 +674,9 @@ class GX1Testlib(object):
         gobj = self._get_obj_from_alias(gobj)
         return self.squish_proxy.get_Names(gobj)
 
+    def find_all_objects(self, gobj, *return_attrs):
+        gobj = self._get_obj_from_alias(gobj)
+        return self.squish_proxy.find_all_objects(gobj, *return_attrs)
 
 if __name__ == "__main__":
     gx1_testlib = GX1Testlib()

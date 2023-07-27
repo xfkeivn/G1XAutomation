@@ -278,7 +278,7 @@ class SquishTest(object):
             _obj = None
         return _obj
 
-    def find_all_objects(self, gobj):
+    def find_all_objects(self, gobj, *return_attrs):
         """finds and returns a list of objects that match the given object description.
 
         Args:
@@ -288,7 +288,17 @@ class SquishTest(object):
             (list): objects
 
         """
-        return self.sqt_module.findAllObjects(gobj)
+        objects = []
+        return_attrs = return_attrs or ['text']
+        for obj in self.sqt_module.findAllObjects(gobj):
+            obj_info = {}
+            for attr in return_attrs:
+                obj_info[attr] = getattr(obj, attr, None)
+                obj_info[attr] = str(obj_info[attr]) if obj_info[attr] is not None else 'NA'
+                if attr == 'text':
+                    obj_info[attr] = html2text.html2text(obj_info[attr]).strip()
+            objects.append(obj_info)
+        return objects
 
     def get_action_obj(self, gobj):
         """Check if Squish object exist and the action of object can be applied.
@@ -473,10 +483,9 @@ class SquishTest(object):
             i.e. ``{"checkable": False, "container": o_Tab, "objectName": "t_btnPulseModeSmartDustLeft", "text": "SmartDust", "type": "VssButton", "visible": True}``
 
         """
-        _obj = self.get_gobj(gobj) if isinstance(gobj, dict) else gobj
+        _obj = self.get_gobj(gobj)
         try:
             _txt = str(_obj.text)
-            _txt = html2text.html2text(_txt).strip()
         except:
             _txt = "NA"
         return _txt
