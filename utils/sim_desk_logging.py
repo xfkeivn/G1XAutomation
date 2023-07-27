@@ -22,7 +22,7 @@ log_file_full_name = os.path.join(dir_upper_name, "GX1.log")
 logger = logging.getLogger("GX1")
 logger.setLevel(level=logging.DEBUG)
 
-handler = RotatingFileHandler(log_file_full_name)
+handler = RotatingFileHandler(log_file_full_name, maxBytes=10*1024*1024, backupCount=5)
 handler.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
