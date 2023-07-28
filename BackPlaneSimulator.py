@@ -83,7 +83,7 @@ class MessageWrapper(object):
         if isinstance(command_obj, GX1Command):
             self.code = command_obj.u16_CommandCode
         else:
-            self.cod = command_obj.u16_ResponseCode - 1
+            self.code = command_obj.u16_ResponseCode - 1
 
 
 class CommandResponseFilter(metaclass=Singleton):

@@ -364,24 +364,29 @@ class GX1Testlib(object):
                 logger.error("GX1 Simulator failed to start")
                 raise Exception("GX1 Simulator failed to start")
 
-            # result = self.squish_proxy.connect()
-            enabled_squish = (
-                self.project_model.squish_container.getPropertyByName(
-                    "Enabled"
-                )
-            )
-            if enabled_squish.getStringValue() == "True":
+            if communication_type == "PIPE":
                 pause_execution(
-                    "Waiting to start Squish hooker in GX1 GUI,\n Start GX1 GUI application first"
+                    "Please start the virtual machine now. restart will not work"
                 )
-                self.squish_proxy.start_squish_server()
-                self.squish_proxy.create_proxy()
-                result = self.squish_proxy.connect()
-                if result:
-                    logger.info("Squish tester is started")
-                else:
-                    logger.error("Squish tester failed to start")
-                    raise Exception("GX1 Simulator failed to start")
+
+            # result = self.squish_proxy.connect()
+            # enabled_squish = (
+            #     self.project_model.squish_container.getPropertyByName(
+            #         "Enabled"
+            #     )
+            # )
+            # if enabled_squish.getStringValue() == "True":
+            #     pause_execution(
+            #         "Waiting to start Squish hooker in GX1 GUI,\n Start GX1 GUI application first"
+            #     )
+            self.squish_proxy.start_squish_server()
+            self.squish_proxy.create_proxy()
+            result = self.squish_proxy.connect()
+            if result:
+                logger.info("Squish tester is started")
+            else:
+                logger.error("Squish tester failed to start")
+                raise Exception("GX1 Simulator failed to start")
 
         else:
             logger.warn("Project is already initialized")

@@ -142,6 +142,8 @@ class SerialCmd:
         response = None
         while True:
             try:
+                if self.serialPort is None:
+                    break
                 received_data += self.serialPort.read(1)
                 if len(received_data) == 0:
                     break
