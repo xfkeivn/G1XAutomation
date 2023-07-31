@@ -8,6 +8,7 @@
 @desc:
 """
 import os
+import shutil
 
 from executor_context import ExecutorContext
 from sim_desk.mgr.context import SimDeskContext
@@ -15,6 +16,7 @@ from sim_desk.models.CommonProperty import *
 from sim_desk.models.TreeModel import *
 from sim_desk.ui.ImagePanel import ImagePanel
 from sim_desk.ui.images import *
+import wx
 
 EDIT_MODE_MOVING = 0
 EDIT_MODE_RESIZING_XY = 1
@@ -249,6 +251,9 @@ class ImageModel(TreeModel):
         self.tree_action_list.append(
             TreeAction("Remove", wx.ID_HIGHEST + 1011, self.remove_self)
         )
+        self.tree_action_list.append(
+            TreeAction("Rename", wx.ID_HIGHEST + 1021, self.rename_self)
+        )
         self.path = path_prop.getStringValue()
         self.image = None
 
@@ -298,6 +303,39 @@ class ImageModel(TreeModel):
             SimDeskContext().get_image_feature_panel().canvas_panel.imageobj = (
                 None
             )
+
+    def rename_self(self, event):
+        dlg = wx.TextEntryDialog(
+            self.getProject_Tree(),
+            "Please enter a new file name",
+            "New Name",
+        )
+        if dlg.ShowModal() == wx.ID_OK:
+            new_name: str = dlg.GetValue().strip()
+            path_property = self.getPropertyByName("Path")
+            if not new_name or not path_property:
+                return
+
+            file_path = path_property.getStringValue()
+            new_file_name = f'{new_name}{os.path.splitext(file_path)[1]}'
+            new_path = os.path.join(os.path.dirname(file_path), new_file_name)
+            if os.path.exists(new_path):
+                wx.MessageDialog(
+                    None,
+                    "The file with the same name already exists!",
+                    "Change failed",
+                    wx.OK,
+                ).ShowModal()
+                return
+            shutil.move(file_path, new_path)
+            path_property.setStringValue(new_path)
+            self.getPropertyByName("Name").setStringValue(new_file_name)
+            self.path = self.filepath = new_path
+            self.setModelLabel(new_file_name)
+            self.label = new_file_name
+            self.image = wx.Image(self.path, wx.BITMAP_TYPE_ANY)
+            SimDeskContext().get_main_frame().Refresh()
+            self.setDirty()
 
         dlg.Destroy()
 

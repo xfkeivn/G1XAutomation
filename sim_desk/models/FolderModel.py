@@ -292,6 +292,7 @@ class ScenarioPyContainer(TreeModel):
             assets_folder = os.path.join(
                 self.getRoot().getProjectDir(), TAG_NAME_FOLDER_TESTASSET
             )
+            txt = f"{txt}.py" if not txt.endswith(".py") else txt
             script_file_name = os.path.join(assets_folder, txt)
             scriptmodel = ScriptModel(self, script_file_name)
             current_path = os.path.dirname(__file__)
