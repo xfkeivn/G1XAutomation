@@ -139,10 +139,11 @@ class Project(TreeModel):
     def open(self, project_dir):
         self.__load_json(project_dir)
 
-        project_com = self.project_config["Project"]["properties"]['COM']['value']
-        if project_com in self._com_port_list:
-            self._com_port_list.remove(project_com)
-        self._com_port_list.insert(0, project_com)
+        project_com = self.project_config["Project"]["properties"].get('COM', {}).get('value')
+        if project_com is not None:
+            if project_com in self._com_port_list:
+                self._com_port_list.remove(project_com)
+            self._com_port_list.insert(0, project_com)
         self.getPropertyByName("COM").setEnum(self._com_port_list)
         self.getPropertyByName("COM").setValues(list(range(len(self._com_port_list))))
 
