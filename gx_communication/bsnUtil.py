@@ -26,8 +26,8 @@
 Description: This program includes helper functions related to the Sardeen
 project. They are aimed to be used by skipper and unit tests
 """
-import struct
 import re
+import struct
 
 FIRST_BYTE_MASK = 0x000000FF  # Least significant byte
 SECOND_BYTE_MASK = 0x0000FF00
@@ -251,6 +251,4 @@ def add_spaces_to_hex(hex_string):
     """
     # Remove all existing spaces
     s = remove_whitespace(hex_string)
-    # Add new spaces
-    s2 = " ".join(s[i:i+2] for i in range(0, len(s), 2))
-    return s2
+    return " ".join(s[i:i+2] for i in range(0, len(s), 2))

@@ -28,8 +28,11 @@ classes that define functions to serialize and deserialize specific data types.
 """
 
 import struct
+
 from gx_communication import errors
+
 from .cmdErrCodes import CmdErrCodes
+
 
 class Serializable:
     """
@@ -183,6 +186,19 @@ class Serializable:
         (fieldFormat, fieldLen) = getFormatAndLenForField(numberFieldName)
         fieldBytes = struct.pack(fieldFormat, number)
         return fieldBytes
+
+    def __str__(self):
+        fields = getSerializableFields(self)
+        field_strings = [self.__class__.__name__]
+        for field in fields:
+            val = getattr(self, field)
+            val_str = str(val)
+            if isinstance(val, list):
+                val_str = str([str(v) for v in val])
+
+            filed_string = "%s->%s" % (field, str(val_str))
+            field_strings.append(filed_string)
+        return " ".join(field_strings)
 
 
 class Deserializable:

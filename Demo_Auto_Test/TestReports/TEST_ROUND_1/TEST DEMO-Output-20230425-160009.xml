@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 6.0.2 (Python 3.8.0 on win32)" generated="20230425 16:00:09.629" rpa="false" schemaversion="3">
+<suite id="s1" name="TEST DEMO" source="D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestProtocols\TEST_DEMO.txt">
+<kw name="Init Test" library="GX1Testlib" type="SETUP">
+<doc>Description:
+ This should be called before any test can started for GX1
+Arguments:</doc>
+<msg timestamp="20230425 16:00:09.878" level="INFO">Loading the project at D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test</msg>
+<msg timestamp="20230425 16:00:09.899" level="INFO">Squish Hook 192.168.80.130, gx1, C:\Users\xuf\.ssh\bsci</msg>
+<msg timestamp="20230425 16:00:09.899" level="INFO">Demo_Auto_Test has been loaded successfully</msg>
+<msg timestamp="20230425 16:00:09.916" level="INFO">connecting to device</msg>
+<msg timestamp="20230425 16:00:09.929" level="INFO">COM Port COM4 created successfully</msg>
+<msg timestamp="20230425 16:00:10.037" level="INFO">GX1 Simulator is started</msg>
+<msg timestamp="20230425 16:00:13.147" level="INFO">found router: gx1.development.squish_server</msg>
+<msg timestamp="20230425 16:00:13.148" level="FAIL">Attaching to AUT 'gx1' failed: another test is currently attached to the AUT.</msg>
+<status status="FAIL" starttime="20230425 16:00:09.877" endtime="20230425 16:00:13.148"/>
+</kw>
+<test id="s1-t1" name="TEST_CASE_1_COMMAND_SIMULATION" line="8">
+<doc>This test case is for demo for the features of DVTFront of GX1.</doc>
+<tag>DEMO</tag>
+<tag>MAINPAGE</tag>
+<tag>SCREENSHOT</tag>
+<tag>stimulation</tag>
+<status status="FAIL" starttime="20230425 16:00:13.149" endtime="20230425 16:00:13.150">Parent suite setup failed:
+Attaching to AUT 'gx1' failed: another test is currently attached to the AUT.</status>
+</test>
+<test id="s1-t2" name="TEST_CASE_2_CLICK_AND_SCREEN_SHOT" line="32">
+<doc>This is the second case</doc>
+<tag>POWER</tag>
+<tag>VOLTAGE</tag>
+<status status="FAIL" starttime="20230425 16:00:13.150" endtime="20230425 16:00:13.151">Parent suite setup failed:
+Attaching to AUT 'gx1' failed: another test is currently attached to the AUT.</status>
+</test>
+<test id="s1-t3" name="TEST_CASE_3_COMMAND_SEARCH" line="54">
+<tag>STIMULATION</tag>
+<tag>VOLTAGE</tag>
+<status status="FAIL" starttime="20230425 16:00:13.152" endtime="20230425 16:00:13.152">Parent suite setup failed:
+Attaching to AUT 'gx1' failed: another test is currently attached to the AUT.</status>
+</test>
+<test id="s1-t4" name="TEST_CASE_4_TEST_OCR" line="64">
+<status status="FAIL" starttime="20230425 16:00:13.153" endtime="20230425 16:00:13.154">Parent suite setup failed:
+Attaching to AUT 'gx1' failed: another test is currently attached to the AUT.</status>
+</test>
+<test id="s1-t5" name="TEST_CASE_5_TEST_COMPARE" line="74">
+<status status="FAIL" starttime="20230425 16:00:13.154" endtime="20230425 16:00:13.155">Parent suite setup failed:
+Attaching to AUT 'gx1' failed: another test is currently attached to the AUT.</status>
+</test>
+<kw name="Close Test" library="GX1Testlib" type="TEARDOWN">
+<doc>Description:
+Close all and cleanup after the test is done
+exceptions.
+Arguments:
+    None
+Return Value:
+    None
+Examples:
+|close_test |</doc>
+<msg timestamp="20230425 16:00:14.160" level="INFO">disconnecting from device</msg>
+<msg timestamp="20230425 16:00:14.160" level="INFO">GX1 Simulator is stopped</msg>
+<msg timestamp="20230425 16:00:14.177" level="INFO">Squish tester is stopped</msg>
+<status status="PASS" starttime="20230425 16:00:13.156" endtime="20230425 16:00:14.178"/>
+</kw>
+<meta name="FW_VERSION">2.0</meta>
+<meta name="SW_VERSION">1.0</meta>
+<status status="FAIL" starttime="20230425 16:00:09.647" endtime="20230425 16:00:14.179">Suite setup failed:
+Attaching to AUT 'gx1' failed: another test is currently attached to the AUT.</status>
+</suite>
+<statistics>
+<total>
+<stat pass="0" fail="5" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="0" fail="1" skip="0">DEMO</stat>
+<stat pass="0" fail="1" skip="0">MAINPAGE</stat>
+<stat pass="0" fail="1" skip="0">POWER</stat>
+<stat pass="0" fail="1" skip="0">SCREENSHOT</stat>
+<stat pass="0" fail="2" skip="0">stimulation</stat>
+<stat pass="0" fail="2" skip="0">VOLTAGE</stat>
+</tag>
+<suite>
+<stat pass="0" fail="5" skip="0" id="s1" name="TEST DEMO">TEST DEMO</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

@@ -4,7 +4,7 @@
 @author: Kevin Xu
 @license: (C) Copyright 2021-2025, Boston Scientific Corporation Limited.
 @contact: xuf@bsci.com
-@software: BSCUDSStudio
+@software: BSC_EME_TAF
 @file: TagName.py
 @time: 2023/3/26 10:58
 @desc:
@@ -20,3 +20,7 @@ TAG_NAME_PERSPECTIVES = "Perspecitves"
 TAG_NAME_SQUISH_NAME_FILE = "SquishNameFile"
 TAG_NAME_SQUISH_NAME = "SquishName"
 TAG_NAME_SQUISH_NAMES_CONTAINER = 'Squish Names'
+
+TAG_NAME_SCRIPT = "Scripts"
+TAG_NAME_SCRIPT_KEYWORD = "Keywords"
+TAG_NAME_SCRIPT_KEYWORD_STATEMENT = "Statements"

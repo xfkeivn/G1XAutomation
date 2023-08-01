@@ -1,0 +1,47 @@
+command: robot -A C:\Users\xuf\AppData\Local\Temp\RIDE12ti36w8.d\argfile.txt --listener D:\Workspace\GX1\G1XAutomation\venv\lib\site-packages\robotide\contrib\testrunner\TestRunnerAgent.py:3357:False D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestProtocols\TEST_DEMO.txt
+
+TestRunnerAgent: Running under CPython 3.8.0
+
+
+==========
+TEST DEMO 
+==========
+TE... | FAIL |
+Parent suite setup failed:
+Keyword 'GX1Testlib.Init Test' expected 0 arguments, got 3.
+----------
+TE... | FAIL |
+Parent suite setup failed:
+Keyword 'GX1Testlib.Init Test' expected 0 arguments, got 3.
+----------
+TE... | FAIL |
+Parent suite setup failed:
+Keyword 'GX1Testlib.Init Test' expected 0 arguments, got 3.
+----------
+TE... | FAIL |
+Parent suite setup failed:
+Keyword 'GX1Testlib.Init Test' expected 0 arguments, got 3.
+----------
+TE... | FAIL |
+Parent suite setup failed:
+Keyword 'GX1Testlib.Init Test' expected 0 arguments, got 3.
+----------
+TE... | FAIL |
+Suite setup failed:
+Keyword 'GX1Testlib.Init Test' expected 0 arguments, got 3.
+
+Also suite teardown failed:
+Keyword 'GX1Testlib.Close Test' expected 0 arguments, got 3.
+
+5 tests, 0 passed, 5 failed
+==========
+Debug:   D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\TEST DEMO-Message-20230425-155109.log
+Output:  D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\TEST DEMO-Output-20230425-155109.xml
+
+Log:     D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\TEST DEMO-Log-20230425-155109.html
+
+Report:  D:\Workspace\GX1\G1XAutomation\Demo_Auto_Test\TestReports\TEST_ROUND_1\TEST DEMO-Report-20230425-155109.html
+
+
+
+Test finished 20230425 15:51:10

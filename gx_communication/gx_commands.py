@@ -1,6 +1,7 @@
-from gx_communication import gx_command_codes
-from gx_communication import serializable
 from typing import List
+
+from gx_communication import gx_command_codes, serializable
+
 
 class Command(serializable.Serializable, serializable.Deserializable):
     """
@@ -60,18 +61,54 @@ class WhoAmICmd(Command):
 
 class WhoAmIResp(Response):
     """
-    Defines Who Am I Command response fields as per Command Protocol.
+     Defines Who Am I Command response fields as per Command Protocol.
 
-   Attributes
-    ----------
-    u8_DeviceId: int
-        ID of device
+    Attributes
+     ----------
+     u8_DeviceId: int
+         ID of device
     """
 
     def __init__(self):
         super().__init__(gx_command_codes.WHO_AM_I_CMD)
         self.u8_DeviceId = 0x00
         self.au8_address = []
+
+
+class SetSystemVolumn(Command):
+    """
+    Defines command for configuring electrode settings.
+    Attributes
+    ---------
+    """
+
+    def __init__(self):
+        super().__init__(gx_command_codes.SET_SYSTEM_VOLUME)
+        self.response = SetSystemVolumnResp()
+        self.u8_volumn = 0x00
+
+
+class SetSystemVolumnResp(Response):
+    def __init__(self):
+        super().__init__(gx_command_codes.SET_SYSTEM_VOLUME)
+
+
+class GetSystemVolumn(Command):
+    """
+    Defines command for configuring electrode settings.
+    Attributes
+    ---------
+    """
+
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_SYSTEM_VOLUME)
+        self.response = GetSystemVolumnResp()
+
+
+class GetSystemVolumnResp(Response):
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_SYSTEM_VOLUME)
+        self.u8_volumn = 0x00
 
 
 class SetElectrodeSettingCmd(Command):
@@ -86,7 +123,7 @@ class SetElectrodeSettingCmd(Command):
         self.response = SetElectrodeSettingResp()
         self.u8_ElectrodePairCount = 0x00
         self.au8_Electrodes = []
-        self._arrayLengths = {'au8_Electrodes': 8}
+        self._arrayLengths = {"au8_Electrodes": 8}
 
 
 class SetElectrodeSettingResp(Response):
@@ -127,7 +164,7 @@ class BlockChannelCmd(Command):
         self.response = BlockChannelResp()
         self.u8_BlockCount = 0x00
         self.au8_BlockedChannels = []
-        self._arrayLengths = {'au8_BlockedChannels': 4}
+        self._arrayLengths = {"au8_BlockedChannels": 4}
 
 
 class BlockChannelResp(Response):
@@ -137,6 +174,7 @@ class BlockChannelResp(Response):
 
 # *** end BW ****
 
+
 class SetStimulationSettingCmd(Command):
     """
     ---------
@@ -145,6 +183,29 @@ class SetStimulationSettingCmd(Command):
     def __init__(self):
         super().__init__(gx_command_codes.SET_STIMULATION_SETTING_CMD)
         self.response = SetStimulationSettingResp()
+        self.u8_ControlSetting = 0x00
+        self.u8_SensoryMotor = 0x00
+        self.u8_Rate = 0x00
+        self.u8_Width = 0x00
+        self.u8_Amplitude = 0x00
+        self.u8_RampSpeed = 0x00
+        self.u8_MaxVoltage = 0x00
+        self.u8_MaxCurrent = 0x00
+
+
+class GetStimulationSettingCmd(Command):
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_STIMULATION_SETTING_CMD)
+        self.response = GetStimulationSettingResponse()
+
+
+class GetStimulationSettingResponse(Response):
+    """
+    ---------
+    """
+
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_STIMULATION_SETTING_CMD)
         self.u8_ControlSetting = 0x00
         self.u8_SensoryMotor = 0x00
         self.u8_Rate = 0x00
@@ -188,6 +249,34 @@ class SetThermalRFSettingResp(Response):
         super().__init__(gx_command_codes.SET_THERMAL_RF_SETTING_CMD)
 
 
+class GetThermalRFSettingResp(Response):
+    """
+    ---------
+    """
+
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_THERMAL_RF_SETTING_CMD)
+        self.u8_TRFMode = 0x00
+        self.u8_AutoRamp = 0x00
+        self.u8_RampRate = 0x00
+        self.u16_SetTime = 0x0000
+        self.u8_SetTemp = 0x00
+        self.u16_StaggerStartTime = 0x0000
+        self.u16_ElectrodePower = 0x0000
+        self.u16_StepTime = 0x0000
+        self.u16_FinalTime = 0x0000
+        self.u8_StartTemp = 0x00
+        self.u8_StepTempInc = 0x00
+        self.u8_FinalTemp = 0x00
+        self.u8_SetVoltage = 0x00
+
+
+class GetThermalRFSettingCmd(Command):
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_THERMAL_RF_SETTING_CMD)
+        self.response = GetThermalRFSettingResp()
+
+
 class SetPulsedRFSettingCmd(Command):
     """
     ---------
@@ -212,6 +301,28 @@ class SetPulsedRFSettingResp(Response):
         super().__init__(gx_command_codes.SET_PULSED_RF_SETTING_CMD)
 
 
+class GetPulsedRFSettingResp(Response):
+    """
+    ---------
+    """
+
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_PULSED_RF_SETTING_CMD)
+        self.u8_PRFMode = 0x00
+        self.u8_AutoRamp = 0x00
+        self.u16_SetTime = 0x0000
+        self.u8_MaxTemp = 0x00
+        self.u8_PulseRate = 0x00
+        self.u16_StaggerStartTime = 0x0000
+        self.u16_Voltage = 0x00
+        self.u16_PulseWidth = 0x00
+        self.u16_ElectrodePower = 0x0000
+
+
+class GetPulsedRFSettingCmd(Command):
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_PULSED_RF_SETTING_CMD)
+        self.response = GetPulsedRFSettingResp()
 
 
 class GetFwImagePropertiesCmd(Command):
@@ -229,9 +340,6 @@ class GetFwImagePropertiesResp(Response):
         super().__init__(gx_command_codes.GET_FW_IMAGE_PROPERTIES_CMD)
 
 
-
-
-
 class CtrlResetTimerCmd(Command):
     """
     ---------
@@ -246,8 +354,6 @@ class CtrlResetTimerCmd(Command):
 class CtrlResetTimerResp(Response):
     def __init__(self):
         super().__init__(gx_command_codes.CTRL_RESET_TIMER_CMD)
-
-
 
 
 # BW **********************************************
@@ -313,6 +419,22 @@ class AdjustCurrentResp(Response):
         super().__init__(gx_command_codes.CTRL_ADJUST_CURR)
 
 
+class AdjustTempCmd(Command):
+    """
+    ---------
+    """
+
+    def __init__(self):
+        super().__init__(gx_command_codes.CTRL_ADJUST_TEMP)
+        self.response = AdjustTempResp()
+        self.i16_target_temp = 0x0000
+
+
+class AdjustTempResp(Response):
+    def __init__(self):
+        super().__init__(gx_command_codes.CTRL_ADJUST_TEMP)
+
+
 class UT_EchoCmd(Command):
     """
     ---------
@@ -351,6 +473,40 @@ class SetImpedanceVolumeCmd(Command):
 class SetImpedanceVolumeResp(Response):
     def __init__(self):
         super().__init__(gx_command_codes.SET_IMPEDANCE_VOLUME_CMD)
+
+
+class SetImpedanceSettingCmd(Command):
+    """
+    ---------
+    """
+
+    def __init__(self):
+        super().__init__(gx_command_codes.SET_IMPEDANCE_SETTING)
+        self.response = SetImpedanceSettingResp()
+        self.u16_open_circuit_impedance = 0x00
+        self.u16_short_circuit_impedance = 0x00
+
+
+class SetImpedanceSettingResp(Response):
+    def __init__(self):
+        super().__init__(gx_command_codes.SET_IMPEDANCE_SETTING)
+
+
+class GetImpedanceSettingCmd(Command):
+    """
+    ---------
+    """
+
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_IMPEDANCE_SETTING)
+        self.response = GetImpedanceSettingResp()
+
+
+class GetImpedanceSettingResp(Response):
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_IMPEDANCE_SETTING)
+        self.u16_open_circuit_impedance = 0x00
+        self.u16_short_circuit_impedance = 0x00
 
 
 class SetCPLDRegCmd(Command):
@@ -428,7 +584,7 @@ class GetMeasuredChannelsCmd(Command):
         super().__init__(gx_command_codes.GET_MEASURED_CHANNEL)
         self.response = GetMeasuredChannelsResp()
         self.au8_channels = []
-        self._arrayLengths = {'au8_channels': 4}
+        self._arrayLengths = {"au8_channels": 4}
 
 
 class MeasuredChannelParam(serializable.Serializable):
@@ -450,13 +606,77 @@ class MeasuredChannelParam(serializable.Serializable):
         self.u16_Power = 0
         self.u16_Width = 0
 
+    def __str__(self):
+        return serializable.Serializable.__str__(self)
+
 
 class GetMeasuredChannelsResp(Response):
     def __init__(self):
         super().__init__(gx_command_codes.GET_MEASURED_CHANNEL)
-        self.ar_measured_channels: List[MeasuredChannelParam] = [MeasuredChannelParam() for i in range(4)]
-        self._arrayTypes['ar_measured_channels'] = 'MeasuredChannelParam'
+        self.ar_measured_channels: List[MeasuredChannelParam] = [
+            MeasuredChannelParam() for i in range(4)
+        ]
+        self._arrayTypes["ar_measured_channels"] = "MeasuredChannelParam"
 
 
+class LaunchApplication(Command):
+    def __init__(self):
+        super().__init__(gx_command_codes.LAUNCH_APPLICATION)
+        self.response = LaunchApplicationResp()
+        self.au8_fw_hash_data = [0] * 32
+        self.au8_cpld_hash_data = [0] * 32
+        self._arrayLengths = {"au8_fw_hash_data": 32, "au8_cpld_hash_data": 32}
 
 
+class LaunchApplication2(Command):
+    def __init__(self):
+        super().__init__(gx_command_codes.LAUNCH_APPLICATION2)
+        self.response = LaunchApplicationResp2()
+        self.au8_fw_hash_data = [0] * 32
+        self.au8_cpld_hash_data = [0] * 32
+        self.au8_config_hash_data = [0] * 32
+        self._arrayLengths = {
+            "au8_fw_hash_data": 32,
+            "au8_cpld_hash_data": 32,
+            "au8_config_hash_data": 32,
+        }
+
+
+class LaunchApplicationResp(Response):
+    def __init__(self):
+        super().__init__(gx_command_codes.LAUNCH_APPLICATION)
+
+
+class LaunchApplicationResp2(Response):
+    def __init__(self):
+        super().__init__(gx_command_codes.LAUNCH_APPLICATION2)
+
+
+class GetDetailedError(Command):
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_DETAILED_ERROR)
+        self.response = GetDetailedErrorResp()
+
+
+class GetDetailedErrorResp(Response):
+    def __init__(self):
+        super().__init__(gx_command_codes.GET_DETAILED_ERROR)
+        self.u8_ErrorType = 0
+        self.u8_ErrorClass = 0
+        self.u16_ErrorId = 0
+        self.u8_ElectrodeIsValid = 0
+        self.u8_ElectrodeNum = 0
+        self.u8_TempIsValid = 0
+        self.u8_Temp = 0
+        self.u8_SupplementalTempIsValid = 0
+        self.u8_SupplementalTemp = 0
+        self.u8_ImpedanceIsValid = 0
+        self.u16_Impedance = 0
+        self.u8_VoltageIsValid = 0
+        self.u16_Voltage = 0
+        self.u8_CurrentIsValid = 0
+        self.u16_Current = 0
+        self.u8_PowerIsValid = 0
+        self.u16_Power = 0
+        self.u16_ErrorDetail = 0
+        self.u32_SupplementalInfo = 0

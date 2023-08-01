@@ -4,7 +4,7 @@
 @author: Kevin Xu
 @license: (C) Copyright 2021-2025, Boston Scientific Corporation Limited.
 @contact: xuf@bsci.com
-@software: BSCUDSStudio
+@software: BSC_EME_TAF
 @file: forward.py
 @time: 2023/4/1 20:35
 @desc:
@@ -38,8 +38,8 @@ connection to a destination reachable from the SSH server machine.
 
 import getpass
 import os
-import socket
 import select
+import socket
 
 try:
     import SocketServer

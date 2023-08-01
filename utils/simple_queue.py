@@ -4,15 +4,16 @@
 @author: Kevin Xu
 @license: (C) Copyright 2021-2025, Boston Scientific Corporation Limited.
 @contact: xuf@bsci.com
-@software: BSCUDSStudio
+@software: BSC_EME_TAF
 @file: simple_queue.py
 @time: 2023/3/26 22:00
 @desc:
 """
-import threading
 import copy
+import threading
 
-class LightQueue():
+
+class LightQueue:
     def __init__(self, max_size=None):
         self.buffer = []
         self.lock = threading.Lock()
@@ -31,7 +32,7 @@ class LightQueue():
 
     def empty(self):
         self.lock.acquire()
-        isempty = (len(self.buffer) == 0)
+        isempty = len(self.buffer) == 0
         self.lock.release()
         return isempty
 
@@ -75,7 +76,7 @@ class LightQueue():
 
 
 class MessageDictQueue:
-    def __init__(self, buffersize = 100000):
+    def __init__(self, buffersize=100000):
         self._msgqueue_dict = {}
         self.lock = threading.Lock()
         self.buffersize = buffersize
@@ -85,12 +86,13 @@ class MessageDictQueue:
         self.lock.acquire()
         if self._msgqueue_dict.get(message_id) is None:
             self._msgqueue_dict[message_id] = LightQueue()
-
-        self._msgqueue_dict[message_id].put((self.seq,message))
+        message.sequence = self.seq
+        self._msgqueue_dict[message_id].put(message)
         if self._msgqueue_dict[message_id].size() > self.buffersize:
             self._msgqueue_dict[message_id].get()
 
         self.lock.release()
+        self.seq += 1
 
     def count(self):
         self.lock.acquire()
