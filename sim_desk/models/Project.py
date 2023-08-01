@@ -11,6 +11,8 @@ import copy
 import json
 import os
 
+import wx
+
 import executor_context
 from serial.tools.list_ports import comports
 from sim_desk.mgr.appconfig import AppConfig
@@ -42,36 +44,36 @@ class Project(TreeModel):
         prop_location.setSavable(False)
         self.addProperties(prop_location)
         self._com_port_list = self.__enum_com_ports()
-        if len(self._com_port_list) > 0:
-            prop_type = EnumProperty(
-                "CommunicationType",
-                "CommunicationType",
-                0,
-                None,
-                ["PIPE", "COM"],
-                [0, 1],
-            )
-            self.addProperties(prop_type)
-            prop_comport = EnumProperty(
-                "COM",
-                "COM",
-                0,
-                None,
-                self._com_port_list,
-                list(range(len(self._com_port_list))),
-                writable=True,
-            )
-            self.addProperties(prop_comport)
-        else:
-            prop_type = EnumProperty(
-                "CommunicationType",
-                "CommunicationType",
-                0,
-                None,
-                ["PIPE"],
-                [0],
-            )
-            self.addProperties(prop_type)
+        # if len(self._com_port_list) > 0:
+        prop_type = EnumProperty(
+            "CommunicationType",
+            "CommunicationType",
+            0,
+            None,
+            ["PIPE", "COM"],
+            [0, 1],
+        )
+        self.addProperties(prop_type)
+        prop_comport = EnumProperty(
+            "COM",
+            "COM",
+            0,
+            None,
+            self._com_port_list,
+            list(range(len(self._com_port_list))),
+            writable=True,
+        )
+        self.addProperties(prop_comport)
+        # else:
+        #     prop_type = EnumProperty(
+        #         "CommunicationType",
+        #         "CommunicationType",
+        #         0,
+        #         None,
+        #         ["PIPE"],
+        #         [0],
+        #     )
+        #     self.addProperties(prop_type)
 
         prop_pipename = StringProperty(
             "PipeName", "PipeName", r"\\.\pipe\gx1", editable=True
@@ -187,6 +189,7 @@ class Project(TreeModel):
 
     def to_json(self):
         json_result = TreeModel.to_json(self)
+        self.validity_check(json_result)
         self.project_config["Project"].update(json_result)
 
     def save(self):
@@ -216,3 +219,10 @@ class Project(TreeModel):
         #     self.getProject_Tree().Enable(True)
         #     self.getProperties_Tree().Enable(True)
         TreeModel.set_model_status(self, modelstatus)
+
+    def validity_check(self, json_data):
+        project_properties = json_data.get("properties", {})
+        communication_type = project_properties.get("CommunicationType", {}).get('value')
+        com_value = project_properties.get("COM", {}).get('value')
+        if communication_type == 'COM' and not com_value:
+            wx.MessageBox("COM is not available, please check!")
