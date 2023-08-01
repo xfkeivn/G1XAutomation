@@ -127,9 +127,6 @@ class SquishProxy:
     def get_gobj_text(self, gobj):
         return self.proxy.get_gobj_text(gobj)
 
-    def get_Names(self, gobj):
-        return self.proxy.get_Names(gobj)
-
     def find_all_objects(self, gobj, *return_attrs):
         return self.proxy.find_all_objects(gobj, *return_attrs)
 

@@ -309,31 +309,33 @@ class BackPlaneSimulator(metaclass=Singleton):
 
     def __receive_response(self):
         while not self.receive_thread_stop:
-            try:
-                response = self.com_handle.get_command()
-                if self.receive_thread_stop:
-                    # logger.debug("the thread is stopped")
-                    break
-                if response is None:
-                    continue
-                payload = RD1055_format.get_payload(response)
-                cmd_code_bytes = payload[0:2]
-                command_code_value = int.from_bytes(cmd_code_bytes, "little")
-                command_class = Command_Code_Class_Mapping.get(command_code_value)
-                if command_class is None:
-                    logger.error(
-                        "Command Code %X not defined for processing"
-                        % command_code_value
-                    )
-                    continue
-                command_obj = command_class()
-                command_obj.deserialize(payload)
-
-                self.__process_command(command_code_value, command_obj)
-                response_cmd = self.__dispatch_command(command_obj)
-                self.com_handle.send_response(response_cmd)
-                self.__process_response(
-                    response_cmd.u16_ResponseCode, response_cmd
+            response = self.com_handle.get_command()
+            if self.receive_thread_stop:
+                # logger.debug("the thread is stopped")
+                break
+            if response is None:
+                continue
+            payload = RD1055_format.get_payload(response)
+            cmd_code_bytes = payload[0:2]
+            command_code_value = int.from_bytes(cmd_code_bytes, "little")
+            command_class = Command_Code_Class_Mapping.get(command_code_value)
+            if command_class is None:
+                logger.error(
+                    "Command Code %X not defined for processing"
+                    % command_code_value
                 )
+                continue
+            command_obj = command_class()
+            try:
+                command_obj.deserialize(payload)
             except Exception as e:
+                logger.debug(f"response:{response}")
                 logger.error(traceback.format_exc())
+                raise e
+
+            self.__process_command(command_code_value, command_obj)
+            response_cmd = self.__dispatch_command(command_obj)
+            self.com_handle.send_response(response_cmd)
+            self.__process_response(
+                response_cmd.u16_ResponseCode, response_cmd
+            )

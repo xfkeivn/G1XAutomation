@@ -143,7 +143,7 @@ class CommandListener(metaclass=Singleton):
         )
 
 
-class GX1Testlib(object):
+class GX1Testlib(metaclass=Singleton):
     """
     Libaray for Test Automation Framework For GX1 system
 
@@ -368,7 +368,7 @@ class GX1Testlib(object):
                 pause_execution(
                     "Please start the virtual machine now. restart will not work"
                 )
-
+            # TODO(csniu): It's right, on the real machine
             # result = self.squish_proxy.connect()
             # enabled_squish = (
             #     self.project_model.squish_container.getPropertyByName(
@@ -537,19 +537,20 @@ class GX1Testlib(object):
         steps = int(steps)
         return self.squish_proxy.mouse_wheel_screen(x, y, steps)
 
-    def long_mouse_drag(self, gobj, x, y, z, steps):
+    def long_mouse_drag(self, gobj, x, y, dx, dy):
         """If object is applicable, this function will produce a mouse drag operation with a fixed delay of
         about one second between pressing the mouse button and starting to move the mouse cursor.
 
         Args:
             gobj (dict): A dictionary containing the Squish object details
-            steps (int): pixels to drag.
-
+            x (int): The x coordinate of the mouse cursor.
+            y (int): The y coordinate of the mouse cursor.
+            dx (int): The objectOrName widget is dragged by dx pixels horizontally.
+            dy (int): The objectOrName widget is dragged by dy pixels vertically.
         """
-        steps = int(steps)
         gobj = self._get_obj_from_alias(gobj)
         return self.squish_proxy.long_mouse_drag(
-            gobj, int(x), int(y), int(z), steps
+            gobj, int(x), int(y), int(dx), int(dy)
         )
 
     def mouse_click(self, gobj):
@@ -675,13 +676,18 @@ class GX1Testlib(object):
         )
         return ident
 
-    def get_Names(self, gobj):
-        gobj = self._get_obj_from_alias(gobj)
-        return self.squish_proxy.get_Names(gobj)
-
     def find_all_objects(self, gobj, *return_attrs):
+        """finds and returns a list of objects that match the given object description.
+
+        Args:
+            gobj (dict): A dictionary containing the Squish object details
+            return_attrs (list): A list of attributes to return,default is ['text']
+        Returns:
+            (list): a list of objects if exist, empty list otherwise.
+        """
         gobj = self._get_obj_from_alias(gobj)
         return self.squish_proxy.find_all_objects(gobj, *return_attrs)
+
 
 if __name__ == "__main__":
     gx1_testlib = GX1Testlib()

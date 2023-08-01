@@ -93,10 +93,6 @@ class SquishPyServer:
         return self.squish_tester.get_gobj_text(gobj)
 
     @expose
-    def get_Names(self, gobj):
-        return self.squish_tester.get_Names()
-
-    @expose
     def find_all_objects(self, gobj, *return_attrs):
         return self.squish_tester.find_all_objects(gobj, *return_attrs)
 
