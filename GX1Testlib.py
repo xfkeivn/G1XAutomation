@@ -145,7 +145,7 @@ class CommandListener(metaclass=Singleton):
 
 class GX1Testlib(metaclass=Singleton):
     """
-    Libaray for Test Automation Framework For GX1 system
+    Library for Test Automation Framework For GX1 system
 
     """
 
@@ -171,7 +171,7 @@ class GX1Testlib(metaclass=Singleton):
         | *Setting* | *Value*  | *Value*    | *Value* |
         | Library | TAFLib  | projectdir
         """
-        logger.info("Project directory is %s" % project_dir)
+
         self.project_model = None
         self.project_dir = project_dir
         self.gx1_simulator = BPS()
