@@ -218,7 +218,7 @@ class EnumProperty(CommonProperty):
         self.enumvalues = enumvalues
 
     def getStringValue(self):
-        if self.stringvalue == "":
+        if self.stringvalue == "" and self.enumstrs:
             return self.enumstrs[0]
         return self.stringvalue
 

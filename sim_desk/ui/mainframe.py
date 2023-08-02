@@ -10,6 +10,7 @@
 
 import contextlib
 import os
+import uuid
 
 import wx
 
@@ -532,7 +533,7 @@ class MainFrame(wx.Frame):
         if not os.path.exists(screenshot_folder):
             os.makedirs(screenshot_folder)
         if self.squish_runner:
-            name = time.strftime("%Y%b%d_%H_%M_%S.png", time.localtime())
+            name = f"{uuid.uuid4().hex}.png"
             full_path_name = os.path.join(screenshot_folder, name)
             self.squish_runner.screen_save(full_path_name)
             self.active_project.image_processing_container.import_to_asset(
