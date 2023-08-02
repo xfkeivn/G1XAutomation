@@ -101,7 +101,7 @@ if __name__ == "__main__":
     servePyro = True
     _hostName = socket.gethostname()
     _hostIP = "127.0.0.1"
-
+    print("Starting the Squish Server...")
     print(sys.argv)
 
     if len(sys.argv) == 1:
